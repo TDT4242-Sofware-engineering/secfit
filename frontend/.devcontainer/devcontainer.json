@@ -1,0 +1,6 @@
+{
+  "name": "Cordova-Dev",
+  "build": {
+    "dockerfile": "../Dockerfile"
+  }
+}

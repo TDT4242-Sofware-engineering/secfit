@@ -23,17 +23,16 @@ $ cd secfit/
 $ docker-compose up --build \
 Hosts the application on http://localhost:9090 with default settings
 
-
 ## Technology
+
 - **deployment** Docker
 - **web** Nginx
 - **database** Postgre SQL
 - **backend** Django 3 with Django REST framework
-- **application** 
-    - **browser** - HTML5/CSS/JS, Bootstrap v5 (no jQuery dependency)
-    - **mobile** Apache Cordova (uses same website)
+- **application**
+  - **browser** - HTML5/CSS/JS, Bootstrap v5 (no jQuery dependency)
+  - **mobile** Apache Cordova (uses same website)
 - **authentication** JWT
-
 
 ## Code and structure
 
@@ -51,7 +50,7 @@ package.json - Some node.js requirements, this is needed for cordova
     - **parsers.py** - contains custom parsers for parsing the body of HTTP requests
     - **tests/** - contains tests for the module. [View Testing in Django](https://docs.djangoproject.com/en/2.1/topics/testing/) for more.
     - **views.py** - Controller in MVC. Methods for rendering and accepting user data
-    - **forms.py**  -  definitions of forms. Used to render html forms and verify user input
+    - **forms.py** - definitions of forms. Used to render html forms and verify user input
     - **settings.py** - Contains important settings at the application and/or project level
     - **Procfile** - Procfile for backend heroku deployment
   - **media/** - directory for file uploads (need to commit it for heroku)
@@ -62,14 +61,12 @@ package.json - Some node.js requirements, this is needed for cordova
   - **manage.py** - entry point for running the project.
   - **seed.json** - contains seed data for the project to get it up and running quickly (coming soon)
 
-
-
 ## Local setup
+
 It's recommended to have a look at: https://www.djangoproject.com/start/
 Just as important is the Django REST guide: https://www.django-rest-framework.org/
 
 Create a virtualenv https://docs.python-guide.org/dev/virtualenvs/
-
 
 ### Django
 
@@ -78,18 +75,16 @@ Installation with examples for Ubuntu. Windows and OSX is mostly the same
 Fork the project and clone it to your machine.
 
 #### Setup and activation of virtualenv (env that prevents python packages from being installed globaly on the machine)
-Naviagate into the project folder, and create your own virtual environment
 
+Naviagate into the project folder, and create your own virtual environment
 
 #### Install python requirements
 
 `pip install -r requirements.txt`
 
-
 #### Migrate database
 
 `python manage.py migrate`
-
 
 #### Create superuser
 
@@ -99,11 +94,9 @@ Create a local admin user by entering the following command:
 
 Only username and password is required
 
-
 #### Start the app
 
 `python manage.py runserver`
-
 
 #### Add initial data
 
@@ -111,13 +104,15 @@ You can add initial data either by going to the url the app is running on locall
 
 Add some categories and you should be all set.
 
-Or by entering 
+Or by entering
 
 `python manage.py loaddata seed.json`
 
 ### Cordova
+
 Cordova CLI guide: https://cordova.apache.org/docs/en/latest/guide/cli/
 If you want to run this as a mobile application
+
 - Navigate to the frontend directory
 - For android, do `cordova run android`
 - For ios, do `cordova run ios`
@@ -126,3 +121,19 @@ If you want to run this as a mobile application
 It's possible you will need to add the platforms you want to run and build.
 The following documentation can be used to run the application in an Android emulator: \
 https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html
+
+# Development in VS code remote container
+
+Prerequisites:
+
+- VS code with remote development extension
+- Docker
+
+To develop in remote containers open a separate VS code instance inside both backend and frontend. Use VS code's command (Ctrl + P) ">Remote-Containers: Open Folder In Container..."
+
+Benefits using this development environment:
+
+- Development environment is identical to the production environment (uses the same dockerfile). This leads to fewer surprises when deploying.
+- No manual installation steps needed
+- No cleanup
+- Easy to switch between different projects using different dependencies/technologies

@@ -30,7 +30,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./backend/secfit
-          file: ./Dockerfile
           push: true
           tags: jonev/secfit:backend
           

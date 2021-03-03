@@ -1,5 +1,5 @@
 # Get docker image
-FROM debian:buster-slim
+FROM node:lts-buster-slim
 
 # Import groupid and host environment variable
 ARG GROUPID
@@ -14,11 +14,12 @@ WORKDIR /app
 COPY . /app/
 
 # Set the host variable in default.js (overwrite)
-RUN echo "const HOST = '${URL_PREFIX}${DOMAIN}:${PORT_PREFIX}${GROUPID}';" > ./www/scripts/defaults.js
+RUN echo "const HOST = 'https://secfit.vassbo.as';" > ./www/scripts/defaults.js
 
 # Install cordova
 # Also install shelljs because of windows for some reason
-RUN apt-get update -y && apt-get install npm -y && npm install -g cordova && npm install -g shelljs
+RUN npm install --silent -g cordova \
+    && npm install --silent -g shelljs
 
 # Run cordova app
 CMD [ "cordova", "run", "browser", "--release", "--port=3000" ]

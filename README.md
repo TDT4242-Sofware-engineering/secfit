@@ -43,7 +43,7 @@ Prerequisites:
 - Git clone, or copy `db.sqlite3`, `docker-compose.yaml` and `nginx.conf` to the server.
 
 ```
-sudo docker stack deploy --compose-file docker-compose.yml --with-registry-auth stack-secfit
+docker stack deploy --compose-file docker-compose.yml --with-registry-auth stack-secfit
 ```
 
 Hosts the application on http://localhost:4011 with default settings

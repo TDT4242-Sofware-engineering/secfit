@@ -2,34 +2,59 @@
 
 SecFit (Secure Fitness) is a hybrid mobile application for fitness logging.
 
-## Deploy with Docker
+## Development in VS code remote container
+
+Prerequisites:
+
+- VS code with remote development extension
+- Docker
+
+To develop in remote containers open a separate VS code instance inside both backend and frontend. Use VS code's command (Ctrl + P) ">Remote-Containers: Open Folder In Container..."
+
+Benefits using this development environment:
+
+- Development environment is identical to the production environment (uses the same dockerfile). This leads to fewer surprises when deploying.
+- No manual installation steps needed
+- No cleanup
+- Easy to switch between different projects using different dependencies/technologies
+
+## Deploy (Production) with Docker Compose/Swarm
 
 ### Prerequisites:
 
-Docker
+Docker Compose/Swarm
 
-Git
+### Deploy:
 
-Windows hosts must use Education or more advanced versions to run Docker \
-Download: https://innsida.ntnu.no/wiki/-/wiki/English/Microsoft+Windows+10
+- The deployment uses prebuilt images from docker hub, built with github actions
 
-### Install:
+### Run with Docker Compose:
 
-$ git clone https://gitlab.stud.idi.ntnu.no/kyleo/secfit.git \
-$ cd secfit/
+```
+docker-compose up --build
+```
 
-### Run:
+Hosts the application on http://localhost:4011
 
-$ docker-compose up --build \
-Hosts the application on http://localhost:9090 with default settings
+### Run (or update) wit Docker Swarm
+
+Prerequisites:
+
+- Git clone, or copy `db.sqlite3`, `docker-compose.yaml` and `nginx.conf` to the server.
+
+```
+sudo docker stack deploy --compose-file docker-compose.yml --with-registry-auth stack-secfit
+```
+
+Hosts the application on http://localhost:4011 with default settings
 
 ## Technology
 
 - **deployment** Docker
-- **web** Nginx
-- **database** Postgre SQL
+- **proxy** Nginx
+- **database** SQLite
 - **backend** Django 3 with Django REST framework
-- **application**
+- **frontend**
   - **browser** - HTML5/CSS/JS, Bootstrap v5 (no jQuery dependency)
   - **mobile** Apache Cordova (uses same website)
 - **authentication** JWT
@@ -61,14 +86,7 @@ package.json - Some node.js requirements, this is needed for cordova
   - **manage.py** - entry point for running the project.
   - **seed.json** - contains seed data for the project to get it up and running quickly (coming soon)
 
-## Local setup
-
-It's recommended to have a look at: https://www.djangoproject.com/start/
-Just as important is the Django REST guide: https://www.django-rest-framework.org/
-
-Create a virtualenv https://docs.python-guide.org/dev/virtualenvs/
-
-### Django
+### Django basics
 
 Installation with examples for Ubuntu. Windows and OSX is mostly the same
 
@@ -121,19 +139,3 @@ If you want to run this as a mobile application
 It's possible you will need to add the platforms you want to run and build.
 The following documentation can be used to run the application in an Android emulator: \
 https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html
-
-# Development in VS code remote container
-
-Prerequisites:
-
-- VS code with remote development extension
-- Docker
-
-To develop in remote containers open a separate VS code instance inside both backend and frontend. Use VS code's command (Ctrl + P) ">Remote-Containers: Open Folder In Container..."
-
-Benefits using this development environment:
-
-- Development environment is identical to the production environment (uses the same dockerfile). This leads to fewer surprises when deploying.
-- No manual installation steps needed
-- No cleanup
-- Easy to switch between different projects using different dependencies/technologies

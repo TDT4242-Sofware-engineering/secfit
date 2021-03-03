@@ -22,4 +22,4 @@ jobs:
         host: ${{ secrets.DEPLOY_HOST }}
         username: ${{ secrets.DEPLOY_USERNAME }}
         key: ${{ secrets.DEPLOY_KEY_PRIVATE }}
-        script: whoami
+        script: /home/${{ secrets.DEPLOY_USERNAME }}/update.sh

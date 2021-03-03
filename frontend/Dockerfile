@@ -19,7 +19,8 @@ RUN echo "const HOST = 'https://secfit.vassbo.as';" > ./www/scripts/defaults.js
 # Install cordova
 # Also install shelljs because of windows for some reason
 RUN npm install --silent -g cordova \
-    && npm install --silent -g shelljs
+    && npm install --silent -g shelljs \
+    && npm install -y --silent
 
 # Run cordova app
 CMD [ "cordova", "run", "browser", "--release", "--port=3000" ]

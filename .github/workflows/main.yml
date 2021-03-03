@@ -57,18 +57,3 @@ jobs:
       - 
         name: Frontend Image digest
         run: echo ${{ steps.docker_build_frontend.outputs.digest }}
-      
-      -
-        name: Build and push proxy
-        id: docker_build_proxy
-        uses: docker/build-push-action@v2
-        env:
-          GROUPID: ${{ secrets.GROUPID }}
-          PORT_PREFIX: ${{ secrets.PORT_PREFIX }}
-        with:
-          context: .
-          push: true
-          tags: jonev/secfit:proxy   
-      - 
-        name: Proxy Image digest
-        run: echo ${{ steps.docker_build_proxy.outputs.digest }}

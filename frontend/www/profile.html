@@ -48,9 +48,14 @@
         <label for="inputCountry" class="form-label">Country</label>
         <input type="text" class="form-control" id="inputCountry" name="country" readonly>
       </div>
-      <div class="col-lg-6"></div>
       <div class="col-lg-6">
-        <input type="button" class="btn btn-danger float-end" id="btn-initiate-delete" value="Delete">
+      </div>
+      <div class="col-lg-6">
+        
+        <input type="button" class="btn btn-success float-end hide mx-1" id="btn-confirm-edit" value="Confirm">
+        <input type="button" class="btn btn-secondary float-end hide mx-1" id="btn-cancel-edit" value="Cancel">
+        <input type="button" class="btn btn-danger float-end hide mx-1" id="btn-initiate-delete" value="Delete">
+        <input type="button" class="btn btn-primary float-end mx-1" id="btn-edit-profile" value="Edit"> 
       </div>
     </form>
   </div>
@@ -63,11 +68,14 @@
       </div>
       <div class="col-lg-4"></div>
 
-      <div class="col-lg-6">
-        <input type="button" class="btn btn-danger float-end" id="btn-delete-user" value="Delete">
+      <div class="col-lg-4">
       </div>
-      <div class="col-lg-6">
+      <div class="col-lg-4 text-center">
+        <input type="button" class="btn btn-danger" id="btn-delete-user" value="Delete">
         <input type="button" class="btn btn-secondary" id="btn-cancel-delete" value="Cancel">
+      </div>
+      <div class="col-lg-4">
+        
       </div>
     </div>
   </div>

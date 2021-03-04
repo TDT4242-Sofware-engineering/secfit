@@ -83,6 +83,8 @@ async function retrieveExercise(id) {
         let exerciseData = await response.json();
         let form = document.querySelector("#form-exercise");
         let formData = new FormData(form);
+        
+        editButton.classList.remove("hide"); // TODO: Validate exercise owner against current user as in line 328: workout.js
 
         for (let key of formData.keys()) {
             let selector = `input[name="${key}"], textarea[name="${key}"]`;

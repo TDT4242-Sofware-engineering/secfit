@@ -82,6 +82,9 @@ class Exercise(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     unit = models.CharField(max_length=50)
+    owner = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="exercises"
+    )
 
     def __str__(self):
         return self.name

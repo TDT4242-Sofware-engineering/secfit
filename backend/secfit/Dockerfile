@@ -44,7 +44,7 @@ RUN DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME} \
     && echo "If you wish to alter the user credentials, then delete the user first."
 
 # Create some exercises from seed data
-RUN python manage.py loaddata seed.json
+# RUN python manage.py loaddata seed.json
 
 # Run wsgi server with gunicorn
 CMD ["gunicorn", "secfit.wsgi", "--log-file", "-", "-b", "0.0.0.0:8000"]

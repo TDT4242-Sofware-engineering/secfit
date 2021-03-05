@@ -142,6 +142,13 @@ class WorkoutFile(models.Model):
     )
     file = models.FileField(upload_to=workout_directory_path)
 
+def exercise_directory_path(instance, filename):
+    return f"exercises/{instance.exercise.id}/{filename}"
+
+class ExerciseFile(models.Model):
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="files")
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="exercise_files")
+    file = models.FileField(upload_to=exercise_directory_path)
 
 class RememberMe(models.Model):
     """Django model for an remember_me cookie used for remember me functionality.

@@ -27,24 +27,8 @@ RUN pip install -r requirements.txt
 # Import groupid environment variable
 ENV GROUPID=${GROUPID}
 
-# Initialize Django
-RUN python manage.py migrate
+# Copy start script
+COPY start.sh /usr/local/bin/start.sh
 
-# Import credential variables
-ARG DJANGO_SUPERUSER_USERNAME
-ARG DJANGO_SUPERUSER_PASSWORD
-ARG DJANGO_SUPERUSER_EMAIL
-
-# Create superuser
-RUN DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME} \
-    DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD} \
-    DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL} \
-    python manage.py createsuperuser --noinput || \
-    echo "WARNING: This error is ignored as it most likely is 'That username is already taken.'" \
-    && echo "If you wish to alter the user credentials, then delete the user first."
-
-# Create some exercises from seed data
-RUN python manage.py loaddata seed.json
-
-# Run wsgi server with gunicorn
-CMD ["gunicorn", "secfit.wsgi", "--log-file", "-", "-b", "0.0.0.0:8000"]
+# Run start script (database migrate and start)
+CMD ["/bin/bash", "/usr/local/bin/start.sh"]

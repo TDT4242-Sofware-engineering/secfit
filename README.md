@@ -65,6 +65,10 @@ Hosts the application on http://localhost:4011 with default settings
   - **mobile** Apache Cordova (uses same website)
 - **authentication** JWT
 
+## All branches
+
+- TODO
+
 ## Code and structure
 
 .gitlab-ci.yml - gitlab ci

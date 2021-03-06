@@ -1,47 +1,9 @@
 from rest_framework.test import APITestCase, force_authenticate, APIClient
 from rest_framework import status
-from django.contrib.auth import get_user_model
 from rest_framework.authtoken.models import Token
 from datetime import datetime
 from users.models import User
-from workouts.models import ExerciseInstance, Exercise
-
-
-
-# from workouts import views
-
-# view = views.WorkoutDetail.as_view()
-
-
-# admin ={"username": "admin", "email": "email@valid.com"}
-
-
-#     self.user = User.objects.create_user(username="tester", email="user1@test.com", password="password1", is_staff=True)
-
-    # def test_x(self):
-    #     self.client.force_authenticate(self.user)
-
-    #     url = reverse('customuser-detail', args=(self.user.id,))
-    #     data = {'first_name': 'test', 'last_name': 'user'}
-    #     response = self.client.put(url, data, format='json')
-
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK)
-
-
-
-        # user = get_user_model().objects.get(username="tester")
-        # us = get_user_model().objects.filter(username="tester")
-        # print(client.force_authenticate(user=user))
-        # user = User.objects.get(username="tester") 
-
-        # print(us.values())
-   
-        # client = APIClient(enforce_csrf_checks=True)
-
-# print(self.accessToken)
-        
-        # u = User.objects.get(username="tester")
-        # self.client.force_authenticate(user)
+from workouts.models import ExerciseInstance, Exercise, Workout
 
 
 # Create your tests here.
@@ -199,14 +161,6 @@ class NotesTestCase(APITestCase):
         response = self.client.post('/api/workouts/', workout,  format="json")
         self.assertEqual(str(response.data["notes"][0]), "This field may not be blank.")
     
-    # def test_notes_too_long(self):
-    #     date = datetime.utcnow()
-    #     tooLongNote= "x" * 100000
-    #     workout = {"name": "validName", "date": date, "notes": tooLongNote, "visibility": "PU", "exercise_instances": [], "files": []}
-    #     response = self.client.post("/api/workouts/", workout, format="json")
-    #     print(response.data)
-    #     self.assertEqual(str(response.data["notes"]), "Ensure this field has no more than 100 characters.")
-
     def test_notes_upper_limit(self):
         date = datetime.utcnow()
         longNote= "x" * 1000000
@@ -229,7 +183,7 @@ class NotesTestCase(APITestCase):
         self.assertEqual(response.data.get("notes"), validNote)
 
 
-class TypeTestCase(APITestCase):
+class ExerciseTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(username="tester", email="test@test.no")
         self.user.set_password("password")
@@ -242,47 +196,75 @@ class TypeTestCase(APITestCase):
         self.accessToken = response.data["access"]
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.accessToken)
         
-        pushups = Exercise.objects.create(name="Push-ups")
-        situps = Exercise.objects.create(name="Sit-ups")
-        ExerciseInstance.objects.create(pushups)
-        ExerciseInstance.objects.create(situps)
-
-        self.exercises = ExerciseInstance.objects.all()
-        print(self.exercises)
+        self.date = datetime.utcnow()
+        self.pushups = Exercise.objects.create(name="Push-ups", unit="number")
+       
         
         
-    def test_type_too_short(self):
-        date = datetime.utcnow()
-        tooShortNote= ""
-        workout = {"name": "validName", "date": date, "notes": tooShortNote, "visibility": "PU", "exercise_instances": [], "files": []}
+    def test_too_short(self):
+        
+        exercise = {"exercise":"", "workout":"api/workouts/1", "sets":"", "number":""}
+        workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": []}
         response = self.client.post('/api/workouts/', workout,  format="json")
-        self.assertEqual(str(response.data["notes"][0]), "This field may not be blank.")
+        feedback =response.data["exercise_instances"][0]
+        
+        self.assertEqual(str(feedback["exercise"][0]), "This field may not be null.")
+        self.assertEqual(str(feedback["sets"][0]), "A valid integer is required.")
+        self.assertEqual(str(feedback["number"][0]), "A valid integer is required.")
+
     
-    # def test_type_too_long(self):
-    #     date = datetime.utcnow()
-    #     tooLongNote= "x" * 100000
-    #     workout = {"name": "validName", "date": date, "notes": tooLongNote, "visibility": "PU", "exercise_instances": [], "files": []}
-    #     response = self.client.post("/api/workouts/", workout, format="json")
-    #     print(response.data)
-    #     self.assertEqual(str(response.data["notes"]), "Ensure this field has no more than 100 characters.")
-
-    def test_type_upper_limit(self):
-        date = datetime.utcnow()
-        longNote= "x" * 1000000
-        workout = {"name": "validName", "date": date, "notes":longNote, "visibility": "PU", "exercise_instances": [], "files": []}
+    def test_too_long(self):
+        toobigNum = "2"*1001
+        exercise = {"exercise":"http://testserver/api/exercises/1/", "workout": "validWorkout", "sets": toobigNum, "number": toobigNum}
+        workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": []}
+        
         response = self.client.post("/api/workouts/", workout, format="json")
-        self.assertEqual(response.data.get("notes"), longNote)
+        
+        feedback=response.data["exercise_instances"][0]
+        self.assertEqual(str(feedback["sets"][0]), "String value too large.")
+        self.assertEqual(str(feedback["number"][0]), "String value too large.")
 
-    def test_type_lower_limit(self):
-        date = datetime.utcnow()
-        shortNote= "x"
-        workout = {"name": "validName", "date": date, "notes": shortNote, "visibility": "PU", "exercise_instances": [], "files": []}
+    def test_upper_limit(self):
+        longNum= "2" * 1000
+        exercise = {"exercise":"http://testserver/api/exercises/1/", "workout": "validWorkout", "sets": longNum, "number": longNum}
+        workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": []}
         response = self.client.post("/api/workouts/", workout, format="json")
-        self.assertEqual(response.data.get("notes"), shortNote)
+        
+        feedback=response.data["exercise_instances"][0]
+        self.assertIsNone(feedback.get("sets"))
+        self.assertIsNone(feedback.get("number"))
 
-    def test_type_valid(self):
-        date = datetime.utcnow()
-        validNote= "validNote"
-        workout = {"name": "validName", "date": date, "notes": validNote, "visibility": "PU", "exercise_instances": [], "files": []}
+    def test_lower_limit(self):
+        shortNum= "2"
+        exercise = {"exercise":"http://testserver/api/exercises/1/", "workout": "validWorkout", "sets": shortNum, "number": shortNum}
+        workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": []}
         response = self.client.post("/api/workouts/", workout, format="json")
-        self.assertEqual(response.data.get("notes"), validNote)
+
+        feedback=response.data["exercise_instances"][0]
+        self.assertIsNone(feedback.get("sets"))
+        self.assertIsNone(feedback.get("number"))
+
+    def test_valid(self):
+
+        validNum = "15"
+        exercise = {"exercise":"http://testserver/api/exercises/1/", "workout": "validWorkout", "sets": validNum, "number": validNum}
+        workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": []}
+        response = self.client.post("/api/workouts/", workout, format="json")
+
+        feedback=response.data["exercise_instances"][0]
+        self.assertIsNone(feedback.get("exercise"))
+        self.assertIsNone(feedback.get("sets"))
+        self.assertIsNone(feedback.get("number"))
+
+
+    def test_not_valid(self):
+
+        invalidNum = "notValid"
+        exercise = {"exercise":"notValid", "workout": "workout", "sets": invalidNum, "number": invalidNum}
+        workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": []}
+        response = self.client.post("/api/workouts/", workout, format="json")
+
+        feedback=response.data["exercise_instances"][0]
+        self.assertEqual(str(feedback["exercise"][0]), "Invalid hyperlink - No URL match.")
+        self.assertEqual(str(feedback["sets"][0]), "A valid integer is required.")
+        self.assertEqual(str(feedback["number"][0]), "A valid integer is required.")

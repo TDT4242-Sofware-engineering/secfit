@@ -32,6 +32,7 @@ class UserList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericA
     def get(self, request, *args, **kwargs):
         self.serializer_class = UserGetSerializer
         return self.list(request, *args, **kwargs)
+        
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
@@ -44,6 +45,11 @@ class UserList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericA
             status = self.request.query_params.get("user", None)
             if status and status == "current":
                 qs = get_user_model().objects.filter(pk=self.request.user.pk)
+            
+            # Search for user by username starts with
+            searchString = self.request.query_params.get("search", None)
+            if searchString:
+                qs = get_user_model().objects.filter(username__startswith=searchString)[:3]
 
         return qs
 

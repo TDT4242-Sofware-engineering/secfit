@@ -32,6 +32,7 @@ function updateNavBar() {
     document.querySelector('a[href="mycoach.html"').classList.remove("hide");
     document.querySelector('a[href="exercises.html"').classList.remove("hide");
     document.querySelector('a[href="myathletes.html"').classList.remove("hide");
+    document.querySelector('a[href="profile.html"').classList.remove("hide");
   } else {
     document.getElementById("btn-login-nav").classList.remove("hide");
     document.getElementById("btn-register").classList.remove("hide");

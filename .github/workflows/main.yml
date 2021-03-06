@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build_backend:
     runs-on: ubuntu-latest
     steps:
       -
@@ -33,7 +33,19 @@ jobs:
       - 
         name: Backend Image digest
         run: echo ${{ steps.docker_build_backend.outputs.digest }}
-        
+  
+  build_frontend:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       -
         name: Build and push frontend
         id: docker_build_frontend
@@ -52,7 +64,7 @@ jobs:
         run: echo ${{ steps.docker_build_frontend.outputs.digest }}
         
   deploy:
-    # The type of runner that the job will run on
+    needs: [build_backend, build_frontend]
     runs-on: ubuntu-latest
 
     # Steps represent a sequence of tasks that will be executed as part of the job

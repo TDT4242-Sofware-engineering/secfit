@@ -16,6 +16,12 @@ urlpatterns = format_suffix_patterns(
             views.WorkoutDetail.as_view(),
             name="workout-detail",
         ),
+        path("api/workouts/invitations", views.WorkoutInvitationList.as_view(), name="workoutInvitation-list"),
+        path(
+            "api/workout/invitations/<int:pk>/",
+            views.WorkoutInvitationDetail.as_view(),
+            name="workoutinvitation-detail",
+        ),
         path("api/exercises/", views.ExerciseList.as_view(), name="exercise-list"),
         path(
             "api/exercises/<int:pk>/",

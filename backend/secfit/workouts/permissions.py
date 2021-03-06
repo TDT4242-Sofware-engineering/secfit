@@ -1,7 +1,8 @@
 """Contains custom DRF permissions classes for the workouts app
 """
 from rest_framework import permissions
-from workouts.models import Workout
+from workouts.models import Workout, WorkoutInvitation
+from django.contrib.auth import get_user_model
 
 
 class IsOwner(permissions.BasePermission):
@@ -66,3 +67,41 @@ class IsReadOnly(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
         return request.method in permissions.SAFE_METHODS
+
+class IsOwnerOrParticipantOfWorkoutInvitation(permissions.BasePermission):
+    """Checks whether the user is allowed to delete a workout invitation"""
+
+    def has_object_permission(self, request, view, obj):
+        if request.method == "DELETE":
+            invitation_pk = view.kwargs["pk"]
+            invitation = WorkoutInvitation.objects.filter(pk=invitation_pk).first()
+            if(request.user == invitation.owner or request.user == invitation.participant):
+                return True
+
+        return False
+
+class IsInvitedToWorkout(permissions.BasePermission):
+    """Checks whether the user is allowed to edit or get the workout. For invited participants to be able to add itself to the workout."""
+    def has_object_permission(self, request, view, obj):
+        if request.method == "PUT" or request.method == "GET":
+            workout_pk = view.kwargs["pk"]
+            workout = Workout.objects.get(pk=workout_pk)
+            invitation = WorkoutInvitation.objects.filter(workout=workout, participant=request.user).first()
+            if invitation is None:
+                return False
+            if(request.user == workout.owner or request.user == invitation.participant):
+                return True
+
+        return False
+
+class IsParticipantToWorkout(permissions.BasePermission):
+    """Checks whether the user is allowed to edit or get the workout. For participants to be able se the workout."""
+    def has_object_permission(self, request, view, obj):
+        if request.method == "GET":
+            workout_pk = view.kwargs["pk"]
+            workout = Workout.objects.get(pk=workout_pk)
+            users = get_user_model().objects.filter(participants=workout.participants)
+            if request.user in users:
+                return True
+
+        return False

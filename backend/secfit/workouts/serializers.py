@@ -2,7 +2,8 @@
 """
 from rest_framework import serializers
 from rest_framework.serializers import HyperlinkedRelatedField
-from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, RememberMe
+from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, RememberMe, WorkoutInvitation
+from django.contrib.auth import get_user_model
 
 
 class ExerciseInstanceSerializer(serializers.HyperlinkedModelSerializer):
@@ -46,6 +47,35 @@ class WorkoutFileSerializer(serializers.HyperlinkedModelSerializer):
         return WorkoutFile.objects.create(**validated_data)
 
 
+class WorkoutInvitationSerializer(serializers.HyperlinkedModelSerializer):
+    """Serializer for a WorkoutInvitation. Hyperlinks are used for relationships by default.
+
+    Serialized fields: url, id, owner, participant, workout
+
+    Attributes:
+        owner:      The owner (User) of the Workout invitation, represented by a username. ReadOnly
+        workout:    The associate workout for this Workout invitation, represented by a hyperlink
+        participant: The participant (User)
+    """
+
+    owner = serializers.ReadOnlyField(source="owner.username")
+    workout = HyperlinkedRelatedField(
+        queryset=Workout.objects.all(), view_name="workout-detail", required=False
+    )
+    participant = serializers.SlugRelatedField(
+        many=False,
+        slug_field='username',
+        queryset=get_user_model().objects.all()
+     )
+
+    class Meta:
+        model = WorkoutInvitation
+        fields = ["url", "id", "owner", "participant", "workout"]
+
+    def create(self, validated_data):
+        return WorkoutInvitation.objects.create(**validated_data)
+
+
 class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for a Workout. Hyperlinks are used for relationships by default.
 
@@ -59,11 +89,17 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         owner_username:     Username of the owning User
         exercise_instance:  Serializer for ExericseInstances
         files:              Serializer for WorkoutFiles
+        participants:       The participants (Users)
     """
 
     owner_username = serializers.SerializerMethodField()
     exercise_instances = ExerciseInstanceSerializer(many=True, required=True)
     files = WorkoutFileSerializer(many=True, required=False)
+    participants = serializers.SlugRelatedField(
+        many=True,
+        slug_field='username',
+        queryset=get_user_model().objects.all()
+    )
 
     class Meta:
         model = Workout
@@ -78,6 +114,7 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
             "visibility",
             "exercise_instances",
             "files",
+            "participants"
         ]
         extra_kwargs = {"owner": {"read_only": True}}
 
@@ -98,7 +135,19 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         if "files" in validated_data:
             files_data = validated_data.pop("files")
 
-        workout = Workout.objects.create(**validated_data)
+        name = validated_data["name"]
+        date = validated_data["date"]
+        notes = validated_data["notes"]
+        owner = validated_data["owner"]
+        visibility = validated_data["visibility"]
+        results = validated_data["participants"]
+
+        workout = Workout.objects.create(name=name, date=date, notes=notes, owner=owner, visibility=visibility)
+
+        usernames = set(result.get_username() for result in results)
+        users = get_user_model().objects.filter(username__in=usernames).values_list('id', flat=True)
+        workout.participants.set(users)
+        workout.save()
 
         for exercise_instance_data in exercise_instances_data:
             ExerciseInstance.objects.create(workout=workout, **exercise_instance_data)
@@ -129,6 +178,10 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         instance.notes = validated_data.get("notes", instance.notes)
         instance.visibility = validated_data.get("visibility", instance.visibility)
         instance.date = validated_data.get("date", instance.date)
+        results = validated_data.get("participants", instance.participants)
+        usernames = set(result.get_username() for result in results)
+        users = get_user_model().objects.filter(username__in=usernames).values_list('id', flat=True)
+        instance.participants.set(users)
         instance.save()
 
         # Handle ExerciseInstances

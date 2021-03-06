@@ -46,6 +46,9 @@ class Workout(models.Model):
     owner = models.ForeignKey(
         get_user_model(), on_delete=models.CASCADE, related_name="workouts"
     )
+    participants = models.ManyToManyField(
+        get_user_model(), related_name="user_details", blank=True
+    )
 
     # Visibility levels
     PUBLIC = "PU"  # Visible to all authenticated users
@@ -82,6 +85,9 @@ class Exercise(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField()
     unit = models.CharField(max_length=50)
+    owner = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="exercises"
+    )
 
     def __str__(self):
         return self.name
@@ -139,6 +145,30 @@ class WorkoutFile(models.Model):
     )
     file = models.FileField(upload_to=workout_directory_path)
 
+class WorkoutInvitation(models.Model):
+    """Django model for file associated with a workout invitation. Basically a wrapper.
+
+    Attributes:
+        workout: The workout for which this file has been uploaded
+        owner:   The user who uploaded the file
+        participant: The user who is invited as an participant
+    """
+
+    workout = models.ForeignKey(Workout, on_delete=models.CASCADE, related_name="workoutInvitation")
+    owner = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="workout_owner"
+    )
+    participant = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="workout_participant"
+    )
+
+def exercise_directory_path(instance, filename):
+    return f"exercises/{instance.exercise.id}/{filename}"
+
+class ExerciseFile(models.Model):
+    exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="files")
+    owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="exercise_files")
+    file = models.FileField(upload_to=exercise_directory_path)
 
 class RememberMe(models.Model):
     """Django model for an remember_me cookie used for remember me functionality.
@@ -147,7 +177,7 @@ class RememberMe(models.Model):
         remember_me:        Value of cookie used for remember me
     """
 
-    remember_me = models.CharField(max_length=500)
+    remember_me = models.CharField(max_length=501)
 
     def __str__(self):
         return self.remember_me

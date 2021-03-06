@@ -2,7 +2,7 @@
 """
 from rest_framework import serializers
 from rest_framework.serializers import HyperlinkedRelatedField
-from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, RememberMe
+from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, RememberMe, ExerciseFile
 
 
 class ExerciseInstanceSerializer(serializers.HyperlinkedModelSerializer):
@@ -197,6 +197,27 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         """
         return obj.owner.username
 
+class ExerciseFileSerializer(serializers.HyperlinkedModelSerializer):
+    """Serializer for a ExerciseFile. Hyperlinks are used for relationships by default.
+
+    Serialized fields: url, id, owner, file, Exercise
+
+    Attributes:
+        owner:      The owner (User) of the ExerciseFile, represented by a username. ReadOnly
+        Exercise:    The associate Exercise for this ExerciseFile, represented by a hyperlink
+    """
+
+    owner = serializers.ReadOnlyField(source="owner.username")
+    exercise = HyperlinkedRelatedField(
+        queryset=Exercise.objects.all(), view_name="exercise-detail", required=False
+    )
+
+    class Meta:
+        model = ExerciseFile
+        fields = ["url", "id", "owner", "file", "exercise"]
+
+    def create(self, validated_data):
+        return ExerciseFile.objects.create(**validated_data)
 
 class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for an Exercise. Hyperlinks are used for relationships by default.
@@ -206,14 +227,20 @@ class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
     Attributes:
         instances:  Associated exercise instances with this Exercise type. Hyperlinks.
     """
-
+    owner_username = serializers.SerializerMethodField()
+    print(f"USERNAME {owner_username}")
     instances = serializers.HyperlinkedRelatedField(
         many=True, view_name="exerciseinstance-detail", read_only=True
     )
-
+    files = ExerciseFileSerializer(many=True, required=False)
+    print("INSIDE SERIALIZER!!!!!!!")
     class Meta:
         model = Exercise
-        fields = ["url", "id", "name", "description", "unit", "instances"]
+        fields = ["url", "id", "owner", "owner_username", "name", "description", "unit", "instances", "files"]
+        extra_kwargs = {"owner": {"read_only": True}}
+    
+    def get_owner_username(self, obj):
+        return obj.owner.username
 
 
 class RememberMeSerializer(serializers.HyperlinkedModelSerializer):

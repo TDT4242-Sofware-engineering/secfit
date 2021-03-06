@@ -22,10 +22,10 @@ from workouts.permissions import (
     IsWorkoutPublic,
 )
 from workouts.mixins import CreateListModelMixin
-from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile
+from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, ExerciseFile
 from workouts.serializers import WorkoutSerializer, ExerciseSerializer
 from workouts.serializers import RememberMeSerializer
-from workouts.serializers import ExerciseInstanceSerializer, WorkoutFileSerializer
+from workouts.serializers import ExerciseInstanceSerializer, WorkoutFileSerializer, ExerciseFileSerializer
 from django.core.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
@@ -186,13 +186,21 @@ class ExerciseList(
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [
+        MultipartJsonParser,
+        JSONParser
+    ]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
+        print("POST part in VIEW")
         return self.create(request, *args, **kwargs)
 
+    def perform_create(self, serializer):
+        print("COmming here?")
+        serializer.save(owner=self.request.user)
 
 class ExerciseDetail(
     mixins.RetrieveModelMixin,
@@ -217,6 +225,23 @@ class ExerciseDetail(
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+class ExerciseFileDetail(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView,
+):
+
+    queryset = ExerciseFile.objects.all()
+    serializer_class = ExerciseFileSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)

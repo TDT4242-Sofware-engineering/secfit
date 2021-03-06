@@ -5,6 +5,9 @@ FROM python:3.8.5-slim
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
+# Copy start script
+COPY dockerStart.sh /usr/local/bin/dockerStart.sh
+
 # Make a new directory to put our code in.
 RUN mkdir /code
 
@@ -24,11 +27,5 @@ RUN pip install --upgrade pip
 # Install the requirements.
 RUN pip install -r requirements.txt
 
-# Import groupid environment variable
-ENV GROUPID=${GROUPID}
-
-# Copy start script
-COPY start.sh /usr/local/bin/start.sh
-
 # Run start script (database migrate and start)
-CMD ["/bin/bash", "/usr/local/bin/start.sh"]
+CMD ["/bin/bash", "/usr/local/bin/dockerStart.sh"]

@@ -178,6 +178,7 @@ function generateWorkoutForm() {
     for (let file of formData.getAll("files")) {
         submitForm.append("files", file);
     }
+
     return submitForm;
 }
 

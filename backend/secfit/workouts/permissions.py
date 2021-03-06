@@ -29,6 +29,22 @@ class IsOwnerOfWorkout(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return obj.workout.owner == request.user
 
+class IsOwnerOfExercise(permissions.BasePermission):
+    """Checks whether the requesting user is also the owner of the new or existing object"""
+
+    def has_permission(self, request, view):
+        if request.method == "POST":
+            if request.data.get("exercise"):
+                exercise_id = request.data["exercise"].split("/")[-2]
+                exercise = exercise.objects.get(pk=exercise_id)
+                if exercise:
+                    return exercise.owner == request.user
+            return False
+
+        return True
+
+    def has_object_permission(self, request, view, obj):
+        return obj.exercise.owner == request.user
 
 class IsCoachAndVisibleToCoach(permissions.BasePermission):
     """Checks whether the requesting user is the existing object's owner's coach

@@ -2,7 +2,7 @@
 """
 from rest_framework import serializers
 from rest_framework.serializers import HyperlinkedRelatedField
-from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, RememberMe, WorkoutInvitation
+from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, RememberMe, WorkoutInvitation, ExerciseFile
 from django.contrib.auth import get_user_model
 
 
@@ -250,6 +250,27 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         """
         return obj.owner.username
 
+class ExerciseFileSerializer(serializers.HyperlinkedModelSerializer):
+    """Serializer for a ExerciseFile. Hyperlinks are used for relationships by default.
+
+    Serialized fields: url, id, owner, file, Exercise
+
+    Attributes:
+        owner:      The owner (User) of the ExerciseFile, represented by a username. ReadOnly
+        Exercise:    The associate Exercise for this ExerciseFile, represented by a hyperlink
+    """
+
+    owner = serializers.ReadOnlyField(source="owner.username")
+    exercise = HyperlinkedRelatedField(
+        queryset=Exercise.objects.all(), view_name="exercise-detail", required=False
+    )
+
+    class Meta:
+        model = ExerciseFile
+        fields = ["url", "id", "owner", "file", "exercise"]
+
+    def create(self, validated_data):
+        return ExerciseFile.objects.create(**validated_data)
 
 class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for an Exercise. Hyperlinks are used for relationships by default.
@@ -259,15 +280,59 @@ class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
     Attributes:
         instances:  Associated exercise instances with this Exercise type. Hyperlinks.
     """
-
+    owner_username = serializers.SerializerMethodField()
     instances = serializers.HyperlinkedRelatedField(
         many=True, view_name="exerciseinstance-detail", read_only=True
     )
-
+    files = ExerciseFileSerializer(many=True, required=False)
     class Meta:
         model = Exercise
-        fields = ["url", "id", "name", "description", "unit", "instances"]
+        fields = ["url", "id", "owner", "owner_username", "name", "description", "unit", "instances", "files"]
+        extra_kwargs = {"owner": {"read_only": True}}
+    
+    def get_owner_username(self, obj):
+        return obj.owner.username
+    
+    def create(self, validated_data):
+        files_data = []
+        if "files" in validated_data:
+            files_data = validated_data.pop("files")
 
+        exercise = Exercise.objects.create(**validated_data)
+
+        for file_data in files_data:
+            ExerciseFile.objects.create(
+                exercise=exercise, owner=exercise.owner, file=file_data.get("file")
+            )
+        return exercise
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get("name", instance.name)
+        instance.description = validated_data.get("description", instance.description)
+        instance.unit = validated_data.get("unit", instance.unit)
+        instance.save()
+
+        if "files" in validated_data:
+            files_data = validated_data.pop("files")
+            files = instance.files
+
+            for file, file_data in zip(files.all(), files_data):
+                file.file = file_data.get("file", file.file)
+
+            # If new files have been added, creating new WorkoutFiles
+            if len(files_data) > len(files.all()):
+                for i in range(len(files.all()), len(files_data)):
+                    ExerciseFile.objects.create(
+                        exercise=instance,
+                        owner=instance.owner,
+                        file=files_data[i].get("file"),
+                    )
+            # Else if files have been removed, delete WorkoutFiles
+            elif len(files_data) < len(files.all()):
+                for i in range(len(files_data), len(files.all())):
+                    files.all()[i].delete()
+
+        return instance
 
 class RememberMeSerializer(serializers.HyperlinkedModelSerializer):
     """Serializer for an RememberMe. Hyperlinks are used for relationships by default.

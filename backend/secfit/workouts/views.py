@@ -23,12 +23,13 @@ from workouts.permissions import (
     IsOwnerOrParticipantOfWorkoutInvitation,
     IsInvitedToWorkout,
     IsParticipantToWorkout,
+    IsOwnerOfExercise,
 )
 from workouts.mixins import CreateListModelMixin
-from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, WorkoutInvitation
+from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, WorkoutInvitation, ExerciseFile
 from workouts.serializers import WorkoutSerializer, ExerciseSerializer, WorkoutInvitationSerializer
 from workouts.serializers import RememberMeSerializer
-from workouts.serializers import ExerciseInstanceSerializer, WorkoutFileSerializer
+from workouts.serializers import ExerciseInstanceSerializer, WorkoutFileSerializer, ExerciseFileSerializer
 from django.core.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
@@ -50,6 +51,9 @@ def api_root(request, format=None):
             ),
             "workout-files": reverse(
                 "workout-file-list", request=request, format=format
+            ),
+            "exercise-files": reverse(
+                "exercise-file-list", request=request, format=format
             ),
             "comments": reverse("comment-list", request=request, format=format),
             "likes": reverse("like-list", request=request, format=format),
@@ -191,6 +195,10 @@ class ExerciseList(
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [
+        MultipartJsonParser,
+        JSONParser
+    ]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -198,6 +206,8 @@ class ExerciseList(
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class ExerciseDetail(
     mixins.RetrieveModelMixin,
@@ -222,6 +232,23 @@ class ExerciseDetail(
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+class ExerciseFileDetail(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView,
+):
+
+    queryset = ExerciseFile.objects.all()
+    serializer_class = ExerciseFileSerializer
+    permission_classes = [permissions.IsAuthenticated & IsOwnerOfExercise]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)

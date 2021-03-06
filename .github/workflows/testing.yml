@@ -40,5 +40,5 @@ jobs:
         with:
           image: jonev/secfit:backend-test
           run: |
-          echo "Starting testing"
-          python ./manage.py test --pattern="*tests.py"
+           echo "Starting testing"
+           python ./manage.py test --pattern="*tests.py"

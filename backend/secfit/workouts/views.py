@@ -20,6 +20,7 @@ from workouts.permissions import (
     IsReadOnly,
     IsPublic,
     IsWorkoutPublic,
+    IsOwnerOfExercise
 )
 from workouts.mixins import CreateListModelMixin
 from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, ExerciseFile
@@ -47,6 +48,9 @@ def api_root(request, format=None):
             ),
             "workout-files": reverse(
                 "workout-file-list", request=request, format=format
+            ),
+            "exercise-files": reverse(
+                "exercise-file-list", request=request, format=format
             ),
             "comments": reverse("comment-list", request=request, format=format),
             "likes": reverse("like-list", request=request, format=format),
@@ -195,11 +199,9 @@ class ExerciseList(
         return self.list(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
-        print("POST part in VIEW")
         return self.create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
-        print("COmming here?")
         serializer.save(owner=self.request.user)
 
 class ExerciseDetail(
@@ -238,7 +240,7 @@ class ExerciseFileDetail(
 
     queryset = ExerciseFile.objects.all()
     serializer_class = ExerciseFileSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated & IsOwnerOfExercise]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)

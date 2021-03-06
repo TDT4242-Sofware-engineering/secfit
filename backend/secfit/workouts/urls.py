@@ -23,6 +23,11 @@ urlpatterns = format_suffix_patterns(
             name="exercise-detail",
         ),
         path(
+            "api/exercise-files/<int:pk>/",
+            views.ExerciseFileDetail.as_view(),
+            name="exercisefile-detail",
+        ),
+        path(
             "api/exercise-instances/",
             views.ExerciseInstanceList.as_view(),
             name="exercise-instance-list",

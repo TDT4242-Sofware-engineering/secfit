@@ -32,9 +32,21 @@
         </div>
         <div class="col-lg-6"></div>
         <div class="col-lg-6">
-            <label for="inputOwner" class="form-label">Owner</label>
-            <input type="text" class="form-control" id="inputOwner" name="owner_username" readonly>
+          <label for="inputOwner" class="form-label">Owner</label>
         </div>
+        <div class="col-lg-6"></div>
+        <div class="col-md-4">
+          <input type="text" class="form-control" id="inputOwner" name="owner_username" readonly>
+          
+        </div>
+        <div class="col-md-2">
+          <input type="button" class="btn btn-primary hide" id="btn-add-athelte" value="Add athlete">
+
+        </div>
+        <div class="col-lg-6">
+          <input type="text" class="form-control hide" id="inputSearchForUser" name="search_for_user" placeholder="Add athlete by start typing username">
+        </div>
+        <div class="list-group mt-1" id="users-search-result-container"></div>
         <div class="col-lg-6">
           <label for="inputVisibility" class="form-label">Visibility</label>
           <select id="inputVisibility" class="form-select" name="visibility" disabled>

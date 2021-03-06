@@ -46,6 +46,9 @@ class Workout(models.Model):
     owner = models.ForeignKey(
         get_user_model(), on_delete=models.CASCADE, related_name="workouts"
     )
+    participants = models.ManyToManyField(
+        get_user_model(), related_name="user_details", blank=True
+    )
 
     # Visibility levels
     PUBLIC = "PU"  # Visible to all authenticated users
@@ -138,6 +141,23 @@ class WorkoutFile(models.Model):
         get_user_model(), on_delete=models.CASCADE, related_name="workout_files"
     )
     file = models.FileField(upload_to=workout_directory_path)
+
+class WorkoutInvitation(models.Model):
+    """Django model for file associated with a workout invitation. Basically a wrapper.
+
+    Attributes:
+        workout: The workout for which this file has been uploaded
+        owner:   The user who uploaded the file
+        participant: The user who is invited as an participant
+    """
+
+    workout = models.ForeignKey(Workout, on_delete=models.CASCADE, related_name="workoutInvitation")
+    owner = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="workout_owner"
+    )
+    participant = models.ForeignKey(
+        get_user_model(), on_delete=models.CASCADE, related_name="workout_participant"
+    )
 
 
 class RememberMe(models.Model):

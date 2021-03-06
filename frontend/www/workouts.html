@@ -16,6 +16,22 @@
     <div class="container">
         <div class="row">
             <div class="col-lg text-center">
+                <h3 class="mt-5">View Workout invitations</h3>
+                <p>Here you can view invitations to workouts</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg text-center">
+                <div id="invitation-div" class="">
+                    <!-- <label for="list-invitations" class="form-label">Invitations</label> -->
+                    <ul class="list-group" id="list-invitations">
+        
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg text-center">
                 <h3 class="mt-5">View Workouts</h3>
                 <p>Here you can view workouts completed by you, your athletes, 
                     or the public. Click on a workout to view its details.</p>
@@ -37,6 +53,8 @@
               </div>
         </div>
 
+        
+
     </div>
 
     <template id="template-workout">
@@ -53,6 +71,15 @@
                 </table>       
             </div>
         </a>
+    </template>
+
+    <template id="template-invitation">
+        <li class="list-group-item">
+            <span></span>
+            <div class="btn-group ms-4" role="group">
+                <button type="button" class="btn btn-success">Accept</button>
+                <button type="button" class="btn btn-danger">Decline</button>
+              </div>
     </template>
 
     <script src="scripts/defaults.js"></script>

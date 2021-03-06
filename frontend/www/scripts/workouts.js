@@ -33,11 +33,78 @@ async function fetchWorkouts(ordering) {
     }
 }
 
+async function fetchWorkoutInvitations(){
+    let templateWorkoutInvitation = document.querySelector("#template-invitation");
+    let listWorkoutInvitation = document.querySelector("#list-invitations");
+    let response = await sendRequest("GET", `${HOST}/api/workouts/invitations`);
+   
+    let status = "p";   // pending
+    let category = "received";  
+    if (!response.ok) {
+        let data = await response.json();
+        let alert = createAlert("Could not retrieve Invitations!", data);
+        document.body.prepend(alert);
+    } else {
+        let invitations = await response.json();
+        for (let invitation of invitations.results) {
+            let cloneInvitation = templateWorkoutInvitation.content.cloneNode(true);
+            let li = cloneInvitation.querySelector("li");
+            let span = li.querySelector("span");
+            span.textContent = `${invitation.owner} has invited you to a workout`;
+            
+            let buttons = li.querySelectorAll("button");
+            let acceptButton = buttons[0];
+            let declineButton = buttons[1];
+
+            //acceptButton.id = `btn-accept-${offer.id}`;
+            acceptButton.addEventListener("click", async (event) => await acceptInvitation(event, invitation));
+
+            //declineButton.id = `btn-decline-${offer.id}`;
+            declineButton.addEventListener("click", async (event) => await deleteInvitationAndReload(event, invitation));
+
+            listWorkoutInvitation.appendChild(li);
+        }
+        if (invitations.results.length == 0) {
+            let p = document.createElement("p");
+            p.innerText = "You currently have no invitations.";
+            listWorkoutInvitation.append(p);
+        }
+    }
+}
+
+async function acceptInvitation(event, invitation){
+    console.log("Accept", invitation)
+    let getWorkoutResponse = await sendRequest("GET", invitation.workout);
+    if(getWorkoutResponse.ok){
+        let data = await getWorkoutResponse.json();
+        console.log("Workout data", data)
+        data.participants.push(invitation.participant)
+        let putWorkoutResponse = await sendRequest("PUT", invitation.workout, data);
+        if(putWorkoutResponse.ok){
+            deleteInvitationAndReload(null, invitation);
+            return;
+        }
+    }
+    console.log("Failed to update workout")
+}
+
+async function deleteInvitationAndReload(event, invitation){
+    console.log("Delete", invitation)
+    let response = await sendRequest("DELETE", invitation.url);
+    if(response.ok){
+        console.log("Invitation deleted")
+        window.location.replace("workouts.html");
+    } else {
+        console.log("Failed to delete invitation")
+    }
+}
+
 function createWorkout() {
     window.location.replace("workout.html");
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
+    await fetchWorkoutInvitations()
     let createButton = document.querySelector("#btn-create-workout");
     createButton.addEventListener("click", createWorkout);
     let ordering = "-date";
@@ -76,7 +143,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
                 switch (event.currentTarget.id) {
                     case "list-my-workouts-list":
-                        if (workout.owner == currentUser.url) {
+                        if (workout.owner == currentUser.url || workout.participants.includes(currentUser.username)) {
                             workoutAnchor.classList.remove('hide');
                         } else {
                             workoutAnchor.classList.add('hide');

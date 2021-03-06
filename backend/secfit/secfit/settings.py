@@ -42,6 +42,7 @@ ALLOWED_HOSTS = [
     "10." + groupid + ".0.6",
     "10." + groupid + ".0.4",
     "molde.idi.ntnu.no",
+    "secfit.vassbo.as",
     "10.0.2.2",
 ]
 

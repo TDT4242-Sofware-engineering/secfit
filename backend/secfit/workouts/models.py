@@ -177,7 +177,7 @@ class RememberMe(models.Model):
         remember_me:        Value of cookie used for remember me
     """
 
-    remember_me = models.CharField(max_length=500)
+    remember_me = models.CharField(max_length=501)
 
     def __str__(self):
         return self.remember_me

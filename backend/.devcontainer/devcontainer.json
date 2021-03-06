@@ -25,5 +25,4 @@
     "DJANGO_SUPERUSER_PASSWORD": "Password",
     "DJANGO_SUPERUSER_EMAIL": "admin@mail.com"
   },
-  "postAttachCommand": "python secfit/manage.py migrate"
 }

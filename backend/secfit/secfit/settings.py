@@ -53,8 +53,7 @@ INSTALLED_APPS = [
     "workouts.apps.WorkoutsConfig",
     "users.apps.UsersConfig",
     "comments.apps.CommentsConfig",
-    "corsheaders",
-    "django_extensions"
+    "corsheaders"
 ]
 
 MIDDLEWARE = [

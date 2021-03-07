@@ -41,4 +41,5 @@ jobs:
           image: jonev/secfit:backend-test
           run: |
            echo "Starting testing"
-           python ./manage.py test --pattern="*tests.py"
+           coverage run --source='.' manage.py test
+           coverage report

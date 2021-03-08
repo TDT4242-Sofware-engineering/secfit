@@ -1,4 +1,4 @@
-name: Build
+name: Build and test
 on:
   push:
     branches-ignore:
@@ -18,8 +18,8 @@ jobs:
         name: Checkout
         uses: actions/checkout@v2
       -
-        name: Build backend
-        id: docker_test_backend
+        name: Build and test backend
+        id: docker_build_backend
         uses: docker/build-push-action@v2
         with:
           context: ./backend/secfit

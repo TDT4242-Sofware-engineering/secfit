@@ -581,6 +581,3 @@ class WorkoutPermissionsTestCase(TestCase):
         permission = permission_check.has_object_permission(request, view, None)
 
         self.assertFalse(permission)
-
-    def test_failing(self):
-        self.assertFalse(True)

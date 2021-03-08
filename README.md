@@ -18,7 +18,7 @@ Benefits using this development environment:
 - No cleanup
 - Easy to switch between different projects using different dependencies/technologies
 
-## Deploy (Production) with Docker Compose/Swarm
+## Deploy
 
 ### Prerequisites:
 
@@ -40,7 +40,7 @@ Hosts the application on http://localhost:4011
 
 Prerequisites:
 
-- Git clone, or copy `db.sqlite3`, `docker-compose.yaml` and `nginx.conf` to the server.
+- Git clone, or copy `db.sqlite3`, `docker-compose.yaml`, `nginx.conf` and `.env` to the server.
 
 ```
 docker stack deploy --compose-file docker-compose.yml --with-registry-auth stack-secfit
@@ -54,9 +54,24 @@ Hosts the application on http://localhost:4011 with default settings
 
 ![Pipeline master](./documentation/Pipeline_Master.png "Pipeline Master")
 
+### All branches
+
+- All branches are built and tested on push and pull requests
+
+## Production environment
+The following figure represents the running services in the production environment:
+![Production environment](./documentation/ProductionServer.png "Pipeline Master")
+
+- The first reverse proxy terminates SSL/TLS and routes traffic to different docker stacks running on the server
+- Application services are running in Docker swarm
+- The second reverse proxy routes traffic to `/` to frontend and `/api/* ...` to backend. 
+- Swarm load balancer routes traffic to services running the same application
+- 2 replicas on each service prevents down time during updates
+- Persistent data by storing SQLite file on the server
+
 ## Technology
 
-- **deployment** Docker
+- **deployment** Docker swarm/compose
 - **proxy** Nginx
 - **database** SQLite
 - **backend** Django 3 with Django REST framework
@@ -65,9 +80,7 @@ Hosts the application on http://localhost:4011 with default settings
   - **mobile** Apache Cordova (uses same website)
 - **authentication** JWT
 
-## All branches
 
-- TODO
 
 ## Code and structure
 

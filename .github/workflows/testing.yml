@@ -1,4 +1,4 @@
-name: TEST
+name: Build and Test
 on:
   push:
     branches-ignore:
@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
     steps:
       -
@@ -21,11 +21,6 @@ jobs:
         name: Build backend
         id: docker_test_backend
         uses: docker/build-push-action@v2
-        env:
-          GROUPID: ${{ secrets.GROUPID }}
-          DJANGO_SUPERUSER_USERNAME: ${{ secrets.DJANGO_SUPERUSER_USERNAME }}
-          DJANGO_SUPERUSER_PASSWORD: ${{ secrets.DJANGO_SUPERUSER_PASSWORD }}
-          DJANGO_SUPERUSER_EMAIL: ${{ secrets.DJANGO_SUPERUSER_EMAIL }}
         with:
           context: ./backend/secfit
           push: false
@@ -33,7 +28,10 @@ jobs:
       - 
         name: Backend Image digest
         run: echo ${{ steps.docker_build_backend.outputs.digest }}
-      
+    
+    test:
+      needs: build
+      steps:
       - 
         name: Test backend
         uses: addnab/docker-run-action@v2

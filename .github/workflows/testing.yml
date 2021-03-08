@@ -28,11 +28,6 @@ jobs:
       - 
         name: Backend Image digest
         run: echo ${{ steps.docker_build_backend.outputs.digest }}
-    
-  test:
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
       - 
         name: Test backend
         uses: addnab/docker-run-action@v2

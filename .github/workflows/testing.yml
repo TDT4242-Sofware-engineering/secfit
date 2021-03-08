@@ -1,4 +1,4 @@
-name: Build and Test
+name: Build
 on:
   push:
     branches-ignore:
@@ -28,12 +28,3 @@ jobs:
       - 
         name: Backend Image digest
         run: echo ${{ steps.docker_build_backend.outputs.digest }}
-      - 
-        name: Test backend
-        uses: addnab/docker-run-action@v2
-        with:
-          image: jonev/secfit:backend-test
-          run: |
-           echo "Starting testing"
-           coverage run --source='.' manage.py test
-           coverage report

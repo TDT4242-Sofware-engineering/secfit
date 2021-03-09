@@ -27,5 +27,8 @@ RUN pip install --upgrade pip
 # Install the requirements.
 RUN pip install -r requirements.txt
 
+# Testing
+RUN coverage run --source='.' manage.py test && coverage report
+
 # Run start script (database migrate and start)
 CMD ["/bin/bash", "/usr/local/bin/dockerStart.sh"]

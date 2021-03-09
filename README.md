@@ -64,7 +64,7 @@ The following figure represents the running services in the production environme
 
 - The first reverse proxy terminates SSL/TLS and routes traffic to different docker stacks running on the server
 - Application services are running in Docker swarm
-- The second reverse proxy routes traffic to `/` to frontend and `/api/* ...` to backend. 
+- The second reverse proxy routes traffic at `/` to frontend and `/api/* ...` to backend. 
 - Swarm load balancer routes traffic to services running the same application
 - 2 replicas on each service prevents down time during updates
 - Persistent data by storing SQLite file on the server

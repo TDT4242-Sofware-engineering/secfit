@@ -1,3 +1,5 @@
+const user = require("./mock/user.json");
+
 async function registerUser() {
   await page.waitForSelector("#btn-register");
     await page.evaluate(
@@ -9,21 +11,21 @@ async function registerUser() {
     await page.waitForNavigation();
 
     await page.waitForSelector('input[name="username"]');
-    await page.type('input[name="username"]', "testUser");
+    await page.type('input[name="username"]', user.username);
     await page.waitForSelector('input[name="email"]');
-    await page.type('input[name="email"]', "test@test.no");
+    await page.type('input[name="email"]', user.email);
     await page.waitForSelector('input[name="password"]');
-    await page.type('input[name="password"]', "test");
+    await page.type('input[name="password"]', user.password);
     await page.waitForSelector('input[name="password1"]');
-    await page.type('input[name="password1"]', "test");
+    await page.type('input[name="password1"]', user.password);
     await page.waitForSelector('input[name="phone_number"]');
-    await page.type('input[name="phone_number"]', "95837412");
+    await page.type('input[name="phone_number"]', user.phone_numer);
     await page.waitForSelector('input[name="country"]');
-    await page.type('input[name="country"]', "Norway");
+    await page.type('input[name="country"]', user.country);
     await page.waitForSelector('input[name="city"]');
-    await page.type('input[name="city"]', "Oslo");
+    await page.type('input[name="city"]', user.city);
     await page.waitForSelector('input[name="street_address"]');
-    await page.type('input[name="street_address"]', "Munkegata 36");
+    await page.type('input[name="street_address"]', user.street_name);
     
     await page.evaluate(
       (selector) => document.querySelector(selector).click(),
@@ -39,6 +41,31 @@ async function registerUser() {
 
 }
 
+async function login() {
+  await page.waitForNavigation();
+  await page.waitForSelector("#form-login");
+  await page.waitForSelector('input[name="username"]');
+  await page.waitForSelector('input[name="password"]');
+  await page.waitForSelector("#btn-login");
+
+  await page.type('input[name="username"]', user.username);
+  await page.type('input[name="password"]', user.password);
+
+  await page.evaluate((selector) => {
+    document.querySelector(selector).click();
+  }, "#btn-login");
+
+  await page.waitForNavigation();
+
+    const logoutButton = await page.$("#btn-logout");
+    const logoutText = await page.evaluate(
+      (title) => title.innerText,
+      logoutButton
+    );
+    expect(logoutText).toBe("Log out");
+}
+
 module.exports = {
-    registerUser
+    registerUser, 
+    login
 }

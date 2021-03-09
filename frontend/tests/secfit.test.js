@@ -1,4 +1,4 @@
-const { registerUser } = require("./utils")
+const { registerUser, login } = require("./utils")
 
 describe("SecFit", () => {
   beforeAll(async () => {
@@ -10,9 +10,32 @@ describe("SecFit", () => {
     const title = await page.evaluate((title) => title.innerText, navTitle);
     expect(title).toBe("SecFit");
   });
+});
 
-  test("Register user", async () => {
+
+describe("Secfit register", () => {
+   test("Register user", async () => {
     await registerUser();
   }, 25000);
+
+})
+
+
+describe("Secfit login", () => {
+  beforeAll(async () => {
+    await page.goto("https://secfit.vassbo.as");
+  });
+
+  
+  test("Log in", async () => {
+    await page.waitForSelector("#btn-login-nav");
+
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-login-nav");
+
+    await login();
+  }, 25000);
 });
+
 

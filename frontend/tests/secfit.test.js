@@ -26,6 +26,25 @@ describe("Secfit login", () => {
     await page.goto("https://secfit.vassbo.as");
   });
 
+
+  test("Log in", async () => {
+    await page.waitForSelector("#btn-login-nav");
+
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-login-nav");
+    await page.waitForNavigation();
+
+
+    await login();
+  }, 25000);
+});
+
+describe("Secfit login", () => {
+  beforeAll(async () => {
+    await page.goto("https://secfit.vassbo.as");
+  });
+
   
   test("Log in", async () => {
     await page.waitForSelector("#btn-login-nav");
@@ -33,9 +52,9 @@ describe("Secfit login", () => {
     await page.evaluate((selector) => {
       document.querySelector(selector).click();
     }, "#btn-login-nav");
-
+    await page.waitForNavigation();
+    
     await login();
   }, 25000);
 });
-
 

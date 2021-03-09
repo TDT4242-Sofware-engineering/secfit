@@ -42,7 +42,6 @@ async function registerUser() {
 }
 
 async function login() {
-  await page.waitForNavigation();
   await page.waitForSelector("#form-login");
   await page.waitForSelector('input[name="username"]');
   await page.waitForSelector('input[name="password"]');

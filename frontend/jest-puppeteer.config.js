@@ -6,7 +6,7 @@ module.exports = {
       '--disable-setuid-sandbox',
     ],
       headless: false,
-      slowMo: process.env.SLOWMO ? process.env.SLOWMO : 0,
+      slowMo: 250,
       devtools: true
   }
 }

@@ -1,9 +1,12 @@
-describe('Google', () => {
+describe('SecFit', () => {
   beforeAll(async () => {
-    await page.goto('https://google.com');
+    await page.goto('http://secfit.vassbo.as');
   });
 
-  it('should be titled "Google"', async () => {
-    await expect(page.title()).resolves.toMatch('Google');
+  it('should be titled "SecFit"', async () => {
+    const navTitle = await page.$(".navbar-brand")
+    const title = await page.evaluate((title) => title.innerText, navTitle)
+    expect(title).toBe("SecFit")
   });
 });
+

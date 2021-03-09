@@ -13,10 +13,6 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 
-
-# Get the GROUPID variable to accept connections from the application server and NGINX
-groupid = os.environ.get("GROUPID", "0")
-
 # Email configuration
 # The host must be running within NTNU's VPN (vpn.ntnu.no) to allow this config
 # Usage: https://docs.djangoproject.com/en/3.1/topics/email/#obtaining-an-instance-of-an-email-backend
@@ -39,8 +35,6 @@ ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
     "0.0.0.0",
-    "10." + groupid + ".0.6",
-    "10." + groupid + ".0.4",
     "molde.idi.ntnu.no",
     "secfit.vassbo.as",
     "10.0.2.2",
@@ -59,7 +53,7 @@ INSTALLED_APPS = [
     "workouts.apps.WorkoutsConfig",
     "users.apps.UsersConfig",
     "comments.apps.CommentsConfig",
-    "corsheaders",
+    "corsheaders"
 ]
 
 MIDDLEWARE = [

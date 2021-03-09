@@ -2,7 +2,7 @@
 """
 from rest_framework import generics, mixins
 from rest_framework import permissions
-
+from rest_framework.views import APIView
 from rest_framework.parsers import (
     JSONParser,
 )
@@ -20,12 +20,16 @@ from workouts.permissions import (
     IsReadOnly,
     IsPublic,
     IsWorkoutPublic,
+    IsOwnerOrParticipantOfWorkoutInvitation,
+    IsInvitedToWorkout,
+    IsParticipantToWorkout,
+    IsOwnerOfExercise,
 )
 from workouts.mixins import CreateListModelMixin
-from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile
-from workouts.serializers import WorkoutSerializer, ExerciseSerializer
+from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, WorkoutInvitation, ExerciseFile
+from workouts.serializers import WorkoutSerializer, ExerciseSerializer, WorkoutInvitationSerializer
 from workouts.serializers import RememberMeSerializer
-from workouts.serializers import ExerciseInstanceSerializer, WorkoutFileSerializer
+from workouts.serializers import ExerciseInstanceSerializer, WorkoutFileSerializer, ExerciseFileSerializer
 from django.core.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
@@ -47,6 +51,9 @@ def api_root(request, format=None):
             ),
             "workout-files": reverse(
                 "workout-file-list", request=request, format=format
+            ),
+            "exercise-files": reverse(
+                "exercise-file-list", request=request, format=format
             ),
             "comments": reverse("comment-list", request=request, format=format),
             "likes": reverse("like-list", request=request, format=format),
@@ -140,6 +147,8 @@ class WorkoutList(
             qs = Workout.objects.filter(
                 Q(visibility="PU")
                 | (Q(visibility="CO") & Q(owner__coach=self.request.user))
+                | Q(owner=self.request.user)
+                | Q(participants=self.request.user)
             ).distinct()
 
         return qs
@@ -160,7 +169,7 @@ class WorkoutDetail(
     serializer_class = WorkoutSerializer
     permission_classes = [
         permissions.IsAuthenticated
-        & (IsOwner | (IsReadOnly & (IsCoachAndVisibleToCoach | IsPublic)))
+        & ((IsOwner | IsInvitedToWorkout | IsParticipantToWorkout) | (IsReadOnly & (IsCoachAndVisibleToCoach | IsPublic)))
     ]
     parser_classes = [MultipartJsonParser, JSONParser]
 
@@ -186,6 +195,10 @@ class ExerciseList(
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
     permission_classes = [permissions.IsAuthenticated]
+    parser_classes = [
+        MultipartJsonParser,
+        JSONParser
+    ]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)
@@ -193,6 +206,8 @@ class ExerciseList(
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
 
 class ExerciseDetail(
     mixins.RetrieveModelMixin,
@@ -217,6 +232,23 @@ class ExerciseDetail(
 
     def patch(self, request, *args, **kwargs):
         return self.partial_update(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+class ExerciseFileDetail(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView,
+):
+
+    queryset = ExerciseFile.objects.all()
+    serializer_class = ExerciseFileSerializer
+    permission_classes = [permissions.IsAuthenticated & IsOwnerOfExercise]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
@@ -316,6 +348,54 @@ class WorkoutFileList(
 
         return qs
 
+
+class WorkoutInvitationList(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    CreateListModelMixin,
+    generics.GenericAPIView,
+):
+
+    queryset = WorkoutInvitation.objects.all()
+    serializer_class = WorkoutInvitationSerializer
+    permission_classes = [permissions.IsAuthenticated, IsOwnerOfWorkout]
+    # parser_classes = [MultipartJsonParser, JSONParser]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs): # Permission ok
+        return self.create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(
+            owner=self.request.user
+            )
+
+    def get_queryset(self):
+        qs = WorkoutInvitation.objects.none()
+        if self.request.user:
+            qs = WorkoutInvitation.objects.filter(
+                Q(participant=self.request.user)
+            ).distinct()
+
+        return qs
+
+class WorkoutInvitationDetail(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView,
+):
+
+    queryset = WorkoutInvitation.objects.all()
+    serializer_class = WorkoutInvitationSerializer
+    permission_classes = [
+        permissions.IsAuthenticated & IsOwnerOrParticipantOfWorkoutInvitation# TODO is owner or participant
+    ]
+
+    def delete(self, request, *args, **kwargs): # TODO is owner or participant
+        return self.destroy(request, *args, **kwargs)
 
 class WorkoutFileDetail(
     mixins.RetrieveModelMixin,

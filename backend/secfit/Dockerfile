@@ -5,6 +5,9 @@ FROM python:3.8.5-slim
 ENV PYTHONUNBUFFERED 1
 ENV PYTHONDONTWRITEBYTECODE 1
 
+# Copy start script
+COPY dockerStart.sh /usr/local/bin/dockerStart.sh
+
 # Make a new directory to put our code in.
 RUN mkdir /code
 
@@ -24,27 +27,8 @@ RUN pip install --upgrade pip
 # Install the requirements.
 RUN pip install -r requirements.txt
 
-# Import groupid environment variable
-ENV GROUPID=${GROUPID}
+# Testing
+RUN coverage run --source='.' manage.py test && coverage report
 
-# Initialize Django
-RUN python manage.py migrate
-
-# Import credential variables
-ARG DJANGO_SUPERUSER_USERNAME
-ARG DJANGO_SUPERUSER_PASSWORD
-ARG DJANGO_SUPERUSER_EMAIL
-
-# Create superuser
-RUN DJANGO_SUPERUSER_USERNAME=${DJANGO_SUPERUSER_USERNAME} \
-    DJANGO_SUPERUSER_PASSWORD=${DJANGO_SUPERUSER_PASSWORD} \
-    DJANGO_SUPERUSER_EMAIL=${DJANGO_SUPERUSER_EMAIL} \
-    python manage.py createsuperuser --noinput || \
-    echo "WARNING: This error is ignored as it most likely is 'That username is already taken.'" \
-    && echo "If you wish to alter the user credentials, then delete the user first."
-
-# Create some exercises from seed data
-RUN python manage.py loaddata seed.json
-
-# Run wsgi server with gunicorn
-CMD ["gunicorn", "secfit.wsgi", "--log-file", "-", "-b", "0.0.0.0:8000"]
+# Run start script (database migrate and start)
+CMD ["/bin/bash", "/usr/local/bin/dockerStart.sh"]

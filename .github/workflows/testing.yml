@@ -1,0 +1,30 @@
+name: Build and test
+on:
+  push:
+    branches-ignore:
+     - master
+     
+  pull_request:
+    branches: 
+     - '**'
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Build and test backend
+        id: docker_build_backend
+        uses: docker/build-push-action@v2
+        with:
+          context: ./backend/secfit
+          push: false
+          tags: jonev/secfit:backend-test
+      - 
+        name: Backend Image digest
+        run: echo ${{ steps.docker_build_backend.outputs.digest }}

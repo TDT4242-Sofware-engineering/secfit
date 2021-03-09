@@ -5,9 +5,17 @@ services:
     image: jonev/secfit:backend
     volumes:
       - ./db.sqlite3:/code/db.sqlite3
+    deploy:
+      mode: replicated
+      replicas: 2
 
   frontend:
     image: jonev/secfit:frontend
+    env_file:
+      - .env
+    deploy:
+      mode: replicated
+      replicas: 2
 
   proxy:
     image: nginx:perl

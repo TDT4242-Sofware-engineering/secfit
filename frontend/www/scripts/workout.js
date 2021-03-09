@@ -3,6 +3,8 @@ let okWorkoutButton;
 let deleteWorkoutButton;
 let editWorkoutButton;
 let postCommentButton;
+let participants = [];
+let currentUser;
 
 async function retrieveWorkout(id) {  
     let workoutData = null;
@@ -159,6 +161,7 @@ function generateWorkoutForm() {
     submitForm.append("date", date);
     submitForm.append("notes", formData.get("notes"));
     submitForm.append("visibility", formData.get("visibility"));
+    submitForm.append("participants", JSON.stringify([]));
 
     // adding exercise instances
     let exerciseInstances = [];
@@ -178,6 +181,7 @@ function generateWorkoutForm() {
     for (let file of formData.getAll("files")) {
         submitForm.append("files", file);
     }
+
     return submitForm;
 }
 
@@ -187,6 +191,18 @@ async function createWorkout() {
     let response = await sendRequest("POST", `${HOST}/api/workouts/`, submitForm, "");
 
     if (response.ok) {
+        let data = await response.json();
+        participants.forEach(async (participant) => {
+            let invitation = {
+                "owner": currentUser.username,
+                "participant": participant,
+                "workout": data.url
+            }
+            let invResponse = await sendRequest("POST", `${HOST}/api/workouts/invitations`, invitation);
+            console.log(invResponse);
+        })
+
+        participants = [];
         window.location.replace("workouts.html");
     } else {
         let data = await response.json();
@@ -318,7 +334,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     buttonRemoveExercise.addEventListener("click", removeExercise);
 
     const urlParams = new URLSearchParams(window.location.search);
-    let currentUser = await getCurrentUser();
+    currentUser = await getCurrentUser();
 
     if (urlParams.has('id')) {
         const id = urlParams.get('id');
@@ -336,6 +352,15 @@ window.addEventListener("DOMContentLoaded", async () => {
     } else {
         await createBlankExercise();
         let ownerInput = document.querySelector("#inputOwner");
+        let usersContainer = document.getElementById("users-search-result-container");
+        console.log("usersContainer", usersContainer)
+        let inputSearchForUser = document.querySelector("#inputSearchForUser");
+        inputSearchForUser.style.display = "none"
+        inputSearchForUser.addEventListener("input", (async (e) => await onSearchForInputChange(e, usersContainer, currentUser.username)));
+        let addAthelteButton = document.querySelector("#btn-add-athelte");
+        addAthelteButton.addEventListener("click", (async () => await togglehideById("#inputSearchForUser")));
+
+
         ownerInput.value = currentUser.username;
         setReadOnly(false, "#form-workout");
         ownerInput.readOnly = !ownerInput.readOnly;
@@ -344,6 +369,8 @@ window.addEventListener("DOMContentLoaded", async () => {
         cancelWorkoutButton.className = cancelWorkoutButton.className.replace(" hide", "");
         buttonAddExercise.className = buttonAddExercise.className.replace(" hide", "");
         buttonRemoveExercise.className = buttonRemoveExercise.className.replace(" hide", "");
+        inputSearchForUser.className = inputSearchForUser.className.replace(" hide", "");
+        addAthelteButton.className = addAthelteButton.className.replace(" hide", "");
 
         okWorkoutButton.addEventListener("click", async () => await createWorkout());
         cancelWorkoutButton.addEventListener("click", handleCancelDuringWorkoutCreate);
@@ -351,3 +378,46 @@ window.addEventListener("DOMContentLoaded", async () => {
     }
 
 });
+
+function togglehideById(id){
+    let element = document.querySelector(id);
+    console.log("Hide" + id + " style: "+ element.style.display);
+    if(element.style.display === "block"){
+        element.style.display = "none"
+    } else {
+        element.style.display = "block"
+    }
+}
+
+async function onSearchForInputChange(e, container, currentUser){
+    container.innerHTML = "";
+    container.className = "col-lg-6";
+    let input = e.target.value;
+    if(input === undefined || input === null || input === ''){
+        return;
+    }
+    let users = await sendRequest("GET", `${HOST}/api/users/?search=` + input);
+    let data = await users.json();
+    data.results.forEach((user) => {
+        console.log(user)
+        let button = document.createElement("input");
+        button.value = user.username;
+        button.type = "button";
+        button.className = "btn btn-primary";
+        button.addEventListener("click", (async () => await toggleParticipant(user.username, currentUser)));
+        container.appendChild(button)
+    })
+}
+
+function toggleParticipant(username, currentUser){
+    console.log("Chosen user: ", username);
+    let ownerInput = document.querySelector("#inputOwner");
+    if(participants.indexOf(username) < 0){
+        participants.push(username);
+        ownerInput.value = currentUser + ", " + participants.join(", ");
+    } else {
+        participants = participants.filter(f => f !== username);
+        let temp = participants.length > 0 ? ", " + participants.join(", ") : "";
+        ownerInput.value = currentUser + temp;
+    }
+}

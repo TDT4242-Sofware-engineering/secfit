@@ -3,6 +3,7 @@ let okButton;
 let deleteButton;
 let editButton;
 let oldFormData;
+let currentUser;
 
 
 function handleCancelButtonDuringEdit() {
@@ -29,14 +30,26 @@ function handleCancelButtonDuringCreate() {
     window.location.replace("exercises.html");
 }
 
-async function createExercise() {
+function exerciseForm() {
     let form = document.querySelector("#form-exercise");
     let formData = new FormData(form);
-    let body = {"name": formData.get("name"), 
-                "description": formData.get("description"), 
-                "unit": formData.get("unit")};
+    const submitForm = new FormData();
+    submitForm.append("name", formData.get("name"));
+    submitForm.append("description", formData.get("description"));
+    submitForm.append("unit", formData.get("unit"));
 
-    let response = await sendRequest("POST", `${HOST}/api/exercises/`, body);
+    for (let file of formData.getAll("files")) {
+        submitForm.append("files", file);
+    }
+
+    return submitForm;
+}
+
+
+async function createExercise() {
+    const submitForm = exerciseForm();
+
+    let response = await sendRequest("POST", `${HOST}/api/exercises/`, submitForm, "");
 
     if (response.ok) {
         window.location.replace("exercises.html");
@@ -74,7 +87,6 @@ async function deleteExercise(id) {
 
 async function retrieveExercise(id) {
     let response = await sendRequest("GET", `${HOST}/api/exercises/${id}/`);
-    console.log(response.ok);
     if (!response.ok) {
         let data = await response.json();
         let alert = createAlert("Could not retrieve exercise data!", data);
@@ -83,6 +95,10 @@ async function retrieveExercise(id) {
         let exerciseData = await response.json();
         let form = document.querySelector("#form-exercise");
         let formData = new FormData(form);
+        if(currentUser.username === exerciseData["owner_username"]) {
+            const customFile = document.querySelector("#customFile");
+            customFile.classList.remove("hide");
+        }
 
         for (let key of formData.keys()) {
             let selector = `input[name="${key}"], textarea[name="${key}"]`;
@@ -90,16 +106,22 @@ async function retrieveExercise(id) {
             let newVal = exerciseData[key];
             input.value = newVal;
         }
+        if (exerciseData.files && exerciseData.files.length > 0) {
+            const mediaGroup = document.querySelector("#media-group");
+
+            const img = document.createElement("img");
+            img.src = exerciseData.files[0].file;
+            mediaGroup.appendChild(img);
+        }
+        
+        
     }
 }
 
 async function updateExercise(id) {
-    let form = document.querySelector("#form-exercise");
-    let formData = new FormData(form);
-    let body = {"name": formData.get("name"), 
-                "description": formData.get("description"), 
-                "unit": formData.get("unit")};
-    let response = await sendRequest("PUT", `${HOST}/api/exercises/${id}/`, body);
+    
+    const submitForm = exerciseForm();
+    let response = await sendRequest("PUT", `${HOST}/api/exercises/${id}/`, submitForm, "");
 
     if (!response.ok) {
         let data = await response.json();
@@ -128,6 +150,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     deleteButton = document.querySelector("#btn-delete-exercise");
     editButton = document.querySelector("#btn-edit-exercise");
     oldFormData = null;
+    currentUser = await getCurrentUser();
 
     const urlParams = new URLSearchParams(window.location.search);
 
@@ -138,7 +161,9 @@ window.addEventListener("DOMContentLoaded", async () => {
 
         editButton.addEventListener("click", handleEditExerciseButtonClick);
         deleteButton.addEventListener("click", (async (id) => await deleteExercise(id)).bind(undefined, exerciseId));
-        okButton.addEventListener("click", (async (id) => await updateExercise(id)).bind(undefined, exerciseId));
+        okButton.addEventListener("click", async () => {
+            await updateExercise(exerciseId)
+        });
     } 
     //create
     else {

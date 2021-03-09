@@ -31,12 +31,12 @@ Docker Compose/Swarm
 ### Run with Docker Compose:
 
 ```
-docker-compose up --build
+docker-compose up
 ```
 
 Hosts the application on http://localhost:4011
 
-### Run (or update) wit Docker Swarm
+### Run (or update) with Docker Swarm
 
 Prerequisites:
 
@@ -48,6 +48,12 @@ docker stack deploy --compose-file docker-compose.yml --with-registry-auth stack
 
 Hosts the application on http://localhost:4011 with default settings
 
+## CI/CD Pipeline
+
+### Master branch
+
+![Pipeline master](./documentation/Pipeline_Master.png "Pipeline Master")
+
 ## Technology
 
 - **deployment** Docker
@@ -58,6 +64,10 @@ Hosts the application on http://localhost:4011 with default settings
   - **browser** - HTML5/CSS/JS, Bootstrap v5 (no jQuery dependency)
   - **mobile** Apache Cordova (uses same website)
 - **authentication** JWT
+
+## All branches
+
+- TODO
 
 ## Code and structure
 

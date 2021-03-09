@@ -3,5 +3,6 @@ module.exports = {
   globals: {
     URL: "http://molde.idi.ntnu.no:22100/"
   },
-  verbose: true
+  verbose: true,
+  testTimeout: 10000
 }

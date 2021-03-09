@@ -5,8 +5,8 @@ module.exports = {
       '--no-sandbox',
       '--disable-setuid-sandbox',
     ],
-      headless: false,
-      slowMo: 250,
-      devtools: true
-  }
+    headless: false,
+    slowMo: 100,
+    devtools: false
+  },
 }

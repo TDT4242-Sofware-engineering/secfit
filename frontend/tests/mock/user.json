@@ -1,0 +1,9 @@
+{
+  "username": "Anna",
+  "email": "annna.smith@example.com",
+  "password": "anna123",
+  "country": "Norway",
+  "city": "Oslo",
+  "street_name": "Bogstadveien 12",
+  "phone_numer": "98989898"
+}

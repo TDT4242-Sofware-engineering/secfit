@@ -1,4 +1,4 @@
-const registerUser = async () => {
+async function registerUser() {
   await page.waitForSelector("#btn-register");
     await page.evaluate(
       (selector) => document.querySelector(selector).click(),
@@ -37,4 +37,8 @@ const registerUser = async () => {
     const logoutText = await page.evaluate((title) => title.innerText, logoutButton);
     expect(logoutText).toBe("Log out");
 
+}
+
+module.exports = {
+    registerUser
 }

@@ -18,6 +18,7 @@ from workouts.permissions import (
     IsParticipantToWorkout,
     IsOwnerOfExercise,
 )
+from comments.models import Comment
 from django.contrib.auth import get_user_model
 from .models import Exercise, ExerciseInstance, Workout, WorkoutFile, WorkoutInvitation
 """
@@ -850,3 +851,128 @@ class ExerciseTestCase(APITestCase):
         self.assertEqual(str(feedback["exercise"][0]), "Invalid hyperlink - No URL match.")
         self.assertEqual(str(feedback["sets"][0]), "A valid integer is required.")
         self.assertEqual(str(feedback["number"][0]), "A valid integer is required.")
+
+
+class FR5TestCase(APITestCase):
+    def setUp(self):
+        self.coach = User.objects.create(username="coach", email="test@test.no")
+        self.coach.set_password("password")
+        self.coach.save()
+        
+        self.athlete = User.objects.create(username="athlete", email="test@test.no", coach=self.coach)
+        self.athlete.set_password("password")
+        self.athlete.save()
+
+
+        self.outsider = User.objects.create(username="outsider", email="test@test.no")
+        self.outsider.set_password("password")
+        self.outsider.save()
+
+        w_pr = Workout.objects.create(
+            name="workout_PR",
+            owner=self.athlete,
+            date="2021-03-11T13:37:00Z",
+            notes="workoutnote",
+            visibility="PR"
+        )
+        w_pr.save()
+        Comment.objects.create(
+            owner=self.athlete,
+            workout=w_pr,
+            content="comment_PR"
+        ).save()
+        WorkoutFile.objects.create(
+            owner=self.athlete,
+            workout=w_pr
+        ).save()
+
+        w_co = Workout.objects.create(
+            name="workout_CO",
+            owner=self.athlete,
+            date="2021-03-12T13:37:00Z",
+            notes="workoutnote",
+            visibility="CO"
+        )
+        w_co.save()
+
+        Comment.objects.create(
+            owner=self.athlete,
+            workout=w_co,
+            content="comment_CO"
+        ).save()
+        WorkoutFile.objects.create(
+            owner=self.athlete,
+            workout=w_co
+        ).save()
+
+        w_pu = Workout.objects.create(
+            name="workout_PU",
+            owner=self.athlete,
+            date="2021-03-13T13:37:00Z",
+            notes="workoutnote",
+            visibility="PU"
+        )
+        w_pu.save()
+
+        Comment.objects.create(
+            owner=self.athlete,
+            workout=w_pu,
+            content="comment_PU"
+        ).save()
+        WorkoutFile.objects.create(
+            owner=self.athlete,
+            workout=w_pu
+        ).save()
+       
+        
+        
+    def test_get_workouts_athlete(self):
+        print("\ntest_get_workouts_athlete\n")
+        self.client.login(username="athlete", password="password")
+        response = self.client.post('/api/token/', {"username": "athlete", "password": "password"},  format="json")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])
+        response = self.client.get('/api/workouts/?ordering=-date')
+        print(response.data)
+        self.assertEqual(response.data.get("count"), 3)
+        self.assertEqual(response.data["results"][0]["name"], "workout_PU")
+        self.assertEqual(response.data["results"][1]["name"], "workout_CO")
+        self.assertEqual(response.data["results"][2]["name"], "workout_PR")
+
+        response = self.client.get('/api/comments/')
+        print(response.data)
+        self.assertEqual(response.data.get("count"), 3)
+        self.assertEqual(response.data["results"][0]["content"], "comment_PU")
+        self.assertEqual(response.data["results"][1]["content"], "comment_CO")
+        self.assertEqual(response.data["results"][2]["content"], "comment_PR")
+
+    def test_get_workouts_coach(self):
+        print("\ntest_get_workouts_coach\n")
+        self.client.login(username="coach", password="password")
+        response = self.client.post('/api/token/', {"username": "coach", "password": "password"},  format="json")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])
+        response = self.client.get('/api/workouts/?ordering=-date')
+        print(response.data)
+        self.assertEqual(response.data.get("count"), 2)
+        self.assertEqual(response.data["results"][0]["name"], "workout_PU")
+        self.assertEqual(response.data["results"][1]["name"], "workout_CO")
+        
+        response = self.client.get('/api/comments/')
+        print(response.data)
+        self.assertEqual(response.data.get("count"), 2)
+        self.assertEqual(response.data["results"][0]["content"], "comment_PU")
+        self.assertEqual(response.data["results"][1]["content"], "comment_CO")
+
+    def test_get_workouts_outsider(self):
+        print("\ntest_get_workouts_outsider\n")
+        self.client.login(username="outsider", password="password")
+        response = self.client.post('/api/token/', {"username": "outsider", "password": "password"},  format="json")
+        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])      
+        response = self.client.get('/api/workouts/?ordering=-date')
+        print(response.data)
+        self.assertEqual(response.data.get("count"), 1)
+        self.assertEqual(response.data["results"][0]["name"], "workout_PU")
+
+        response = self.client.get('/api/comments/')
+        print(response.data)
+        self.assertEqual(response.data.get("count"), 1)
+        self.assertEqual(response.data["results"][0]["content"], "comment_PU")

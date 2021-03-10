@@ -25,7 +25,7 @@ from .models import Exercise, ExerciseInstance, Workout, WorkoutFile, WorkoutInv
 Tests for the workouts application.
 """
 from django.test import TestCase
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, Mock
 
 # Unit tests
 
@@ -881,6 +881,7 @@ class FR5TestCase(APITestCase):
             workout=w_pr,
             content="comment_PR"
         ).save()
+        
         WorkoutFile.objects.create(
             owner=self.athlete,
             workout=w_pr
@@ -932,18 +933,22 @@ class FR5TestCase(APITestCase):
         response = self.client.post('/api/token/', {"username": "athlete", "password": "password"},  format="json")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])
         response = self.client.get('/api/workouts/?ordering=-date')
-        print(response.data)
+
         self.assertEqual(response.data.get("count"), 3)
         self.assertEqual(response.data["results"][0]["name"], "workout_PU")
         self.assertEqual(response.data["results"][1]["name"], "workout_CO")
         self.assertEqual(response.data["results"][2]["name"], "workout_PR")
 
         response = self.client.get('/api/comments/')
-        print(response.data)
+
         self.assertEqual(response.data.get("count"), 3)
         self.assertEqual(response.data["results"][0]["content"], "comment_PU")
         self.assertEqual(response.data["results"][1]["content"], "comment_CO")
         self.assertEqual(response.data["results"][2]["content"], "comment_PR")
+
+        response = self.client.get('/api/workout-files/')
+        print(response.data)
+        self.assertEqual(response.data.get("count"), 3)
 
     def test_get_workouts_coach(self):
         print("\ntest_get_workouts_coach\n")
@@ -951,16 +956,20 @@ class FR5TestCase(APITestCase):
         response = self.client.post('/api/token/', {"username": "coach", "password": "password"},  format="json")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])
         response = self.client.get('/api/workouts/?ordering=-date')
-        print(response.data)
+
         self.assertEqual(response.data.get("count"), 2)
         self.assertEqual(response.data["results"][0]["name"], "workout_PU")
         self.assertEqual(response.data["results"][1]["name"], "workout_CO")
         
         response = self.client.get('/api/comments/')
-        print(response.data)
+
         self.assertEqual(response.data.get("count"), 2)
         self.assertEqual(response.data["results"][0]["content"], "comment_PU")
         self.assertEqual(response.data["results"][1]["content"], "comment_CO")
+
+        response = self.client.get('/api/workout-files/')
+        print(response.data)
+        self.assertEqual(response.data.get("count"), 2)
 
     def test_get_workouts_outsider(self):
         print("\ntest_get_workouts_outsider\n")
@@ -968,11 +977,15 @@ class FR5TestCase(APITestCase):
         response = self.client.post('/api/token/', {"username": "outsider", "password": "password"},  format="json")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])      
         response = self.client.get('/api/workouts/?ordering=-date')
-        print(response.data)
+
         self.assertEqual(response.data.get("count"), 1)
         self.assertEqual(response.data["results"][0]["name"], "workout_PU")
 
         response = self.client.get('/api/comments/')
-        print(response.data)
+
         self.assertEqual(response.data.get("count"), 1)
         self.assertEqual(response.data["results"][0]["content"], "comment_PU")
+
+        response = self.client.get('/api/workout-files/')
+        print(response.data)
+        self.assertEqual(response.data.get("count"), 1)

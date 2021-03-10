@@ -344,6 +344,7 @@ class WorkoutFileList(
                     Q(workout__visibility="CO")
                     & Q(workout__owner__coach=self.request.user)
                 )
+                | Q(workout__visibility="PU") # BUG FIX -> to allow users to see pulic workout files
             ).distinct()
 
         return qs

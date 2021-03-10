@@ -5,6 +5,7 @@ services:
     image: jonev/secfit:backend
     volumes:
       - ./db.sqlite3:/code/db.sqlite3
+      - ./media:/code/secfit/media
     deploy:
       mode: replicated
       replicas: 2

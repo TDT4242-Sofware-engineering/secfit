@@ -1,10 +1,11 @@
 const { registerUser, login } = require("./utils")
 const user = require("./mock/user.json");
+const url = "https://secfit.vassbo.as/index.html"
 
 
 describe("SecFit", () => {
   beforeAll(async () => {
-    await page.goto("https://secfit.vassbo.as");
+    await page.goto(url);
   });
 
   it('should be titled "SecFit"', async () => {
@@ -15,17 +16,17 @@ describe("SecFit", () => {
 });
 
 
-// describe("Secfit register", () => {
-//    test("Register user", async () => {
-//     await registerUser();
-//   }, 25000);
+describe("Secfit register", () => {
+   test("Register user", async () => {
+    await registerUser();
+  }, 25000);
 
-// })
+})
 
 
 describe("Secfit login", () => {
   beforeAll(async () => {
-    await page.goto("https://secfit.vassbo.as");
+    await page.goto(url);
   });
 
 
@@ -46,7 +47,7 @@ describe("Secfit login", () => {
 
 describe("Profile functionality", () => {
   beforeAll(async () => {
-    await page.goto("https://secfit.vassbo.as");
+    await page.goto(url);
   });
 
   test("access to profile page", async () => {
@@ -70,9 +71,9 @@ describe("Profile functionality", () => {
 
   // Read profile info
   test("read profile info", async () => {
-    await page.waitForSelector('input[name="username"]');
 
-    await page.waitForSelector('input[name="email"]');
+
+    await page.waitForSelector('input[name="username"]');
     const username = await page.evaluate(
       (field) => document.querySelector(field).value,
       "#inputUsername"
@@ -116,10 +117,34 @@ describe("Profile functionality", () => {
     expect(country).toEqual(user.country);
   }, 20000);
 
-// Edit profile
+
+  // Cancel edit profile
+  test("cancel edit email", async () => {
+
+    await page.waitForSelector("#btn-edit-profile");
+
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-edit-profile");
+    console.log("clicked edit button")
+
+    await page.waitForSelector("#btn-cancel-edit");
+
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-cancel-edit");
+    console.log("clicked cancel edit button")
+
+    await page.waitForSelector("#btn-edit-profile");
+    console.log("cancelled edit")
+
+  })
+
+  // Edit profile
   test("edit profile", async () => {
 
     await page.waitForSelector("#btn-edit-profile");
+
     await page.evaluate((selector) => {
       document.querySelector(selector).click();
     }, "#btn-edit-profile");
@@ -128,37 +153,37 @@ describe("Profile functionality", () => {
 
     await page.waitForSelector('input[name="username"]');
     await page.evaluate(
-      (field) => document.querySelector(field).value === + "Annika" ,
+      (field) => document.querySelector(field).value = "Annika",
       "#inputUsername"
     );
 
     await page.waitForSelector('input[name="email"]');
     await page.evaluate(
-      (field) => document.querySelector(field).value === user.email + "1",
+      (field) => document.querySelector(field).value = "new@email.com",
       'input[name="email"]'
     );
 
     await page.waitForSelector('input[name="phone_number"]');
-   await page.evaluate(
-      (field) => document.querySelector(field).value === user.phone_numer + "1" ,
+    await page.evaluate(
+      (field) => document.querySelector(field).value = "123",
       'input[name="phone_number"]'
     );
 
     await page.waitForSelector('input[name="street_address"]');
     await page.evaluate(
-      (field) => document.querySelector(field).value === user.street_name + "1", 
+      (field) => document.querySelector(field).value = "munkegata 36",
       'input[name="street_address"]'
     );
 
     await page.waitForSelector('input[name="city"]');
     const city = await page.evaluate(
-      (field) => document.querySelector(field).value === user.city + "1",
+      (field) => document.querySelector(field).value = "Trondheim",
       'input[name="city"]'
     );
-    
+
     await page.waitForSelector('input[name="country"]');
     const country = await page.evaluate(
-      (field) => document.querySelector(field).value === user.country + "1", 
+      (field) => document.querySelector(field).value = "Sweden",
       'input[name="country"]'
     );
 
@@ -167,8 +192,96 @@ describe("Profile functionality", () => {
     }, "#btn-confirm-edit");
     console.log("clicked confirm edit button")
 
+    await page.waitForSelector('input[name="username"]');
+    const username = await page.evaluate(
+      (field) => document.querySelector(field).value,
+      "#inputUsername"
+    );
+    expect(username).toEqual("Annika");
+
 
   })
 
 
+  // cancel delete profile
+  test("cancel delete profile", async () => {
+
+    await page.waitForSelector("#btn-edit-profile");
+
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-edit-profile");
+    console.log("clicked edit profile button")
+
+    await page.waitForSelector("#btn-initiate-delete");
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-initiate-delete");
+    console.log("clicked delete profile button")
+
+    await page.waitForSelector("#btn-cancel-delete");
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-cancel-delete");
+    console.log("clicked cancel delete profile button")
+
+    await page.waitForSelector('input[name="username"]');
+
+  })
+
+  // delete profile
+  test("delete profile", async () => {
+
+    await page.waitForSelector("#btn-edit-profile");
+
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-edit-profile");
+    console.log("clicked edit profile button")
+
+    await page.waitForSelector("#btn-initiate-delete");
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-initiate-delete");
+
+    console.log("clicked delete profile button")
+
+    await page.waitForSelector("#btn-delete-user");
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-delete-user");
+
+    console.log("clicked confirm delete profile button")
+
+    await page.waitForNavigation();
+
+    await page.waitForSelector("#btn-login-nav");
+    console.log("user deleted")
+
+  })
+
 });
+
+// describe("exercise page", async () => {
+//   beforeAll(async () => {
+//     await page.goto(url)
+//   })
+//   test("access exercise page", async () =>{
+//     await page.waitForSelector("#btn-login-nav");
+
+//     await page.evaluate((selector) => {
+//       document.querySelector(selector).click();
+//     }, "#btn-login-nav");
+//     await page.waitForNavigation();
+
+//     await login();
+
+//     await page.waitForSelector("#nav-profile");
+//     await page.evaluate((selector) => {
+//       document.querySelector(selector).click();
+//     }, "#nav-profile");
+//     await page.waitForNavigation();
+
+//     await page.waitForSelector("#form-profile");
+//   })
+// })

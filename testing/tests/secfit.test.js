@@ -424,8 +424,8 @@ describe("coach page", async () => {
     await page.waitForSelector("#button-edit-coach");
   }, 25000)
 
-  // new athlete
-  test("add athlete", async () =>{
+  // new coach
+  test("add coach", async () =>{
     await page.waitForSelector("#button-edit-coach");
 
     await page.evaluate((selector) => {

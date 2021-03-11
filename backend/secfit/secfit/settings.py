@@ -38,6 +38,7 @@ ALLOWED_HOSTS = [
     "molde.idi.ntnu.no",
     "secfit.vassbo.as",
     "10.0.2.2",
+    "proxy"
 ]
 
 # Application definition

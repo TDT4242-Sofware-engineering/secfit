@@ -37,7 +37,7 @@ function exerciseForm() {
     submitForm.append("name", formData.get("name"));
     submitForm.append("description", formData.get("description"));
     submitForm.append("unit", formData.get("unit"));
-
+    
     for (let file of formData.getAll("files")) {
         submitForm.append("files", file);
     }
@@ -107,8 +107,9 @@ async function retrieveExercise(id) {
             input.value = newVal;
         }
         if (exerciseData.files && exerciseData.files.length > 0) {
+            // TODO: Look at multiple image support with bootstrap
+            // slideshow https://getbootstrap.com/docs/4.0/components/carousel/
             const mediaGroup = document.querySelector("#media-group");
-
             const img = document.createElement("img");
             img.src = exerciseData.files[0].file;
             mediaGroup.appendChild(img);
@@ -172,6 +173,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         editButton.className += " hide";
         okButton.className = okButton.className.replace(" hide", "");
         cancelButton.className = cancelButton.className.replace(" hide", "");
+        customFile.classList.remove("hide");
 
         okButton.addEventListener("click", async () => await createExercise());
         cancelButton.addEventListener("click", handleCancelButtonDuringCreate);

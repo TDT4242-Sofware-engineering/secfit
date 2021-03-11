@@ -2,9 +2,9 @@ const { registerUser, login } = require("./utils")
 const user = require("./mock/user.json");
 const exercise = require("./mock/exercise.json")
 const workout = require("./mock/workout.json")
-const url = "https://secfit.vassbo.as/index.html"
+const url = process.env.TEST_URL + "/index.html"
 
-
+console.log("Running tests on: " + url);
 // Initial test
 describe("SecFit", () => {
   beforeAll(async () => {

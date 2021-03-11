@@ -863,10 +863,18 @@ class FR5TestCase(APITestCase):
         self.athlete.set_password("password")
         self.athlete.save()
 
-
         self.outsider = User.objects.create(username="outsider", email="test@test.no")
         self.outsider.set_password("password")
         self.outsider.save()
+
+        # Setting ut data to query as different roles
+        ex = Exercise.objects.create(
+            name="ex1",
+            owner=self.athlete,
+            description="ex desc",
+            unit="m"
+        )
+        ex.save()
 
         w_pr = Workout.objects.create(
             name="workout_PR",
@@ -876,6 +884,14 @@ class FR5TestCase(APITestCase):
             visibility="PR"
         )
         w_pr.save()
+
+        ExerciseInstance.objects.create(
+            workout=w_pr,
+            exercise=ex,
+            sets=2,
+            number=3
+        ).save()
+
         Comment.objects.create(
             owner=self.athlete,
             workout=w_pr,
@@ -896,6 +912,13 @@ class FR5TestCase(APITestCase):
         )
         w_co.save()
 
+        ExerciseInstance.objects.create(
+            workout=w_co,
+            exercise=ex,
+            sets=2,
+            number=3
+        ).save()
+
         Comment.objects.create(
             owner=self.athlete,
             workout=w_co,
@@ -915,6 +938,13 @@ class FR5TestCase(APITestCase):
         )
         w_pu.save()
 
+        ExerciseInstance.objects.create(
+            workout=w_pu,
+            exercise=ex,
+            sets=2,
+            number=3
+        ).save()
+
         Comment.objects.create(
             owner=self.athlete,
             workout=w_pu,
@@ -928,64 +958,76 @@ class FR5TestCase(APITestCase):
         
         
     def test_get_workouts_athlete(self):
-        print("\ntest_get_workouts_athlete\n")
+        # Login as athlete
         self.client.login(username="athlete", password="password")
         response = self.client.post('/api/token/', {"username": "athlete", "password": "password"},  format="json")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])
-        response = self.client.get('/api/workouts/?ordering=-date')
 
+        # Workouts
+        response = self.client.get('/api/workouts/?ordering=-date')
         self.assertEqual(response.data.get("count"), 3)
         self.assertEqual(response.data["results"][0]["name"], "workout_PU")
         self.assertEqual(response.data["results"][1]["name"], "workout_CO")
         self.assertEqual(response.data["results"][2]["name"], "workout_PR")
+        # Exercise instances
+        self.assertEqual(len(response.data["results"][0]["exercise_instances"]), 1)
+        self.assertEqual(len(response.data["results"][1]["exercise_instances"]), 1)
+        self.assertEqual(len(response.data["results"][2]["exercise_instances"]), 1)
 
+        # Comments
         response = self.client.get('/api/comments/')
-
         self.assertEqual(response.data.get("count"), 3)
         self.assertEqual(response.data["results"][0]["content"], "comment_PU")
         self.assertEqual(response.data["results"][1]["content"], "comment_CO")
         self.assertEqual(response.data["results"][2]["content"], "comment_PR")
 
+        # Workout files
         response = self.client.get('/api/workout-files/')
-        print(response.data)
         self.assertEqual(response.data.get("count"), 3)
 
     def test_get_workouts_coach(self):
-        print("\ntest_get_workouts_coach\n")
+        # Login as coach
         self.client.login(username="coach", password="password")
         response = self.client.post('/api/token/', {"username": "coach", "password": "password"},  format="json")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])
-        response = self.client.get('/api/workouts/?ordering=-date')
 
+        # Workouts
+        response = self.client.get('/api/workouts/?ordering=-date')
         self.assertEqual(response.data.get("count"), 2)
         self.assertEqual(response.data["results"][0]["name"], "workout_PU")
         self.assertEqual(response.data["results"][1]["name"], "workout_CO")
+        # Exercise instances
+        self.assertEqual(len(response.data["results"][0]["exercise_instances"]), 1)
+        self.assertEqual(len(response.data["results"][1]["exercise_instances"]), 1)
         
+        # Comments
         response = self.client.get('/api/comments/')
-
         self.assertEqual(response.data.get("count"), 2)
         self.assertEqual(response.data["results"][0]["content"], "comment_PU")
         self.assertEqual(response.data["results"][1]["content"], "comment_CO")
 
+        # Workoutfiles
         response = self.client.get('/api/workout-files/')
-        print(response.data)
         self.assertEqual(response.data.get("count"), 2)
 
     def test_get_workouts_outsider(self):
-        print("\ntest_get_workouts_outsider\n")
+        # Login as outsider
         self.client.login(username="outsider", password="password")
         response = self.client.post('/api/token/', {"username": "outsider", "password": "password"},  format="json")
         self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])      
+        
+        # Workouts
         response = self.client.get('/api/workouts/?ordering=-date')
-
         self.assertEqual(response.data.get("count"), 1)
         self.assertEqual(response.data["results"][0]["name"], "workout_PU")
+        # Exercise instances
+        self.assertEqual(len(response.data["results"][0]["exercise_instances"]), 1)
 
+        # Comments
         response = self.client.get('/api/comments/')
-
         self.assertEqual(response.data.get("count"), 1)
         self.assertEqual(response.data["results"][0]["content"], "comment_PU")
 
+        # Workout files
         response = self.client.get('/api/workout-files/')
-        print(response.data)
         self.assertEqual(response.data.get("count"), 1)

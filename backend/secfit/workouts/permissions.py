@@ -1,7 +1,7 @@
 """Contains custom DRF permissions classes for the workouts app
 """
 from rest_framework import permissions
-from workouts.models import Workout, WorkoutInvitation
+from workouts.models import Workout, WorkoutInvitation, Exercise
 from django.contrib.auth import get_user_model
 
 
@@ -36,7 +36,7 @@ class IsOwnerOfExercise(permissions.BasePermission):
         if request.method == "POST":
             if request.data.get("exercise"):
                 exercise_id = request.data["exercise"].split("/")[-2]
-                exercise = exercise.objects.get(pk=exercise_id)
+                exercise = Exercise.objects.get(pk=exercise_id)
                 if exercise:
                     return exercise.owner == request.user
             return False
@@ -116,7 +116,7 @@ class IsParticipantToWorkout(permissions.BasePermission):
         if request.method == "GET":
             workout_pk = view.kwargs["pk"]
             workout = Workout.objects.get(pk=workout_pk)
-            users = get_user_model().objects.filter(participants=workout.participants)
+            users = get_user_model().objects.filter(pk__in=workout.participants.all().values_list('id', flat=True))
             if request.user in users:
                 return True
 

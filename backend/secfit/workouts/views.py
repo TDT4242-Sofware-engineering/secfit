@@ -169,7 +169,7 @@ class WorkoutDetail(
     serializer_class = WorkoutSerializer
     permission_classes = [
         permissions.IsAuthenticated
-        & ((IsOwner | IsInvitedToWorkout | IsParticipantToWorkout) | (IsReadOnly & (IsCoachAndVisibleToCoach | IsPublic))) # TODO or isInvited on put
+        & ((IsOwner | IsInvitedToWorkout | IsParticipantToWorkout) | (IsReadOnly & (IsCoachAndVisibleToCoach | IsPublic)))
     ]
     parser_classes = [MultipartJsonParser, JSONParser]
 

@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI/CD Production
 on:
   push:
     branches: [ master ]
@@ -57,12 +57,18 @@ jobs:
       - 
         name: Frontend Image digest
         run: echo ${{ steps.docker_build_frontend.outputs.digest }}
-        
-  deploy:
+   
+  system_test:
     needs: [build_backend, build_frontend]
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests in docker compose
+        run: docker-compose -f ./testing/docker-compose.yml run tests 
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
+  deploy:
+    needs: system_test
+    runs-on: ubuntu-latest
     steps:
     - name: Deploy to Docker swarm
       uses: appleboy/ssh-action@v0.1.4

@@ -1,5 +1,6 @@
 const { registerUser, login } = require("./utils")
 const user = require("./mock/user.json");
+const user2 = require("./mock/user2.json");
 const exercise = require("./mock/exercise.json")
 const workout = require("./mock/workout.json")
 const url = process.env.TEST_URL + "/index.html"
@@ -21,8 +22,15 @@ describe("SecFit", () => {
 // Register user
 describe("Secfit register", () => {
    test("Register user", async () => {
-    await registerUser();
+    await registerUser(user);
   }, 25000);
+
+})
+
+describe("Secfit register", () => {
+  test("Register user", async () => {
+   await registerUser(user2);
+ }, 25000);
 
 })
 
@@ -41,7 +49,7 @@ describe("Secfit login", () => {
     await page.waitForNavigation();
 
 
-    await login();
+    await login(user);
   }, 25000);
 });
 
@@ -61,7 +69,7 @@ describe("exercise page", async () => {
     }, "#btn-login-nav");
     await page.waitForNavigation();
 
-    await login();
+    await login(user);
 
     await page.waitForSelector("#nav-exercises");
     await page.evaluate((selector) => {
@@ -203,7 +211,7 @@ describe("workout page", async () => {
     }, "#btn-login-nav");
     await page.waitForNavigation();
 
-    await login();
+    await login(user);
 
     await page.waitForSelector("#btn-create-workout");
   })
@@ -363,7 +371,7 @@ describe("athlete page", async () => {
     }, "#btn-login-nav");
     await page.waitForNavigation();
 
-    await login();
+    await login(user);
 
     await page.waitForSelector("#nav-myathletes");
     await page.evaluate((selector) => {
@@ -413,7 +421,7 @@ describe("coach page", async () => {
     }, "#btn-login-nav");
     await page.waitForNavigation();
 
-    await login();
+    await login(user);
 
     await page.waitForSelector("#nav-mycoach");
     await page.evaluate((selector) => {
@@ -464,7 +472,7 @@ describe("Profile functionality", () => {
     }, "#btn-login-nav");
     await page.waitForNavigation();
 
-    await login();
+    await login(user);
 
     await page.waitForSelector("#nav-profile");
     await page.evaluate((selector) => {

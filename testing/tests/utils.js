@@ -1,6 +1,6 @@
-const user = require("./mock/user.json");
+// const user = require("./mock/user.json");
 
-async function registerUser() {
+async function registerUser(user) {
   await page.waitForSelector("#btn-register");
     await page.evaluate(
       (selector) => document.querySelector(selector).click(),
@@ -9,6 +9,8 @@ async function registerUser() {
     console.log("Register button clicked");
 
     await page.waitForNavigation();
+
+    console.log("Using user: ", user)
 
     await page.waitForSelector('input[name="username"]');
     await page.type('input[name="username"]', user.username);
@@ -41,7 +43,8 @@ async function registerUser() {
 
 }
 
-async function login() {
+async function login(user) {
+  console.log("Login as user: ", user)
   await page.waitForSelector("#form-login");
   await page.waitForSelector('input[name="username"]');
   await page.waitForSelector('input[name="password"]');

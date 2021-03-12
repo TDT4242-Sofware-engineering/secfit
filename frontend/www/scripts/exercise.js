@@ -110,9 +110,42 @@ async function retrieveExercise(id) {
             // TODO: Look at multiple image support with bootstrap
             // slideshow https://getbootstrap.com/docs/4.0/components/carousel/
             const mediaGroup = document.querySelector("#media-group");
-            const img = document.createElement("img");
-            img.src = exerciseData.files[0].file;
-            mediaGroup.appendChild(img);
+        
+            // const img = document.createElement("img");
+            // img.src = exerciseData.files[0].file;
+            // mediaGroup.appendChild(img);
+
+            exerciseData.files.forEach((file, i) => {
+    
+                // Indicator button
+                const btn = document.createElement("button");
+                btn.setAttribute("type", "button");
+                btn.setAttribute("data-bs-target", "#carouselExampleIndicators");
+                btn.setAttribute("data-bs-slide-to", i);
+                btn.setAttribute("aria-label", `Slide ${i}`)
+                if (i === 0) {
+                    btn.setAttribute("class", "active");
+                    btn.setAttribute("aria-current","true");
+                }
+                const carouselIndicator = document.querySelector(".carousel-indicators");
+                carouselIndicator.appendChild(btn);
+    
+                // Carousel item
+                const carouselItem = document.createElement("div");
+                carouselItem.classList.add("carousel-item");
+                if (i === 0) {
+                    carouselItem.classList.add("active");
+                }
+                const media = document.createElement("img");
+                media.classList.add("d-block");
+                media.classList.add("w-100");
+                media.src = file.file;
+                carouselItem.appendChild(media);
+
+                const carouselInner = document.querySelector(".carousel-inner");
+                carouselInner.appendChild(carouselItem);
+            })
+           
         }
         
         
@@ -122,6 +155,7 @@ async function retrieveExercise(id) {
 async function updateExercise(id) {
     
     const submitForm = exerciseForm();
+
     let response = await sendRequest("PUT", `${HOST}/api/exercises/${id}/`, submitForm, "");
 
     if (!response.ok) {

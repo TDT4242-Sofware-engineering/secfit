@@ -1,6 +1,9 @@
 {
   "name": "Cordova-Dev",
+  "extensions": [
+    "esbenp.prettier-vscode"
+  ],
   "build": {
     "dockerfile": "../Dockerfile"
-  }
+  },
 }

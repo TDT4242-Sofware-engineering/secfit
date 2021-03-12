@@ -1,5 +1,5 @@
 # Get docker image
-FROM buildkite/puppeteer
+FROM buildkite/puppeteer:7.1.0
 
 # Set working dir
 WORKDIR /app

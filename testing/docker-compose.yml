@@ -11,8 +11,6 @@ services:
       - proxy
     env_file:
       - .env
-    volumes:
-      - .:/app
 
   backend:
     image: jonev/secfit:backend

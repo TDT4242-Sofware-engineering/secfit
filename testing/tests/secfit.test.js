@@ -55,7 +55,7 @@ describe("Secfit login", () => {
 
 
 // Exercises
-describe("exercise page", async () => {
+describe("exercise page", () => {
   beforeAll(async () => {
     await page.goto(url)
   })
@@ -197,7 +197,7 @@ describe("exercise page", async () => {
 })
 
 // Workouts
-describe("workout page", async () => {
+describe("workout page", () => {
   beforeAll(async () => {
     await page.goto(url)
   })
@@ -357,7 +357,7 @@ describe("workout page", async () => {
 })
 
 // Athlete page
-describe("athlete page", async () => {
+describe("athlete page", () => {
   beforeAll(async () => {
     await page.goto(url)
   })
@@ -407,7 +407,7 @@ describe("athlete page", async () => {
 
 
 // Coach page
-describe("coach page", async () => {
+describe("coach page", () => {
   beforeAll(async () => {
     await page.goto(url)
   })

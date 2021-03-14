@@ -57,17 +57,9 @@ jobs:
       - 
         name: Frontend Image digest
         run: echo ${{ steps.docker_build_frontend.outputs.digest }}
-   
-  system_test:
-    needs: [build_backend, build_frontend]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Run tests in docker compose
-        run: docker-compose -f ./testing/docker-compose.yml run tests 
 
   deploy:
-    needs: system_test
+    needs: [build_backend, build_frontend]
     runs-on: ubuntu-latest
     steps:
     - name: Deploy to Docker swarm

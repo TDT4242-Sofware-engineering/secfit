@@ -8,4 +8,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Run tests in docker compose
-        run: docker-compose -f ./testing/docker-compose.yml run tests
+        run: |
+          docker-compose pull
+          docker-compose -f ./testing/docker-compose.yml run tests

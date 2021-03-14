@@ -17,8 +17,16 @@ With coverage:
 coverage run --source='.' manage.py test
 ```
 
-Create report:
+After running test with `coverage`, run one of these commands to generate a report:
+
+Create list report:
 
 ```bash
 coverage report
+```
+
+Create HTML report:
+
+```bash
+coverage html
 ```

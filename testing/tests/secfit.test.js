@@ -675,3 +675,61 @@ describe("Profile functionality", () => {
   })
 
 });
+
+describe("Cleanup", () => {
+  beforeAll(async () => {
+    await page.goto(url);
+  });
+
+  test("access to profile page", async () => {
+    await page.waitForSelector("#btn-login-nav");
+
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-login-nav");
+    await page.waitForNavigation();
+
+    await login(user2);
+
+    await page.waitForSelector("#nav-profile");
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#nav-profile");
+    await page.waitForNavigation();
+
+    await page.waitForSelector("#form-profile");
+  }, 25000);
+
+  
+  //delete profile
+  test("delete profile", async () => {
+
+    await page.waitForSelector("#btn-edit-profile");
+
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-edit-profile");
+    console.log("clicked edit profile button")
+
+    await page.waitForSelector("#btn-initiate-delete");
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-initiate-delete");
+
+    console.log("clicked delete profile button")
+
+    await page.waitForSelector("#btn-delete-user");
+    await page.evaluate((selector) => {
+      document.querySelector(selector).click();
+    }, "#btn-delete-user");
+
+    console.log("clicked confirm delete profile button")
+
+    await page.waitForNavigation();
+
+    await page.waitForSelector("#btn-login-nav");
+    console.log("user deleted")
+
+  })
+
+});

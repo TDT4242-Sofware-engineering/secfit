@@ -180,19 +180,19 @@ describe("exercise page", () => {
   }, 25000)
 
   // delete exercise
-  test("delete exercise", async () =>{
+  // test("delete exercise", async () =>{
 
-    await page.evaluate((selector) => {
-      document.querySelector(selector).click();
-    }, "#btn-edit-exercise");
+  //   await page.evaluate((selector) => {
+  //     document.querySelector(selector).click();
+  //   }, "#btn-edit-exercise");
     
-    await page.evaluate((selector) => {
-      document.querySelector(selector).click();
-    }, "#btn-delete-exercise");
+  //   await page.evaluate((selector) => {
+  //     document.querySelector(selector).click();
+  //   }, "#btn-delete-exercise");
 
-    await page.waitForSelector("#btn-create-exercise");
+  //   await page.waitForSelector("#btn-create-exercise");
 
-  }, 25000)
+  // }, 25000)
 
 })
 

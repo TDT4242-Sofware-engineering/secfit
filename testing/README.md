@@ -1,6 +1,9 @@
 # System and integration tests
 
 ### To run against production: 
+Prerequisites:
+- `npm install`
+Then run:
 - `npm run test-prod`
 
 ### To run within a test environment in docker-compose

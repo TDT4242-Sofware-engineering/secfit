@@ -37,6 +37,7 @@ import json
 from collections import namedtuple
 import base64, pickle
 from django.core.signing import Signer
+from rest_framework.parsers import MultiPartParser, FormParser
 
 
 @api_view(["GET"])
@@ -195,9 +196,10 @@ class ExerciseList(
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
     parser_classes = [
         MultipartJsonParser,
-        JSONParser
+        FormParser
     ]
 
     def get(self, request, *args, **kwargs):
@@ -223,6 +225,11 @@ class ExerciseDetail(
     queryset = Exercise.objects.all()
     serializer_class = ExerciseSerializer
     permission_classes = [permissions.IsAuthenticated]
+    
+    parser_classes = [
+        MultipartJsonParser,
+        JSONParser
+    ]
 
     def get(self, request, *args, **kwargs):
         return self.retrieve(request, *args, **kwargs)
@@ -360,7 +367,6 @@ class WorkoutInvitationList(
     queryset = WorkoutInvitation.objects.all()
     serializer_class = WorkoutInvitationSerializer
     permission_classes = [permissions.IsAuthenticated, IsOwnerOfWorkout]
-    # parser_classes = [MultipartJsonParser, JSONParser]
 
     def get(self, request, *args, **kwargs):
         return self.list(request, *args, **kwargs)

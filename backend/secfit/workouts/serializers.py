@@ -281,13 +281,11 @@ class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
         instances:  Associated exercise instances with this Exercise type. Hyperlinks.
     """
     owner_username = serializers.SerializerMethodField()
-    instances = serializers.HyperlinkedRelatedField(
-        many=True, view_name="exerciseinstance-detail", read_only=True
-    )
     files = ExerciseFileSerializer(many=True, required=False)
+
     class Meta:
         model = Exercise
-        fields = ["url", "id", "owner", "owner_username", "name", "description", "unit", "instances", "files"]
+        fields = ["url", "id", "owner", "owner_username", "name", "description", "unit", "files"]
         extra_kwargs = {"owner": {"read_only": True}}
     
     def get_owner_username(self, obj):
@@ -295,6 +293,7 @@ class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
     
     def create(self, validated_data):
         files_data = []
+
         if "files" in validated_data:
             files_data = validated_data.pop("files")
 
@@ -311,26 +310,14 @@ class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
         instance.description = validated_data.get("description", instance.description)
         instance.unit = validated_data.get("unit", instance.unit)
         instance.save()
-
+        
         if "files" in validated_data:
             files_data = validated_data.pop("files")
-            files = instance.files
-
-            for file, file_data in zip(files.all(), files_data):
-                file.file = file_data.get("file", file.file)
-
-            # If new files have been added, creating new WorkoutFiles
-            if len(files_data) > len(files.all()):
-                for i in range(len(files.all()), len(files_data)):
-                    ExerciseFile.objects.create(
-                        exercise=instance,
-                        owner=instance.owner,
-                        file=files_data[i].get("file"),
-                    )
-            # Else if files have been removed, delete WorkoutFiles
-            elif len(files_data) < len(files.all()):
-                for i in range(len(files_data), len(files.all())):
-                    files.all()[i].delete()
+            files = ExerciseFile.objects.filter(exercise_id=instance.id)
+            for file_data in files_data:
+                ExerciseFile.objects.create(
+                    exercise=instance, owner=instance.owner, file=file_data.get("file")
+                )
 
         return instance
 

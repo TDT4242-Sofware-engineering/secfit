@@ -2,6 +2,12 @@
 
 SecFit (Secure Fitness) is a hybrid mobile application for fitness logging.
 
+## Content
+This project contains 3 applications.
+- [Backend](./backend/README.md) (Python - Django)
+- [Frontend](./frontend/README.md) (JS/HTML - Cordova)
+- [Testing](./testing/README.md) (JS - node)
+
 ## Development in VS code remote container
 
 Prerequisites:
@@ -73,7 +79,7 @@ The following figure represents the running services in the production environme
 - The second reverse proxy routes traffic at `/` to frontend and `/api/* ...` to backend. 
 - Swarm load balancer routes traffic to services running the same application
 - 2 replicas on each service prevents down time during updates
-- Persistent data by storing SQLite file on the server
+- Persistent data by storing SQLite file and media folder on the servers
 
 ## Technology
 

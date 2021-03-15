@@ -69,7 +69,7 @@ async function sendRequest(
   body,
   contentType = "application/json; charset=UTF-8"
 ) {
-  if (!url.includes("localhost")) {
+  if (url.includes("secfit.vassbo.as")) {
     url = url.replace("http://", "https://");
   }
   if (body && contentType.includes("json")) {

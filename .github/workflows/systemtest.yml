@@ -1,0 +1,13 @@
+name: Manual System test
+on:
+  workflow_dispatch:
+
+jobs:
+  system_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run tests in docker compose
+        run: |
+          docker-compose pull
+          docker-compose -f ./testing/docker-compose.yml run tests

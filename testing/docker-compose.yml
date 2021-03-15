@@ -1,0 +1,33 @@
+version: '3'
+services:
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: "wait-for-it.sh proxy:80 -- npm run test"
+    depends_on:
+      - backend
+      - frontend
+      - proxy
+    env_file:
+      - .env
+
+  backend:
+    image: jonev/secfit:backend
+
+  frontend:
+    image: jonev/secfit:frontend
+    env_file:
+      - .env
+    depends_on: 
+      - backend
+
+  proxy:
+    image: nginx:perl
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on: 
+      - backend
+      - frontend
+    expose: 
+      - "80"

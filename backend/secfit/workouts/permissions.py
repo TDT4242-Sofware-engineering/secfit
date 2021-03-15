@@ -17,7 +17,7 @@ class IsOwnerOfWorkout(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if request.method == "POST":
-            if request.data.get("workout"):
+            if hasattr(request, 'data') and request.data.get("workout"):
                 workout_id = request.data["workout"].split("/")[-2]
                 workout = Workout.objects.get(pk=workout_id)
                 if workout:
@@ -34,7 +34,7 @@ class IsOwnerOfExercise(permissions.BasePermission):
 
     def has_permission(self, request, view):
         if request.method == "POST":
-            if request.data.get("exercise"):
+            if hasattr(request, 'data') and request.data.get("exercise"):
                 exercise_id = request.data["exercise"].split("/")[-2]
                 exercise = Exercise.objects.get(pk=exercise_id)
                 if exercise:

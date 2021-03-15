@@ -15,7 +15,7 @@ COPY . /app/
 # Also install shelljs because of windows for some reason
 RUN npm install --silent -g cordova \
     && npm install --silent -g shelljs \
-    && npm install -y --silent
+    && npm install -y --silent 
 
 # Run start script (set host and start)
 CMD ["/bin/bash", "/usr/local/bin/dockerStart.sh"]

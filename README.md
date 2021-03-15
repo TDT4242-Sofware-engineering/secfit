@@ -81,6 +81,50 @@ The following figure represents the running services in the production environme
 - 2 replicas on each service prevents down time during updates
 - Persistent data by storing SQLite file and media folder on the servers
 
+## Puppeteer test results
+```bash
+ PASS  tests/secfit.test.js (162.739 s)
+  SecFit
+    ✓ should be titled "SecFit" (306 ms)
+  Secfit register
+    ✓ Register user (22817 ms)
+    ✓ Register user (23393 ms)
+  Secfit login
+    ✓ Log in (6090 ms)
+  exercise page
+    ✓ access exercise page (7227 ms)
+    ✓ create exercise (11399 ms)
+    ✓ look at exercise (2846 ms)
+    ✓ edit exercise (2529 ms)
+    ✓ delete exercise (770 ms)
+  workout page
+    ✓ access workout page (6611 ms)
+    ✓ create workout (14277 ms)
+    ✓ look at workout (2840 ms)
+    ✓ edit workout (4000 ms)
+    ✓ delete workout (738 ms)
+  athlete page
+    ✓ access athlete page (7223 ms)
+    ✓ add athlete (3896 ms)
+  coach page
+    ✓ access coach page (7235 ms)
+    ✓ add coach (3485 ms)
+  Profile functionality
+    ✓ access to profile page (7237 ms)
+    ✓ read profile info (3632 ms)
+    ✓ cancel edit email (1729 ms)
+    ✓ edit profile (4979 ms)
+    ✓ cancel delete profile (2336 ms)
+    ✓ delete profile (2407 ms)
+  Cleanup
+    ✓ access to profile page (7630 ms)
+    ✓ delete profile (2390 ms)
+Test Suites: 1 passed, 1 total
+Tests:       26 passed, 26 total
+Snapshots:   0 total
+Time:        162.869 s
+Ran all test suites.
+```
 ## Technology
 
 - **deployment** Docker swarm/compose

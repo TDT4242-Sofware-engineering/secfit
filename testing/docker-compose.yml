@@ -13,10 +13,14 @@ services:
       - .env
 
   backend:
-    image: jonev/secfit:backend
+    build:
+      context: ../backend/secfit
+      dockerfile: Dockerfile
 
   frontend:
-    image: jonev/secfit:frontend
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
     env_file:
       - .env
     depends_on: 

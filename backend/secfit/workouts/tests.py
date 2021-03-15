@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from datetime import datetime
 from users.models import User
-from workouts.models import ExerciseInstance, Exercise, Workout
+from workouts.models import ExerciseInstance, Exercise, Workout, ExerciseFile
 from types import SimpleNamespace
 from workouts.permissions import (
     IsOwner,
@@ -110,6 +110,25 @@ class WorkoutPermissionsTestCase(TestCase):
         permission = permission_check.has_permission(request, None)
 
         self.assertTrue(permission)
+    
+    def test_IsOwnerOfWorkout_no_missing_workout(self):
+        request = APIRequestFactory().get('/')
+        request.method = 'POST'
+        request.user = self.requestuser
+
+        permission_check = IsOwnerOfWorkout()
+        permission = permission_check.has_permission(request, None)
+
+        self.assertFalse(permission)
+    
+    def test_IsOwnerOfWorkout_Not_post_method(self):
+        request = APIRequestFactory().get('/')
+        request.method = 'GET'
+
+        permission_check = IsOwnerOfWorkout()
+        permission = permission_check.has_permission(request, None)
+
+        self.assertTrue(permission)
 
     def test_IsOwnerOfWorkout_no(self):
         request = APIRequestFactory().get('/')
@@ -144,6 +163,20 @@ class WorkoutPermissionsTestCase(TestCase):
 
         self.assertEqual(workout.owner, user)
         self.assertFalse(permission)
+
+    def test_IsOwnerOfWorkout_object_yes(self):
+        request = APIRequestFactory().get('/')
+        request.user = self.requestuser
+
+        workoutfile = WorkoutFile.objects.create(
+            owner=self.requestuser,
+            workout=self.workout
+        )
+
+        permission_check = IsOwnerOfWorkout()
+        permission = permission_check.has_object_permission(request, None, workoutfile)
+
+        self.assertTrue(permission)
     
     def test_IsOwnerOfExercise_yes(self):
         request = APIRequestFactory().get('/')
@@ -162,6 +195,26 @@ class WorkoutPermissionsTestCase(TestCase):
 
         ).save()
 
+
+        permission_check = IsOwnerOfExercise()
+        permission = permission_check.has_permission(request, None)
+
+        self.assertTrue(permission)
+    
+    def test_IsOwnerOfExercise_missing_exercise(self):
+        request = APIRequestFactory().get('/')
+        request.method = 'POST'
+        request.user = self.requestuser
+
+        permission_check = IsOwnerOfExercise()
+        permission = permission_check.has_permission(request, None)
+
+        self.assertFalse(permission)
+    
+    def test_IsOwnerOfExercise_Not_post_method(self):
+        request = APIRequestFactory().get('/')
+        request.method = 'GET'
+        request.user = self.requestuser
 
         permission_check = IsOwnerOfExercise()
         permission = permission_check.has_permission(request, None)
@@ -200,6 +253,28 @@ class WorkoutPermissionsTestCase(TestCase):
         permission = permission_check.has_permission(request, None)
 
         self.assertFalse(permission)
+    
+    def test_IsOwnerOfExercise_object_yes(self):
+        request = APIRequestFactory().get('/')
+        request.user = self.requestuser
+
+        exercise = Exercise.objects.create(
+            name="exname",
+            owner=self.requestuser,
+            description="desc",
+            unit="m"
+        )
+        exercise.save()
+
+        exercisefile = ExerciseFile.objects.create(
+            owner=self.requestuser,
+            exercise=exercise
+        )
+
+        permission_check = IsOwnerOfExercise()
+        permission = permission_check.has_object_permission(request, None, exercisefile)
+
+        self.assertTrue(permission)
 
     def test_IsCoachAndVisibleToCoach_yes(self):
         request = APIRequestFactory().get('/')
@@ -527,6 +602,15 @@ class WorkoutPermissionsTestCase(TestCase):
 
         permission_check = IsInvitedToWorkout()
         permission = permission_check.has_object_permission(request, view, None)
+
+        self.assertFalse(permission)
+    
+    def test_IsInvitedToWorkout_Not_put_method(self):
+        request = APIRequestFactory().get('/')
+        request.method = 'PATCH'
+
+        permission_check = IsInvitedToWorkout()
+        permission = permission_check.has_object_permission(request, None, None)
 
         self.assertFalse(permission)
     

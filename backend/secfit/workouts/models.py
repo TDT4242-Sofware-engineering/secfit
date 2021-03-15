@@ -169,7 +169,7 @@ def exercise_directory_path(instance, filename):
 def file_size(value):
     limit = 1024*1024
     if value.size > limit:
-        raise ValidationError("File too large. Max size 1 MB")
+        raise ValidationError(f"File: {value.name}, is too large. Max size 1 MB")
 
 class ExerciseFile(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="files")

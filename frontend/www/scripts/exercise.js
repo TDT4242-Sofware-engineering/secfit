@@ -29,6 +29,28 @@ function handleCancelButtonDuringCreate() {
   window.location.replace("exercises.html");
 }
 
+function validateFile() {
+  const errorMsg = document.querySelector("#errorMsg");
+  errorMsg.innerHTML = "";
+  const validatedFiles = Array.from(customFile.files).filter((file, i) => {
+    if (file.size < 1024 * 1024) {
+      return file;
+    }
+    const errorNode = document.createElement("p");
+    errorNode.classList.add("text-danger");
+    const text = document.createTextNode(
+      `File ${file.name} is too big. Max size 1MB`
+    );
+    errorNode.appendChild(text);
+    errorMsg.appendChild(errorNode);
+  });
+
+  const newFileList = new DataTransfer();
+  validatedFiles.forEach((file) => newFileList.items.add(file));
+
+  customFile.files = newFileList.files;
+}
+
 function exerciseForm() {
   let form = document.querySelector("#form-exercise");
   let formData = new FormData(form);
@@ -58,7 +80,11 @@ async function createExercise() {
     window.location.replace("exercises.html");
   } else {
     let data = await response.json();
-    let alert = createAlert("Could not create new exercise!", data);
+    let msg = "";
+    if (data.files) {
+      data.files.forEach((file) => (msg += `${file.file}`));
+    }
+    let alert = createAlert("Could not create new exercise!", data, msg);
     document.body.prepend(alert);
   }
 }
@@ -165,7 +191,11 @@ async function updateExercise(id) {
 
   if (!response.ok) {
     let data = await response.json();
-    let alert = createAlert(`Could not update exercise ${id}`, data);
+    let msg = "";
+    if (data.files) {
+      data.files.forEach((file) => (msg += `${file.file}`));
+    }
+    let alert = createAlert(`Could not update exercise ${id}`, data, msg);
     document.body.prepend(alert);
   } else {
     // duplicate code from handleCancelButtonDuringEdit
@@ -193,6 +223,10 @@ window.addEventListener("DOMContentLoaded", async () => {
   currentUser = await getCurrentUser();
 
   const urlParams = new URLSearchParams(window.location.search);
+
+  const cstmFile = document.querySelector("#customFile");
+  console.log("custom inputfile: ", cstmFile);
+  cstmFile.addEventListener("input", validateFile);
 
   // view/edit
   if (urlParams.has("id")) {

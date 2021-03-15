@@ -7,6 +7,7 @@ from django.db import models
 from django.core.files.storage import FileSystemStorage
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 
 
 class OverwriteStorage(FileSystemStorage):
@@ -165,10 +166,15 @@ class WorkoutInvitation(models.Model):
 def exercise_directory_path(instance, filename):
     return f"exercises/{instance.exercise.id}/{filename}"
 
+def file_size(value):
+    limit = 1024*1024
+    if value.size > limit:
+        raise ValidationError("File too large. Max size 1 MB")
+
 class ExerciseFile(models.Model):
     exercise = models.ForeignKey(Exercise, on_delete=models.CASCADE, related_name="files")
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="exercise_files")
-    file = models.FileField(upload_to=exercise_directory_path)
+    file = models.FileField(upload_to=exercise_directory_path, validators=[file_size])
 
 class RememberMe(models.Model):
     """Django model for an remember_me cookie used for remember me functionality.

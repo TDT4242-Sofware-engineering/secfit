@@ -147,7 +147,7 @@ class WorkoutList(
             qs = Workout.objects.filter(
                 Q(visibility="PU")
                 | (Q(visibility="CO") & Q(owner__coach=self.request.user))
-                | Q(owner=self.request.user)
+                | Q(owner=self.request.user) # BUG FIX -> This allow user to see it own workouts
                 | Q(participants=self.request.user)
             ).distinct()
 
@@ -344,6 +344,7 @@ class WorkoutFileList(
                     Q(workout__visibility="CO")
                     & Q(workout__owner__coach=self.request.user)
                 )
+                | Q(workout__visibility="PU") # BUG FIX -> to allow users to see pulic workout files
             ).distinct()
 
         return qs

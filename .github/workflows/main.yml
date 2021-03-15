@@ -1,4 +1,4 @@
-name: CI/CD
+name: CI/CD Production
 on:
   push:
     branches: [ master ]
@@ -57,12 +57,10 @@ jobs:
       - 
         name: Frontend Image digest
         run: echo ${{ steps.docker_build_frontend.outputs.digest }}
-        
+
   deploy:
     needs: [build_backend, build_frontend]
     runs-on: ubuntu-latest
-
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
     - name: Deploy to Docker swarm
       uses: appleboy/ssh-action@v0.1.4

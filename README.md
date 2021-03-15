@@ -24,11 +24,11 @@ Benefits using this development environment:
 
 Docker Compose/Swarm
 
-### Deploy:
+### Info:
 
 - The deployment uses prebuilt images from docker hub, built with github actions
 
-### Run with Docker Compose:
+### Deploy with Docker Compose:
 
 ```
 docker-compose up
@@ -36,7 +36,7 @@ docker-compose up
 
 Hosts the application on http://localhost:4011
 
-### Run (or update) with Docker Swarm
+### Deploy (or update) with Docker Swarm
 
 Prerequisites:
 
@@ -46,17 +46,23 @@ Prerequisites:
 docker stack deploy --compose-file docker-compose.yml --with-registry-auth stack-secfit
 ```
 
-Hosts the application on http://localhost:4011 with default settings
+Hosts the application on http://localhost:4011
 
 ## CI/CD Pipeline
 
 ### Master branch
-
+The following figure represents the CI/CD pipeline on master branch:
 ![Pipeline master](./documentation/Pipeline_Master.png "Pipeline Master")
+
+1. Developers push code to github
+2. A PR to master branch is created. On merge, a new docker image per service is built. While building the image, tests are executed.
+3. After github actions has built the images they are pushed to docker hub.
+4. A github action connects to the production server using SSH and executes a script `./update`.
+5. This script tells docker swarm to update the services. Docker swarm pulls the new images from docker hub, and restarts the services using these images.
 
 ### All branches
 
-- All branches are built and tested on push and pull requests
+- There are built docker images containing tests, on push and pull requests for all branches
 
 ## Production environment
 The following figure represents the running services in the production environment:

@@ -3,7 +3,9 @@
 SecFit (Secure Fitness) is a hybrid mobile application for fitness logging.
 
 ## Content
+
 This project contains 3 applications.
+
 - [Backend](./backend/README.md) (Python - Django)
 - [Frontend](./frontend/README.md) (JS/HTML - Cordova)
 - [Testing](./testing/README.md) (JS - node)
@@ -57,6 +59,7 @@ Hosts the application on http://localhost:4011
 ## CI/CD Pipeline
 
 ### Master branch
+
 The following figure represents the CI/CD pipeline on master branch:
 ![Pipeline master](./documentation/Pipeline_Master.png "Pipeline Master")
 
@@ -71,17 +74,19 @@ The following figure represents the CI/CD pipeline on master branch:
 - There are built docker images containing tests, on push and pull requests for all branches
 
 ## Production environment
+
 The following figure represents the running services in the production environment:
 ![Production environment](./documentation/ProductionServer.png "Pipeline Master")
 
 - The first reverse proxy terminates SSL/TLS and routes traffic to different docker stacks running on the server
 - Application services are running in Docker swarm
-- The second reverse proxy routes traffic at `/` to frontend and `/api/* ...` to backend. 
+- The second reverse proxy routes traffic at `/` to frontend and `/api/* ...` to backend.
 - Swarm load balancer routes traffic to services running the same application
 - 2 replicas on each service prevents down time during updates
 - Persistent data by storing SQLite file and media folder on the servers
 
 ## Puppeteer test results
+
 ```bash
  PASS  tests/secfit.test.js (162.739 s)
   SecFit
@@ -125,6 +130,7 @@ Snapshots:   0 total
 Time:        162.869 s
 Ran all test suites.
 ```
+
 ## Technology
 
 - **deployment** Docker swarm/compose
@@ -135,8 +141,6 @@ Ran all test suites.
   - **browser** - HTML5/CSS/JS, Bootstrap v5 (no jQuery dependency)
   - **mobile** Apache Cordova (uses same website)
 - **authentication** JWT
-
-
 
 ## Code and structure
 
@@ -218,3 +222,27 @@ If you want to run this as a mobile application
 It's possible you will need to add the platforms you want to run and build.
 The following documentation can be used to run the application in an Android emulator: \
 https://cordova.apache.org/docs/en/latest/guide/platforms/android/index.html
+
+# SonarQube
+
+## Report before refactoring
+
+![SonarQube report before refactoring](./documentation/sonarqube_before_refactoring.png "SonarQube report before refactoring")
+
+## Run analysis
+
+Prerequisites:
+
+- Running instance of SonarQube at localhost port 90000 (`docker run -d --name sonarqube -e SONAR_ES_BOOTSTRAP_CHECKS_DISABLE=true -p 9000:9000 sonarqube:latest`)
+- Create a user and a project - [link](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/)
+- Download and add scanner to path - [link](https://docs.sonarqube.org/latest/analysis/scan/sonarscanner/)
+
+Run the scan (replace xxxTokenxxx with your token):
+
+```bash
+sonar-scanner \
+  -Dsonar.projectKey=secfit \
+  -Dsonar.sources=. \
+  -Dsonar.host.url=http://localhost:9000 \
+  -Dsonar.login=xxxTokenxxx
+```

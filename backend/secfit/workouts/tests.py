@@ -29,21 +29,33 @@ from unittest.mock import MagicMock, Mock
 
 # Unit tests
 
+## Global constants
+TOKEN_PATH = "/api/token/"
+AUTH_PREFIX = "Bearer "
+WORKOUTS_PATH = "/api/workouts/"
+WORKOUTS_ORDERING_PATH = "/api/workouts/?ordering=-date"
+COMMENTS_PATH = "/api/comments/"
+WORKOUT_FILES_PATH = "/api/workout-files/"
+### Dummy data
+DUMMY_EMAIL = "email@email.no"
+DUMMY_STREET = "Prinsen gate"
+DUMMY_DATE = "2021-03-11T13:37:00Z"
+
 class WorkoutPermissionsTestCase(TestCase):
     def setUp(self):
         self.requestuser = get_user_model().objects.create(
             username="requestuser", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
         self.requestuser.save()
         self.workout = Workout.objects.create(
             name="workout",
             owner=self.requestuser,
-            date="2021-03-11T13:37:00Z",
+            date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PU"
         )
@@ -67,17 +79,17 @@ class WorkoutPermissionsTestCase(TestCase):
 
         user = get_user_model().objects.create(
             username="username2", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
 
         workout = Workout.objects.create(
             name="workout",
             owner=user,
-            date="2021-03-11T13:37:00Z",
+            date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PU"
         )
@@ -100,7 +112,7 @@ class WorkoutPermissionsTestCase(TestCase):
         Workout.objects.create(
             name="workout",
             owner=self.requestuser,
-            date="2021-03-11T13:37:00Z",
+            date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PU"
         ).save()
@@ -141,18 +153,18 @@ class WorkoutPermissionsTestCase(TestCase):
 
         user = get_user_model().objects.create(
             username="username2", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
         user.save()
 
         workout = Workout.objects.create(
             name="workout",
             owner=user,
-            date="2021-03-11T13:37:00Z",
+            date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PU"
         )
@@ -232,11 +244,11 @@ class WorkoutPermissionsTestCase(TestCase):
 
         user = get_user_model().objects.create(
             username="username2", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
         user.save()
 
@@ -280,11 +292,11 @@ class WorkoutPermissionsTestCase(TestCase):
         request = APIRequestFactory().get('/')
         request.user = get_user_model().objects.create(
             username="coach", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
         self.requestuser.coach = request.user
         workout = self.workout
@@ -298,11 +310,11 @@ class WorkoutPermissionsTestCase(TestCase):
         request = APIRequestFactory().get('/')
         request.user = get_user_model().objects.create(
             username="coach", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
         self.requestuser.coach = self.requestuser
         workout = self.workout
@@ -334,16 +346,16 @@ class WorkoutPermissionsTestCase(TestCase):
 
         user = get_user_model().objects.create(
             username="otheruser", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
         workout = Workout.objects.create(
             name="workout",
             owner=user,
-            date="2021-03-11T13:37:00Z",
+            date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PU"
         )
@@ -371,7 +383,7 @@ class WorkoutPermissionsTestCase(TestCase):
         workout = Workout.objects.create(
             name="workout",
             owner=self.requestuser,
-            date="2021-03-11T13:37:00Z",
+            date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PR"
         )
@@ -404,7 +416,7 @@ class WorkoutPermissionsTestCase(TestCase):
         workout = Workout.objects.create(
             name="workout",
             owner=self.requestuser,
-            date="2021-03-11T13:37:00Z",
+            date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PR"
         )
@@ -444,11 +456,11 @@ class WorkoutPermissionsTestCase(TestCase):
 
         participant = get_user_model().objects.create(
             username="participant", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
 
         WorkoutInvitation.objects.create(
@@ -472,11 +484,11 @@ class WorkoutPermissionsTestCase(TestCase):
 
         participant = get_user_model().objects.create(
             username="participant", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
 
         WorkoutInvitation.objects.create(
@@ -496,11 +508,11 @@ class WorkoutPermissionsTestCase(TestCase):
     def test_IsOwnerOrParticipantOfWorkoutInvitation_participant_yes(self):
         participant = get_user_model().objects.create(
             username="participant", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
         request = APIRequestFactory().get('/')
         request.method = 'DELETE'
@@ -524,11 +536,11 @@ class WorkoutPermissionsTestCase(TestCase):
     def test_IsOwnerOrParticipantOfWorkoutInvitation_participant_no(self):
         participant = get_user_model().objects.create(
             username="participant", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
         request = APIRequestFactory().get('/')
         request.method = 'DELETE'
@@ -552,11 +564,11 @@ class WorkoutPermissionsTestCase(TestCase):
     def test_IsInvitedToWorkout__yes(self):
         participant = get_user_model().objects.create(
             username="participant", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
         request = APIRequestFactory().get('/')
         request.method = 'PUT'
@@ -580,11 +592,11 @@ class WorkoutPermissionsTestCase(TestCase):
     def test_IsInvitedToWorkout__no(self):
         participant = get_user_model().objects.create(
             username="participant", 
-            email="email@email.no", 
+            email=DUMMY_EMAIL, 
             phone_number="91919191", 
             country="Norway", 
             city="Trondheim", 
-            street_address="Prinsen gate"
+            street_address=DUMMY_STREET
         )
         request = APIRequestFactory().get('/')
         request.method = 'PUT'
@@ -635,7 +647,7 @@ class WorkoutPermissionsTestCase(TestCase):
         workout = Workout.objects.create(
             name="workout_participants",
             owner=self.requestuser,
-            date="2021-03-11T13:37:00Z",
+            date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PR"
         )
@@ -658,7 +670,7 @@ class WorkoutPermissionsTestCase(TestCase):
         workout = Workout.objects.create(
             name="workout_participants",
             owner=self.requestuser,
-            date="2021-03-11T13:37:00Z",
+            date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PR"
         )
@@ -676,192 +688,195 @@ class WorkoutPermissionsTestCase(TestCase):
 # Boundary tests
 class NameTestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create(username="tester", email="test@test.no")
+        self.user = User.objects.create(username="tester", email=DUMMY_EMAIL)
         self.user.set_password("password")
         self.user.save()
 
         self.accessToken = None
 
         self.client.login(username="tester", password="password")
-        response = self.client.post('/api/token/', {"username": "tester", "password": "password"},  format="json")
+        response = self.client.post(TOKEN_PATH, {"username": "tester", "password": "password"},  format="json")
         self.accessToken = response.data["access"]
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.accessToken)
+        self.client.credentials(HTTP_AUTHORIZATION=AUTH_PREFIX + self.accessToken)
         
         
     def test_name_too_short(self):
         date = datetime.utcnow()
         tooShortName= ""
         workout = {"name": tooShortName, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post('/api/workouts/', workout,  format="json")
+        response = self.client.post(WORKOUTS_PATH, workout,  format="json")
         self.assertEqual(str(response.data["name"][0]), "This field may not be blank.")
     
     def test_name_too_long(self):
         date = datetime.utcnow()
         tooLongName= "x" * 101
         workout = {"name": tooLongName, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data["name"][0]), "Ensure this field has no more than 100 characters.")
 
     def test_name_upper_limit(self):
         date = datetime.utcnow()
         longName= "x" * 100
         workout = {"name": longName, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(response.data.get("name"), longName)
 
     def test_name_lower_limit(self):
         date = datetime.utcnow()
         shortName= "x"
         workout = {"name": shortName, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(response.data.get("name"), shortName)
 
     def test_name_valid(self):
         date = datetime.utcnow()
         validName= "name"
         workout = {"name": validName, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(response.data.get("name"), validName)
 
 class DateTimeCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create(username="tester", email="test@test.no")
+        self.user = User.objects.create(username="tester", email=DUMMY_EMAIL)
         self.user.set_password("password")
         self.user.save()
 
         self.accessToken = None
 
         self.client.login(username="tester", password="password")
-        response = self.client.post('/api/token/', {"username": "tester", "password": "password"},  format="json")
+        response = self.client.post(TOKEN_PATH, {"username": "tester", "password": "password"},  format="json")
         self.accessToken = response.data["access"]
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.accessToken)
+        self.client.credentials(HTTP_AUTHORIZATION=AUTH_PREFIX + self.accessToken)
 
     def test_date_upper_limit(self):
         date = datetime.max
         workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data.get("date"))[:-1], date.isoformat())
 
 
     def test_date_lower_limit(self):
         date = datetime.min
         workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data.get("date"))[:-1], date.isoformat())
 
 
     def test_date_valid(self):
         date = datetime.utcnow()
         workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data.get("date"))[:-1], date.isoformat())
 
     def test_date_invalid(self):
         time = "22.10.93"
         invalidName= "name!!..,m.,\+w0\+932\+3+49\+2904|+94!!\#m.,m.,m.,m.,m.,"
         workout = {"name": invalidName, "date": time, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data["date"][0]), "Datetime has wrong format. Use one of these formats instead: YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z].")
 
 
 class VisibilityTestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create(username="tester", email="test@test.no")
+        self.user = User.objects.create(username="tester", email=DUMMY_EMAIL)
         self.user.set_password("password")
         self.user.save()
 
         self.accessToken = None
 
         self.client.login(username="tester", password="password")
-        response = self.client.post('/api/token/', {"username": "tester", "password": "password"},  format="json")
+        response = self.client.post(TOKEN_PATH, {"username": "tester", "password": "password"},  format="json")
         self.accessToken = response.data["access"]
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.accessToken)
+        self.client.credentials(HTTP_AUTHORIZATION=AUTH_PREFIX + self.accessToken)
         
         
     def test_visibility_too_short(self):
         date = datetime.utcnow()
         tooShortVisibility = "P"
         workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": tooShortVisibility, "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post('/api/workouts/', workout,  format="json")
+        response = self.client.post(WORKOUTS_PATH, workout,  format="json")
         self.assertEqual(str(response.data["visibility"][0]), "\"P\"" + " is not a valid choice.")
     
     def test_visibility_too_long(self):
         date = datetime.utcnow()
         tooLongVisibility = "PUT"
         workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": tooLongVisibility, "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data["visibility"][0]), "\"PUT\"" + " is not a valid choice.")
 
     def test_visibility_valid(self):
         date = datetime.utcnow()
         validVisibility = "PU"
         workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": validVisibility, "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(response.data.get("visibility"), validVisibility)
 
     def test_visibility_invalid(self):
         date = datetime.utcnow()
         invalidVisibility = "!@!#"
         workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": invalidVisibility, "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data["visibility"][0]), "\"!@!#\"" + " is not a valid choice.")
 
 
 class NotesTestCase(APITestCase):
     def setUp(self):
-        self.user = User.objects.create(username="tester", email="test@test.no")
+        self.user = User.objects.create(username="tester", email=DUMMY_EMAIL)
         self.user.set_password("password")
         self.user.save()
 
         self.accessToken = None
 
         self.client.login(username="tester", password="password")
-        response = self.client.post('/api/token/', {"username": "tester", "password": "password"},  format="json")
+        response = self.client.post(TOKEN_PATH, {"username": "tester", "password": "password"},  format="json")
         self.accessToken = response.data["access"]
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.accessToken)
+        self.client.credentials(HTTP_AUTHORIZATION=AUTH_PREFIX + self.accessToken)
         
         
     def test_notes_too_short(self):
         date = datetime.utcnow()
         tooShortNote= ""
         workout = {"name": "validName", "date": date, "notes": tooShortNote, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post('/api/workouts/', workout,  format="json")
+        response = self.client.post(WORKOUTS_PATH, workout,  format="json")
         self.assertEqual(str(response.data["notes"][0]), "This field may not be blank.")
     
     def test_notes_upper_limit(self):
         date = datetime.utcnow()
         longNote= "x" * 1000000
         workout = {"name": "validName", "date": date, "notes":longNote, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(response.data.get("notes"), longNote)
 
     def test_notes_lower_limit(self):
         date = datetime.utcnow()
         shortNote= "x"
         workout = {"name": "validName", "date": date, "notes": shortNote, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(response.data.get("notes"), shortNote)
 
     def test_notes_valid(self):
         date = datetime.utcnow()
         validNote= "validNote"
         workout = {"name": "validName", "date": date, "notes": validNote, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(response.data.get("notes"), validNote)
 
 
 class ExerciseTestCase(APITestCase):
+
     def setUp(self):
-        self.user = User.objects.create(username="tester", email="test@test.no")
+        self.EXERCISE_URL = "http://testserver/api/exercises/1/"
+
+        self.user = User.objects.create(username="tester", email=DUMMY_EMAIL)
         self.user.set_password("password")
         self.user.save()
 
         self.accessToken = None
 
         self.client.login(username="tester", password="password")
-        response = self.client.post('/api/token/', {"username": "tester", "password": "password"},  format="json")
+        response = self.client.post(TOKEN_PATH, {"username": "tester", "password": "password"},  format="json")
         self.accessToken = response.data["access"]
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + self.accessToken)
+        self.client.credentials(HTTP_AUTHORIZATION=AUTH_PREFIX + self.accessToken)
         
         self.date = datetime.utcnow()
         self.pushups = Exercise.objects.create(name="Push-ups", unit="number", owner=self.user)
@@ -872,7 +887,7 @@ class ExerciseTestCase(APITestCase):
         
         exercise = {"exercise":"", "workout":"api/workouts/1", "sets":"", "number":""}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
-        response = self.client.post('/api/workouts/', workout,  format="json")
+        response = self.client.post(WORKOUTS_PATH, workout,  format="json")
         feedback =response.data["exercise_instances"][0]
         
         self.assertEqual(str(feedback["exercise"][0]), "This field may not be null.")
@@ -882,10 +897,10 @@ class ExerciseTestCase(APITestCase):
     
     def test_too_long(self):
         toobigNum = "2"*1001
-        exercise = {"exercise":"http://testserver/api/exercises/1/", "workout": "validWorkout", "sets": toobigNum, "number": toobigNum}
+        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": toobigNum, "number": toobigNum}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
         
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         
         feedback=response.data["exercise_instances"][0]
         self.assertEqual(str(feedback["sets"][0]), "String value too large.")
@@ -893,9 +908,9 @@ class ExerciseTestCase(APITestCase):
 
     def test_upper_limit(self):
         longNum= "2" * 1000
-        exercise = {"exercise":"http://testserver/api/exercises/1/", "workout": "validWorkout", "sets": longNum, "number": longNum}
+        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": longNum, "number": longNum}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
         
         feedback=response.data["exercise_instances"][0]
         self.assertIsNone(feedback.get("sets"))
@@ -903,9 +918,9 @@ class ExerciseTestCase(APITestCase):
 
     def test_lower_limit(self):
         shortNum= "2"
-        exercise = {"exercise":"http://testserver/api/exercises/1/", "workout": "validWorkout", "sets": shortNum, "number": shortNum}
+        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": shortNum, "number": shortNum}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
 
         feedback=response.data["exercise_instances"][0]
         self.assertIsNone(feedback.get("sets"))
@@ -914,9 +929,9 @@ class ExerciseTestCase(APITestCase):
     def test_valid(self):
 
         validNum = "15"
-        exercise = {"exercise":"http://testserver/api/exercises/1/", "workout": "validWorkout", "sets": validNum, "number": validNum}
+        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": validNum, "number": validNum}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
 
         feedback=response.data["exercise_instances"][0]
         self.assertIsNone(feedback.get("exercise"))
@@ -929,7 +944,7 @@ class ExerciseTestCase(APITestCase):
         invalidNum = "notValid"
         exercise = {"exercise":"notValid", "workout": "workout", "sets": invalidNum, "number": invalidNum}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
-        response = self.client.post("/api/workouts/", workout, format="json")
+        response = self.client.post(WORKOUTS_PATH, workout, format="json")
 
         feedback=response.data["exercise_instances"][0]
         self.assertEqual(str(feedback["exercise"][0]), "Invalid hyperlink - No URL match.")
@@ -939,15 +954,15 @@ class ExerciseTestCase(APITestCase):
 
 class FR5TestCase(APITestCase):
     def setUp(self):
-        self.coach = User.objects.create(username="coach", email="test@test.no")
+        self.coach = User.objects.create(username="coach", email=DUMMY_EMAIL)
         self.coach.set_password("password")
         self.coach.save()
         
-        self.athlete = User.objects.create(username="athlete", email="test@test.no", coach=self.coach)
+        self.athlete = User.objects.create(username="athlete", email=DUMMY_EMAIL, coach=self.coach)
         self.athlete.set_password("password")
         self.athlete.save()
 
-        self.outsider = User.objects.create(username="outsider", email="test@test.no")
+        self.outsider = User.objects.create(username="outsider", email=DUMMY_EMAIL)
         self.outsider.set_password("password")
         self.outsider.save()
 
@@ -963,7 +978,7 @@ class FR5TestCase(APITestCase):
         w_pr = Workout.objects.create(
             name="workout_PR",
             owner=self.athlete,
-            date="2021-03-11T13:37:00Z",
+            date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PR"
         )
@@ -1044,11 +1059,11 @@ class FR5TestCase(APITestCase):
     def test_get_workouts_athlete(self):
         # Login as athlete
         self.client.login(username="athlete", password="password")
-        response = self.client.post('/api/token/', {"username": "athlete", "password": "password"},  format="json")
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])
+        response = self.client.post(TOKEN_PATH, {"username": "athlete", "password": "password"},  format="json")
+        self.client.credentials(HTTP_AUTHORIZATION=AUTH_PREFIX + response.data["access"])
 
         # Workouts
-        response = self.client.get('/api/workouts/?ordering=-date')
+        response = self.client.get(WORKOUTS_ORDERING_PATH)
         self.assertEqual(response.data.get("count"), 3)
         self.assertEqual(response.data["results"][0]["name"], "workout_PU")
         self.assertEqual(response.data["results"][1]["name"], "workout_CO")
@@ -1059,24 +1074,24 @@ class FR5TestCase(APITestCase):
         self.assertEqual(len(response.data["results"][2]["exercise_instances"]), 1)
 
         # Comments
-        response = self.client.get('/api/comments/')
+        response = self.client.get(COMMENTS_PATH)
         self.assertEqual(response.data.get("count"), 3)
         self.assertEqual(response.data["results"][0]["content"], "comment_PU")
         self.assertEqual(response.data["results"][1]["content"], "comment_CO")
         self.assertEqual(response.data["results"][2]["content"], "comment_PR")
 
         # Workout files
-        response = self.client.get('/api/workout-files/')
+        response = self.client.get(WORKOUT_FILES_PATH)
         self.assertEqual(response.data.get("count"), 3)
 
     def test_get_workouts_coach(self):
         # Login as coach
         self.client.login(username="coach", password="password")
         response = self.client.post('/api/token/', {"username": "coach", "password": "password"},  format="json")
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])
+        self.client.credentials(HTTP_AUTHORIZATION=AUTH_PREFIX + response.data["access"])
 
         # Workouts
-        response = self.client.get('/api/workouts/?ordering=-date')
+        response = self.client.get(WORKOUTS_ORDERING_PATH)
         self.assertEqual(response.data.get("count"), 2)
         self.assertEqual(response.data["results"][0]["name"], "workout_PU")
         self.assertEqual(response.data["results"][1]["name"], "workout_CO")
@@ -1085,33 +1100,33 @@ class FR5TestCase(APITestCase):
         self.assertEqual(len(response.data["results"][1]["exercise_instances"]), 1)
         
         # Comments
-        response = self.client.get('/api/comments/')
+        response = self.client.get(COMMENTS_PATH)
         self.assertEqual(response.data.get("count"), 2)
         self.assertEqual(response.data["results"][0]["content"], "comment_PU")
         self.assertEqual(response.data["results"][1]["content"], "comment_CO")
 
         # Workoutfiles
-        response = self.client.get('/api/workout-files/')
+        response = self.client.get(WORKOUT_FILES_PATH)
         self.assertEqual(response.data.get("count"), 2)
 
     def test_get_workouts_outsider(self):
         # Login as outsider
         self.client.login(username="outsider", password="password")
         response = self.client.post('/api/token/', {"username": "outsider", "password": "password"},  format="json")
-        self.client.credentials(HTTP_AUTHORIZATION="Bearer " + response.data["access"])      
+        self.client.credentials(HTTP_AUTHORIZATION=AUTH_PREFIX + response.data["access"])      
         
         # Workouts
-        response = self.client.get('/api/workouts/?ordering=-date')
+        response = self.client.get(WORKOUTS_ORDERING_PATH)
         self.assertEqual(response.data.get("count"), 1)
         self.assertEqual(response.data["results"][0]["name"], "workout_PU")
         # Exercise instances
         self.assertEqual(len(response.data["results"][0]["exercise_instances"]), 1)
 
         # Comments
-        response = self.client.get('/api/comments/')
+        response = self.client.get(COMMENTS_PATH)
         self.assertEqual(response.data.get("count"), 1)
         self.assertEqual(response.data["results"][0]["content"], "comment_PU")
 
         # Workout files
-        response = self.client.get('/api/workout-files/')
+        response = self.client.get(WORKOUT_FILES_PATH)
         self.assertEqual(response.data.get("count"), 1)

@@ -561,13 +561,13 @@ describe("Profile functionality", () => {
     );
 
     await page.waitForSelector('input[name="city"]');
-    const city = await page.evaluate(
+    await page.evaluate(
       (field) => document.querySelector(field).value = "Trondheim",
       'input[name="city"]'
     );
 
     await page.waitForSelector('input[name="country"]');
-    const country = await page.evaluate(
+    await page.evaluate(
       (field) => document.querySelector(field).value = "Sweden",
       'input[name="country"]'
     );

@@ -1130,3 +1130,121 @@ class FR5TestCase(APITestCase):
         # Workout files
         response = self.client.get(WORKOUT_FILES_PATH)
         self.assertEqual(response.data.get("count"), 1)
+
+class WorkoutSerializerUpdateTestCase(APITestCase):
+    def setUp(self):       
+        self.athlete = User.objects.create(username="athlete", email=DUMMY_EMAIL)
+        self.athlete.set_password("password")
+        self.athlete.save()
+
+        # Setting ut data to query as different roles
+        ex = Exercise.objects.create(
+            name="ex1",
+            owner=self.athlete,
+            description="ex desc",
+            unit="m"
+        )
+        ex.save()
+
+        w_pr = Workout.objects.create(
+            name="workout_PR",
+            owner=self.athlete,
+            date=DUMMY_DATE,
+            notes="workoutnote",
+            visibility="PR"
+        )
+        w_pr.save()
+
+        ExerciseInstance.objects.create(
+            workout=w_pr,
+            exercise=ex,
+            sets=1,
+            number=2
+        ).save()
+
+        ExerciseInstance.objects.create(
+            workout=w_pr,
+            exercise=ex,
+            sets=2,
+            number=3
+        ).save()
+        
+        WorkoutFile.objects.create(
+            owner=self.athlete,
+            workout=w_pr
+        ).save()
+    
+    def test_add_exercise(self):
+        self.client.login(username="athlete", password="password")
+        response = self.client.post('/api/token/', {"username": "athlete", "password": "password"},  format="json")
+        self.client.credentials(HTTP_AUTHORIZATION=AUTH_PREFIX + response.data["access"])
+
+        data = {
+            'name': "name from put",
+            'date': "2021-04-11T11:18:00.000Z",
+            'notes': "notes from put",
+            'visibility': 'PR',
+            'participants': '[]',
+            'exercise_instances': '[\
+                {"exercise":"https://secfit.vassbo.as/api/exercises/1/","number":"3","sets":"4"}, \
+                {"exercise":"https://secfit.vassbo.as/api/exercises/1/","number":"4","sets":"5"},\
+                {"exercise":"https://secfit.vassbo.as/api/exercises/1/","number":"5","sets":"6"}\
+                ]',
+            'files': []
+        }
+        response = self.client.put(WORKOUTS_PATH + "1/", data,  format="multipart")
+        
+        exepected = {
+            "url":"http://testserver/api/workouts/1/",
+            "id":1,
+            "name":"name from put",
+            "date":"2021-04-11T11:18:00Z",
+            "notes":"notes from put",
+            "owner":"http://testserver/api/users/1/",
+            "owner_username":"athlete",
+            "visibility":"PR",
+            "exercise_instances":[
+                {"url":"http://testserver/api/exercise-instances/1/","id":1,"exercise":"http://testserver/api/exercises/1/","sets":4,"number":3,"workout":"http://testserver/api/workouts/1/"},
+                {"url":"http://testserver/api/exercise-instances/2/","id":2,"exercise":"http://testserver/api/exercises/1/","sets":5,"number":4,"workout":"http://testserver/api/workouts/1/"},
+                {"url":"http://testserver/api/exercise-instances/3/","id":3,"exercise":"http://testserver/api/exercises/1/","sets":6,"number":5,"workout":"http://testserver/api/workouts/1/"}],
+            "files":[],
+            "participants":[]
+        }
+            
+        self.assertEqual(response.json(), exepected)
+    
+    def test_remove_exercise(self):
+        self.client.login(username="athlete", password="password")
+        response = self.client.post('/api/token/', {"username": "athlete", "password": "password"},  format="json")
+        self.client.credentials(HTTP_AUTHORIZATION=AUTH_PREFIX + response.data["access"])
+
+        data = {
+            'name': "name from put",
+            'date': "2021-04-11T11:18:00.000Z",
+            'notes': "notes from put",
+            'visibility': 'PR',
+            'participants': '[]',
+            'exercise_instances': '[\
+                {"exercise":"https://secfit.vassbo.as/api/exercises/1/","number":"3","sets":"4"}\
+                ]',
+            'files': []
+        }
+        response = self.client.put(WORKOUTS_PATH + "1/", data,  format="multipart")
+        
+        exepected = {
+            "url":"http://testserver/api/workouts/1/",
+            "id":1,
+            "name":"name from put",
+            "date":"2021-04-11T11:18:00Z",
+            "notes":"notes from put",
+            "owner":"http://testserver/api/users/1/",
+            "owner_username":"athlete",
+            "visibility":"PR",
+            "exercise_instances":[
+                {"url":"http://testserver/api/exercise-instances/1/","id":1,"exercise":"http://testserver/api/exercises/1/","sets":4,"number":3,"workout":"http://testserver/api/workouts/1/"}],
+            "files":[],
+            "participants":[]
+        }
+            
+        self.assertEqual(response.json(), exepected)
+

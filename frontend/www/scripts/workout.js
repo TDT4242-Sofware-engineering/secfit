@@ -20,7 +20,7 @@ async function retrieveWorkout(id) {
 
         for (let key of formData.keys()) {
             let selector = `input[name="${key}"], textarea[name="${key}"]`;
-            let input = form.querySelector(selector);
+            let inputFromForm = form.querySelector(selector);
             let newVal = workoutData[key];
             if (key == "date") {
                 // Creating a valid datetime-local string with the correct local time
@@ -29,7 +29,7 @@ async function retrieveWorkout(id) {
                 newVal = date.substring(0, newVal.length - 1);    // remove Z (since this is a local time, not UTC)
             }
             if (key != "files") {
-                input.value = newVal;
+                inputFromForm.value = newVal;
             }
         }
 

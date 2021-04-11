@@ -137,47 +137,6 @@ async function retrieveExercise(id) {
     }
 
     handleExerciseFiles(exerciseData);
-    // if (exerciseData.files && exerciseData.files.length > 0) {
-    //   const mediaCarousel = document.querySelector("#mediaCarousel");
-    //   mediaCarousel.classList.remove("hide");
-
-    //   exerciseData.files.forEach((file, i) => {
-    //     // Indicator button
-    //     const btn = document.createElement("button");
-    //     btn.setAttribute("type", "button");
-    //     btn.setAttribute("data-bs-target", "#mediaCarousel");
-    //     btn.setAttribute("data-bs-slide-to", i);
-    //     btn.setAttribute("aria-label", `Slide ${i}`);
-    //     if (i === 0) {
-    //       btn.setAttribute("class", "active");
-    //       btn.setAttribute("aria-current", "true");
-    //     }
-    //     const carouselIndicator = document.querySelector(
-    //       ".carousel-indicators"
-    //     );
-    //     carouselIndicator.appendChild(btn);
-
-    //     // Carousel item
-    //     const carouselItem = document.createElement("div");
-    //     carouselItem.classList.add("carousel-item");
-    //     carouselItem.setAttribute("style", "height:400px");
-    //     if (i === 0) {
-    //       carouselItem.classList.add("active");
-    //     }
-    //     const media = document.createElement("img");
-    //     media.classList.add("d-block");
-    //     media.classList.add("w-75");
-    //     media.classList.add("h-100");
-    //     media.classList.add("mx-auto");
-    //     media.classList.add("pb-4");
-    //     media.setAttribute("style", "object-fit: contain");
-    //     media.src = file.file;
-    //     carouselItem.appendChild(media);
-
-    //     const carouselInner = document.querySelector(".carousel-inner");
-    //     carouselInner.appendChild(carouselItem);
-    //   });
-    // }
   }
 }
 
@@ -283,7 +242,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     editButton.addEventListener("click", handleEditExerciseButtonClick);
     deleteButton.addEventListener(
       "click",
-      (async (id) => await deleteExercise(id)).bind(undefined, exerciseId)
+      (async (id) => deleteExercise(id)).bind(undefined, exerciseId)
     );
     okButton.addEventListener("click", async () => {
       await updateExercise(exerciseId);
@@ -298,7 +257,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     cancelButton.className = cancelButton.className.replace(" hide", "");
     customFile.classList.remove("hide");
 
-    okButton.addEventListener("click", async () => await createExercise());
+    okButton.addEventListener("click", async () => createExercise());
     cancelButton.addEventListener("click", handleCancelButtonDuringCreate);
   }
 });

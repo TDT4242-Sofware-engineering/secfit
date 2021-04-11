@@ -313,7 +313,6 @@ class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
         
         if "files" in validated_data:
             files_data = validated_data.pop("files")
-            files = ExerciseFile.objects.filter(exercise_id=instance.id)
             for file_data in files_data:
                 ExerciseFile.objects.create(
                     exercise=instance, owner=instance.owner, file=file_data.get("file")

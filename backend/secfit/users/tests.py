@@ -96,8 +96,6 @@ class RegisterTestCase(APITestCase):
 
 
 class UserSerializerTestCase(TestCase):
-    def setUp(self):
-        pass
 
     def tests_serialize_user_ok(self):
         

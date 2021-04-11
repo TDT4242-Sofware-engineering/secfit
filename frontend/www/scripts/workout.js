@@ -392,7 +392,7 @@ function togglehideById(id){
     }
 }
 
-async function onSearchForInputChange(e, container, currentUser){
+async function onSearchForInputChange(e, container, currentUserUsername){
     container.innerHTML = "";
     container.className = "col-lg-6";
     let input = e.target.value;
@@ -407,20 +407,20 @@ async function onSearchForInputChange(e, container, currentUser){
         button.value = user.username;
         button.type = "button";
         button.className = "btn btn-primary";
-        button.addEventListener("click", (async () => toggleParticipant(user.username, currentUser)));
+        button.addEventListener("click", (async () => toggleParticipant(user.username, currentUserUsername)));
         container.appendChild(button)
     })
 }
 
-function toggleParticipant(username, currentUser){
+function toggleParticipant(username, currentUserUsername){
     console.log("Chosen user: ", username);
     let ownerInput = document.querySelector("#inputOwner");
     if(participants.indexOf(username) < 0){
         participants.push(username);
-        ownerInput.value = currentUser + ", " + participants.join(", ");
+        ownerInput.value = currentUserUsername + ", " + participants.join(", ");
     } else {
         participants = participants.filter(f => f !== username);
         let temp = participants.length > 0 ? ", " + participants.join(", ") : "";
-        ownerInput.value = currentUser + temp;
+        ownerInput.value = currentUserUsername + temp;
     }
 }

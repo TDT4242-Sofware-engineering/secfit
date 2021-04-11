@@ -347,9 +347,9 @@ window.addEventListener("DOMContentLoaded", async () => {
         if (workoutData["owner"] == currentUser.url) {
             editWorkoutButton.classList.remove("hide");
             editWorkoutButton.addEventListener("click", handleEditWorkoutButtonClick);
-            deleteWorkoutButton.addEventListener("click", (async (id) => await deleteWorkout(id)).bind(undefined, id));
-            okWorkoutButton.addEventListener("click", (async (id) => await updateWorkout(id)).bind(undefined, id));
-            postCommentButton.addEventListener("click", (async (id) => await createComment(id)).bind(undefined, id));
+            deleteWorkoutButton.addEventListener("click", (async (id) => deleteWorkout(id)).bind(undefined, id));
+            okWorkoutButton.addEventListener("click", (async (id) => updateWorkout(id)).bind(undefined, id));
+            postCommentButton.addEventListener("click", (async (id) => createComment(id)).bind(undefined, id));
             divCommentRow.className = divCommentRow.className.replace(" hide", "");
         }
     } else {
@@ -359,9 +359,9 @@ window.addEventListener("DOMContentLoaded", async () => {
         console.log("usersContainer", usersContainer)
         let inputSearchForUser = document.querySelector("#inputSearchForUser");
         inputSearchForUser.style.display = "none"
-        inputSearchForUser.addEventListener("input", (async (e) => await onSearchForInputChange(e, usersContainer, currentUser.username)));
+        inputSearchForUser.addEventListener("input", (async (e) => onSearchForInputChange(e, usersContainer, currentUser.username)));
         let addAthelteButton = document.querySelector("#btn-add-athelte");
-        addAthelteButton.addEventListener("click", (async () => await togglehideById("#inputSearchForUser")));
+        addAthelteButton.addEventListener("click", (async () => togglehideById("#inputSearchForUser")));
 
 
         ownerInput.value = currentUser.username;
@@ -375,7 +375,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         inputSearchForUser.className = inputSearchForUser.className.replace(" hide", "");
         addAthelteButton.className = addAthelteButton.className.replace(" hide", "");
 
-        okWorkoutButton.addEventListener("click", async () => await createWorkout());
+        okWorkoutButton.addEventListener("click", async () => createWorkout());
         cancelWorkoutButton.addEventListener("click", handleCancelDuringWorkoutCreate);
         divCommentRow.className += " hide";
     }
@@ -407,7 +407,7 @@ async function onSearchForInputChange(e, container, currentUser){
         button.value = user.username;
         button.type = "button";
         button.className = "btn btn-primary";
-        button.addEventListener("click", (async () => await toggleParticipant(user.username, currentUser)));
+        button.addEventListener("click", (async () => toggleParticipant(user.username, currentUser)));
         container.appendChild(button)
     })
 }

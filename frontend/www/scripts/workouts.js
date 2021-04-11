@@ -56,10 +56,8 @@ async function fetchWorkoutInvitations(){
             let acceptButton = buttons[0];
             let declineButton = buttons[1];
 
-            //acceptButton.id = `btn-accept-${offer.id}`;
             acceptButton.addEventListener("click", async (event) => await acceptInvitation(event, invitation));
 
-            //declineButton.id = `btn-decline-${offer.id}`;
             declineButton.addEventListener("click", async (event) => await deleteInvitationAndReload(event, invitation));
 
             listWorkoutInvitation.appendChild(li);

@@ -43,10 +43,8 @@ async function displayOffers() {
             let acceptButton = buttons[0];
             let declineButton = buttons[1];
 
-            //acceptButton.id = `btn-accept-${offer.id}`;
             acceptButton.addEventListener("click", async (event) => await acceptOffer(event, offer.url, offer.owner));
 
-            //declineButton.id = `btn-decline-${offer.id}`;
             declineButton.addEventListener("click", async (event) => await declineOffer(event, offer.url));
 
             listOffers.appendChild(li);

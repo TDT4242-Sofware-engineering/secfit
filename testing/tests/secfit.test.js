@@ -98,13 +98,6 @@ describe("exercise page", () => {
     await page.waitForSelector("#inputUnit");
     await page.type("#inputUnit", exercise.unit)
 
-    // await page.waitForSelector("#customFile");
-    // await page.evaluate((selector) => {
-    //   document.querySelector(selector).click();
-    // }, "#customFile");
-    // const uploadHandle = await page.$('input[type="file"]')
-    // uploadHandle.uploadFile("./mock/image.jpg");
-
     await page.waitForSelector("#btn-ok-exercise");
     await page.evaluate((selector) => {
       document.querySelector(selector).click();
@@ -179,21 +172,6 @@ describe("exercise page", () => {
 
   }, 25000)
 
-  // delete exercise
-  // test("delete exercise", async () =>{
-
-  //   await page.evaluate((selector) => {
-  //     document.querySelector(selector).click();
-  //   }, "#btn-edit-exercise");
-    
-  //   await page.evaluate((selector) => {
-  //     document.querySelector(selector).click();
-  //   }, "#btn-delete-exercise");
-
-  //   await page.waitForSelector("#btn-create-exercise");
-
-  // }, 25000)
-
 })
 
 // Workouts
@@ -247,13 +225,6 @@ describe("workout page", () => {
 
     await page.waitForSelector("#inputNotes");
     await page.type("#inputNotes", workout.notes);
-
-    // await page.waitForSelector("#customFile");
-    // await page.evaluate((selector) => {
-    //   document.querySelector(selector).click();
-    // }, "#customFile");
-    // const uploadHandle = await page.$('input[type="file"]')
-    // uploadHandle.uploadFile("./mock/image.jpg");
 
     await page.select('select[name=type]', '4')
 

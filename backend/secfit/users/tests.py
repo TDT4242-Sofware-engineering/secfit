@@ -131,7 +131,7 @@ class UserSerializerTestCase(TestCase):
 
         
 
-        workout = Workout.objects.create(
+        Workout.objects.create(
             name="workout",
             owner=user,
             date="2021-03-11T13:37:00Z",

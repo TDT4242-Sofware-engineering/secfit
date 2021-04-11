@@ -104,7 +104,6 @@ class OfferList(
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        qs = Offer.objects.none()
         result = Offer.objects.none()
 
         if self.request.user:

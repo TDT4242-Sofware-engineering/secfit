@@ -14,7 +14,7 @@ describe("SecFit", () => {
 
   it('should be titled "SecFit"', async () => {
     const navTitle = await page.$(".navbar-brand");
-    const title = await page.evaluate((title) => title.innerText, navTitle);
+    const title = await page.evaluate((t) => t.innerText, navTitle);
     expect(title).toBe("SecFit");
   });
 });

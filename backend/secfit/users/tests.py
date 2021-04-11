@@ -193,38 +193,38 @@ class UserSerializerTestCase(TestCase):
 class UsernameTestCase(APITestCase):
 
     def test_username_too_short(self):
-        tooShortUsername = ""
-        user = {"username": tooShortUsername, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
+        too_short_username = ""
+        user = {"username": too_short_username, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user,  format="json")
         self.assertEqual(str(response.data["username"][0]), "This field may not be blank.")
     
     def test_username_too_long(self):
-        tooLongUsername = "x" * 151
-        user = {"username": tooLongUsername, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
+        too_long_username = "x" * 151
+        user = {"username": too_long_username, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertEqual(str(response.data["username"][0]), "Ensure this field has no more than 150 characters.")
 
     def test_username_upper_limit(self):
-        longUsername = "x" * 150
-        user = {"username": longUsername, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
+        long_username = "x" * 150
+        user = {"username": long_username, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("username"))
 
     def test_username_lower_limit(self):
-        shortUsername = "x"
-        user = {"username": shortUsername, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
+        short_username = "x"
+        user = {"username": short_username, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("username"))
 
     def test_username_valid(self):
-        validUsername = "userName"
-        user = {"username": validUsername, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
+        valid_username = "userName"
+        user = {"username": valid_username, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("username"))
 
     def test_username_invalid(self):
-        invalidUsername = "userName!!"
-        user = {"username": invalidUsername, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
+        invalid_username = "userName!!"
+        user = {"username": invalid_username, "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertEqual(str(response.data["username"][0]), "Enter a valid username. This value may contain only letters, numbers, and @/./+/-/_ characters.")
         
@@ -232,38 +232,38 @@ class UsernameTestCase(APITestCase):
 class EmailTestCase(APITestCase):
 
     def test_email_too_short(self):
-        tooShortEmail = "x@x.x"
-        user = {"username": "validUsername", "email": tooShortEmail, "password": "validPassword", "password1": "validPassword"}
+        too_short_email = "x@x.x"
+        user = {"username": "validUsername", "email": too_short_email, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user,  format="json")
         self.assertEqual(str(response.data["email"][0]), "Enter a valid email address.")
     
     def test_email_too_long(self):
-        tooLongEmail = ("x" * 250)+"@x.xx"
-        user = {"username": "validUsername", "email": tooLongEmail, "password": "validPassword", "password1": "validPassword"}
+        too_long_email = ("x" * 250)+"@x.xx"
+        user = {"username": "validUsername", "email": too_long_email, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertEqual(str(response.data["email"][0]), "Ensure this field has no more than 254 characters.")
 
     def test_email_upper_limit(self):
-        longEmail = ("x" * 249)+"@x.xx"
-        user = {"username": "validUsername", "email": longEmail, "password": "validPassword", "password1": "validPassword"}
+        long_email = ("x" * 249)+"@x.xx"
+        user = {"username": "validUsername", "email": long_email, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("email"))
 
     def test_email_lower_limit(self):
-        shortEmail = "x@x.xx"
-        user = {"username": "validUsername", "email": shortEmail, "password": "validPassword", "password1": "validPassword"}
+        short_email = "x@x.xx"
+        user = {"username": "validUsername", "email": short_email, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("email"))
 
     def test_email_valid(self):
-        validEmail = "valid@email.com"
-        user = {"username": "validUsername", "email": validEmail, "password": "validPassword", "password1": "validPassword"}
+        valid_email = "valid@email.com"
+        user = {"username": "validUsername", "email": valid_email, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("email"))
 
     def test_email_invalid(self):
-        invalidEmail = "..@xx.xx"
-        user = {"username": "validUsername", "email": invalidEmail, "password": "validPassword", "password1": "validPassword"}
+        invalid_email = "..@xx.xx"
+        user = {"username": "validUsername", "email": invalid_email, "password": "validPassword", "password1": "validPassword"}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertEqual(str(response.data["email"][0]), "Enter a valid email address.")
 
@@ -272,26 +272,26 @@ class EmailTestCase(APITestCase):
 class PhoneNumberTestCase(APITestCase):
     
     def test_phone_too_long(self):
-        tooLongPhone = "x" * 51
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "phone_number": tooLongPhone}
+        too_long_phone = "x" * 51
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "phone_number": too_long_phone}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertEqual(str(response.data["phone_number"][0]), "Ensure this field has no more than 50 characters.")
 
     def test_phone_upper_limit(self):
-        longPhone = "x" * 50
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "phone_number": longPhone}
+        long_phone = "x" * 50
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "phone_number": long_phone}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("phone_number"))
 
     def test_phone_lower_limit(self):
-        shortPhone = ""
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "phone_number": shortPhone}
+        short_phone = ""
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "phone_number": short_phone}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("phone_number"))
 
     def test_phone_valid(self):
-        validPhone = "12436487"
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "phone_number": validPhone}
+        valid_phone = "12436487"
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "phone_number": valid_phone}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("phone_number"))
 
@@ -299,26 +299,26 @@ class PhoneNumberTestCase(APITestCase):
 class AddressTestCase(APITestCase):
 
     def test_address_too_long(self):
-        tooLongAddress = "x" * 51
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "street_address": tooLongAddress}
+        too_long_address = "x" * 51
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "street_address": too_long_address}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertEqual(str(response.data["street_address"][0]), "Ensure this field has no more than 50 characters.")
 
     def test_address_upper_limit(self):
-        longAddress = "x" * 50
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "street_address": longAddress}
+        long_address = "x" * 50
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "street_address": long_address}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("street_address"))
 
     def test_address_lower_limit(self):
-        shortAddress = ""
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "street_address": shortAddress}
+        short_address = ""
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "street_address": short_address}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("street_address"))
 
     def test_address_valid(self):
-        validAddress = "Munkegata 34"
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "street_address": validAddress}
+        valid_address = "Munkegata 34"
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "street_address": valid_address}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("street_address"))
 
@@ -329,26 +329,26 @@ class CountryTestCase(APITestCase):
 
     
     def test_country_too_long(self):
-        tooLongCountry = "x" * 51
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "country": tooLongCountry}
+        too_long_country = "x" * 51
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "country": too_long_country}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertEqual(str(response.data["country"][0]), "Ensure this field has no more than 50 characters.")
 
     def test_country_upper_limit(self):
-        longCountry = "x" * 50
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "country": longCountry}
+        long_country = "x" * 50
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "country": long_country}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("country"))
 
     def test_country_lower_limit(self):
-        shortCountry = ""
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "country": shortCountry}
+        short_country = ""
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "country": short_country}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("country"))
 
     def test_country_valid(self):
-        validCountry = "Munkegata 34"
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "country": validCountry}
+        valid_country = "Munkegata 34"
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "country": valid_country}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("country"))
 
@@ -357,25 +357,25 @@ class CityTestCase(APITestCase):
 
     
     def test_city_too_long(self):
-        tooLongCity = "x" * 51
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "city": tooLongCity}
+        too_long_city = "x" * 51
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "city": too_long_city}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertEqual(str(response.data["city"][0]), "Ensure this field has no more than 50 characters.")
 
     def test_city_upper_limit(self):
-        longCity = "x" * 50
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "city": longCity}
+        long_city = "x" * 50
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "city": long_city}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("city"))
 
     def test_city_lower_limit(self):
-        shortCity = ""
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "city": shortCity}
+        short_city = ""
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "city": short_city}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("city"))
 
     def test_city_valid(self):
-        validCity = "Oslo"
-        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "city": validCity}
+        valid_city = "Oslo"
+        user = {"username": "validUsername", "email": DUMMY_EMAIL, "password": "validPassword", "password1": "validPassword", "city": valid_city}
         response = self.client.post(USERS_PATH, user, format="json")
         self.assertIsNone(response.data.get("city"))

@@ -1,4 +1,3 @@
-// const user = require("./mock/user.json");
 
 async function registerUser(user) {
   await page.waitForSelector("#btn-register");

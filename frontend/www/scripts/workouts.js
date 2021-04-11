@@ -38,8 +38,6 @@ async function fetchWorkoutInvitations(){
     let listWorkoutInvitation = document.querySelector("#list-invitations");
     let response = await sendRequest("GET", `${HOST}/api/workouts/invitations`);
    
-    let status = "p";   // pending
-    let category = "received";  
     if (!response.ok) {
         let data = await response.json();
         let alert = createAlert("Could not retrieve Invitations!", data);

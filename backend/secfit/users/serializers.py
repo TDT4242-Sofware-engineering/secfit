@@ -32,7 +32,6 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
         data = self.get_initial()
 
         password = data.get("password")
-        password1 = data.get("password1")
 
         try:
             password_validation.validate_password(password)

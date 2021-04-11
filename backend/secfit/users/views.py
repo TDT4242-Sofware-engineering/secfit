@@ -47,9 +47,9 @@ class UserList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericA
                 qs = get_user_model().objects.filter(pk=self.request.user.pk)
             
             # Search for user by username starts with
-            searchString = self.request.query_params.get("search", None)
-            if searchString:
-                qs = get_user_model().objects.filter(username__startswith=searchString)[:3]
+            search_string = self.request.query_params.get("search", None)
+            if search_string:
+                qs = get_user_model().objects.filter(username__startswith=search_string)[:3]
 
         return qs
 

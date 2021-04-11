@@ -702,38 +702,38 @@ class NameTestCase(APITestCase):
         
     def test_name_too_short(self):
         date = datetime.utcnow()
-        tooShortName= ""
-        workout = {"name": tooShortName, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
+        too_short_name= ""
+        workout = {"name": too_short_name, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout,  format="json")
         self.assertEqual(str(response.data["name"][0]), "This field may not be blank.")
     
     def test_name_too_long(self):
         date = datetime.utcnow()
-        tooLongName= "x" * 101
-        workout = {"name": tooLongName, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
+        too_long_name= "x" * 101
+        workout = {"name": too_long_name, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data["name"][0]), "Ensure this field has no more than 100 characters.")
 
     def test_name_upper_limit(self):
         date = datetime.utcnow()
-        longName= "x" * 100
-        workout = {"name": longName, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
+        long_name= "x" * 100
+        workout = {"name": long_name, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
-        self.assertEqual(response.data.get("name"), longName)
+        self.assertEqual(response.data.get("name"), long_name)
 
     def test_name_lower_limit(self):
         date = datetime.utcnow()
-        shortName= "x"
-        workout = {"name": shortName, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
+        short_name= "x"
+        workout = {"name": short_name, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
-        self.assertEqual(response.data.get("name"), shortName)
+        self.assertEqual(response.data.get("name"), short_name)
 
     def test_name_valid(self):
         date = datetime.utcnow()
-        validName= "name"
-        workout = {"name": validName, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
+        valid_name= "name"
+        workout = {"name": valid_name, "date": date, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
-        self.assertEqual(response.data.get("name"), validName)
+        self.assertEqual(response.data.get("name"), valid_name)
 
 class DateTimeCase(APITestCase):
     def setUp(self):
@@ -770,8 +770,8 @@ class DateTimeCase(APITestCase):
 
     def test_date_invalid(self):
         time = "22.10.93"
-        invalidName= "name!!..,m.,\+w0\+932\+3+49\+2904|+94!!\#m.,m.,m.,m.,m.,"
-        workout = {"name": invalidName, "date": time, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
+        invalid_name= "name!!..,m.,\+w0\+932\+3+49\+2904|+94!!\#m.,m.,m.,m.,m.,"
+        workout = {"name": invalid_name, "date": time, "notes": "validNotes", "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data["date"][0]), "Datetime has wrong format. Use one of these formats instead: YYYY-MM-DDThh:mm[:ss[.uuuuuu]][+HH:MM|-HH:MM|Z].")
 
@@ -792,29 +792,29 @@ class VisibilityTestCase(APITestCase):
         
     def test_visibility_too_short(self):
         date = datetime.utcnow()
-        tooShortVisibility = "P"
-        workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": tooShortVisibility, "exercise_instances": [], "files": [], "participants": []}
+        too_short_visibility = "P"
+        workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": too_short_visibility, "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout,  format="json")
         self.assertEqual(str(response.data["visibility"][0]), "\"P\"" + " is not a valid choice.")
     
     def test_visibility_too_long(self):
         date = datetime.utcnow()
-        tooLongVisibility = "PUT"
-        workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": tooLongVisibility, "exercise_instances": [], "files": [], "participants": []}
+        too_long_visibility = "PUT"
+        workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": too_long_visibility, "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data["visibility"][0]), "\"PUT\"" + " is not a valid choice.")
 
     def test_visibility_valid(self):
         date = datetime.utcnow()
-        validVisibility = "PU"
-        workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": validVisibility, "exercise_instances": [], "files": [], "participants": []}
+        valid_visibility = "PU"
+        workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": valid_visibility, "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
-        self.assertEqual(response.data.get("visibility"), validVisibility)
+        self.assertEqual(response.data.get("visibility"), valid_visibility)
 
     def test_visibility_invalid(self):
         date = datetime.utcnow()
-        invalidVisibility = "!@!#"
-        workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": invalidVisibility, "exercise_instances": [], "files": [], "participants": []}
+        invalid_visibility = "!@!#"
+        workout = {"name": "validName", "date": date, "notes": "validNotes", "visibility": invalid_visibility, "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
         self.assertEqual(str(response.data["visibility"][0]), "\"!@!#\"" + " is not a valid choice.")
 
@@ -835,31 +835,31 @@ class NotesTestCase(APITestCase):
         
     def test_notes_too_short(self):
         date = datetime.utcnow()
-        tooShortNote= ""
-        workout = {"name": "validName", "date": date, "notes": tooShortNote, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
+        too_short_note= ""
+        workout = {"name": "validName", "date": date, "notes": too_short_note, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout,  format="json")
         self.assertEqual(str(response.data["notes"][0]), "This field may not be blank.")
     
     def test_notes_upper_limit(self):
         date = datetime.utcnow()
-        longNote= "x" * 1000000
-        workout = {"name": "validName", "date": date, "notes":longNote, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
+        long_note= "x" * 1000000
+        workout = {"name": "validName", "date": date, "notes":long_note, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
-        self.assertEqual(response.data.get("notes"), longNote)
+        self.assertEqual(response.data.get("notes"), long_note)
 
     def test_notes_lower_limit(self):
         date = datetime.utcnow()
-        shortNote= "x"
-        workout = {"name": "validName", "date": date, "notes": shortNote, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
+        short_note= "x"
+        workout = {"name": "validName", "date": date, "notes": short_note, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
-        self.assertEqual(response.data.get("notes"), shortNote)
+        self.assertEqual(response.data.get("notes"), short_note)
 
     def test_notes_valid(self):
         date = datetime.utcnow()
-        validNote= "validNote"
-        workout = {"name": "validName", "date": date, "notes": validNote, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
+        valid_note= "validNote"
+        workout = {"name": "validName", "date": date, "notes": valid_note, "visibility": "PU", "exercise_instances": [], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
-        self.assertEqual(response.data.get("notes"), validNote)
+        self.assertEqual(response.data.get("notes"), valid_note)
 
 
 class ExerciseTestCase(APITestCase):
@@ -896,8 +896,8 @@ class ExerciseTestCase(APITestCase):
 
     
     def test_too_long(self):
-        toobigNum = "2"*1001
-        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": toobigNum, "number": toobigNum}
+        too_big_num = "2"*1001
+        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": too_big_num, "number": too_big_num}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
         
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
@@ -907,8 +907,8 @@ class ExerciseTestCase(APITestCase):
         self.assertEqual(str(feedback["number"][0]), "String value too large.")
 
     def test_upper_limit(self):
-        longNum= "2" * 1000
-        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": longNum, "number": longNum}
+        long_num= "2" * 1000
+        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": long_num, "number": long_num}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
         
@@ -917,8 +917,8 @@ class ExerciseTestCase(APITestCase):
         self.assertIsNone(feedback.get("number"))
 
     def test_lower_limit(self):
-        shortNum= "2"
-        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": shortNum, "number": shortNum}
+        short_num= "2"
+        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": short_num, "number": short_num}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
 
@@ -928,8 +928,8 @@ class ExerciseTestCase(APITestCase):
 
     def test_valid(self):
 
-        validNum = "15"
-        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": validNum, "number": validNum}
+        valid_num = "15"
+        exercise = {"exercise":self.EXERCISE_URL, "workout": "validWorkout", "sets": valid_num, "number": valid_num}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
 
@@ -941,8 +941,8 @@ class ExerciseTestCase(APITestCase):
 
     def test_not_valid(self):
 
-        invalidNum = "notValid"
-        exercise = {"exercise":"notValid", "workout": "workout", "sets": invalidNum, "number": invalidNum}
+        invalid_num = "notValid"
+        exercise = {"exercise":"notValid", "workout": "workout", "sets": invalid_num, "number": invalid_num}
         workout = {"name": "validName", "date": self.date, "notes": "validNote", "visibility": "PU", "exercise_instances": [exercise], "files": [], "participants": []}
         response = self.client.post(WORKOUTS_PATH, workout, format="json")
 

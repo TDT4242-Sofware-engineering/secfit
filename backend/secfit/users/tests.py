@@ -96,8 +96,6 @@ class RegisterTestCase(APITestCase):
 
 
 class UserSerializerTestCase(TestCase):
-    def setUp(self):
-        pass
 
     def tests_serialize_user_ok(self):
         
@@ -133,7 +131,7 @@ class UserSerializerTestCase(TestCase):
 
         
 
-        workout = Workout.objects.create(
+        Workout.objects.create(
             name="workout",
             owner=user,
             date="2021-03-11T13:37:00Z",

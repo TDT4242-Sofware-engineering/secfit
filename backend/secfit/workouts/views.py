@@ -139,20 +139,20 @@ class WorkoutList(
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        qs = Workout.objects.none()
+        query_set = Workout.objects.none()
         if self.request.user:
             # A workout should be visible to the requesting user if any of the following hold:
             # - The workout has public visibility
             # - The owner of the workout is the requesting user
             # - The workout has coach visibility and the requesting user is the owner's coach
-            qs = Workout.objects.filter(
+            query_set = Workout.objects.filter(
                 Q(visibility="PU")
                 | (Q(visibility="CO") & Q(owner__coach=self.request.user))
                 | Q(owner=self.request.user) # BUG FIX -> This allow user to see it own workouts
                 | Q(participants=self.request.user)
             ).distinct()
 
-        return qs
+        return query_set
 
 
 class WorkoutDetail(
@@ -279,9 +279,9 @@ class ExerciseInstanceList(
         return self.create(request, *args, **kwargs)
 
     def get_queryset(self):
-        qs = ExerciseInstance.objects.none()
+        query_set = ExerciseInstance.objects.none()
         if self.request.user:
-            qs = ExerciseInstance.objects.filter(
+            query_set = ExerciseInstance.objects.filter(
                 Q(workout__owner=self.request.user)
                 | (
                     (Q(workout__visibility="CO") | Q(workout__visibility="PU"))
@@ -289,7 +289,7 @@ class ExerciseInstanceList(
                 )
             ).distinct()
 
-        return qs
+        return query_set
 
 
 class ExerciseInstanceDetail(
@@ -342,9 +342,9 @@ class WorkoutFileList(
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        qs = WorkoutFile.objects.none()
+        query_set = WorkoutFile.objects.none()
         if self.request.user:
-            qs = WorkoutFile.objects.filter(
+            query_set = WorkoutFile.objects.filter(
                 Q(owner=self.request.user)
                 | Q(workout__owner=self.request.user)
                 | (
@@ -354,7 +354,7 @@ class WorkoutFileList(
                 | Q(workout__visibility="PU") # BUG FIX -> to allow users to see pulic workout files
             ).distinct()
 
-        return qs
+        return query_set
 
 
 class WorkoutInvitationList(
@@ -380,13 +380,13 @@ class WorkoutInvitationList(
             )
 
     def get_queryset(self):
-        qs = WorkoutInvitation.objects.none()
+        query_set = WorkoutInvitation.objects.none()
         if self.request.user:
-            qs = WorkoutInvitation.objects.filter(
+            query_set = WorkoutInvitation.objects.filter(
                 Q(participant=self.request.user)
             ).distinct()
 
-        return qs
+        return query_set
 
 class WorkoutInvitationDetail(
     mixins.RetrieveModelMixin,

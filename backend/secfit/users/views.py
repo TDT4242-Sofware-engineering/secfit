@@ -38,20 +38,20 @@ class UserList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericA
         return self.create(request, *args, **kwargs)
 
     def get_queryset(self):
-        qs = get_user_model().objects.all()
+        query_set = get_user_model().objects.all()
 
         if self.request.user:
             # Return the currently logged in user
             status = self.request.query_params.get("user", None)
             if status and status == "current":
-                qs = get_user_model().objects.filter(pk=self.request.user.pk)
+                query_set = get_user_model().objects.filter(pk=self.request.user.pk)
             
             # Search for user by username starts with
             search_string = self.request.query_params.get("search", None)
             if search_string:
-                qs = get_user_model().objects.filter(username__startswith=search_string)[:3]
+                query_set = get_user_model().objects.filter(username__startswith=search_string)[:3]
 
-        return qs
+        return query_set
 
 
 class UserDetail(
@@ -107,27 +107,27 @@ class OfferList(
         result = Offer.objects.none()
 
         if self.request.user:
-            qs = Offer.objects.filter(
+            query_set = Offer.objects.filter(
                 Q(owner=self.request.user) | Q(recipient=self.request.user)
             ).distinct()
-            qp = self.request.query_params
-            u = self.request.user
+            query_params = self.request.query_params
+            user = self.request.user
 
             # filtering by status (if provided)
-            s = qp.get("status", None)
-            if s is not None and self.request is not None:
-                qs = qs.filter(status=s)
-                if qp.get("status", None) is None:
-                    qs = Offer.objects.filter(Q(owner=u)).distinct()
+            status = query_params.get("status", None)
+            if status is not None and self.request is not None:
+                query_set = query_set.filter(status=status)
+                if query_params.get("status", None) is None:
+                    query_set = Offer.objects.filter(Q(owner=user)).distinct()
 
             # filtering by category (sent or received)
-            c = qp.get("category", None)
-            if c is not None and qp is not None:
-                if c == "sent":
-                    qs = qs.filter(owner=u)
-                elif c == "received":
-                    qs = qs.filter(recipient=u)
-            return qs
+            category = query_params.get("category", None)
+            if category is not None and query_params is not None:
+                if category == "sent":
+                    query_set = query_set.filter(owner=user)
+                elif category == "received":
+                    query_set = query_set.filter(recipient=user)
+            return query_set
         else:
             return result
 
@@ -176,14 +176,14 @@ class AthleteFileList(
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        qs = AthleteFile.objects.none()
+        query_set = AthleteFile.objects.none()
 
         if self.request.user:
-            qs = AthleteFile.objects.filter(
+            query_set = AthleteFile.objects.filter(
                 Q(athlete=self.request.user) | Q(owner=self.request.user)
             ).distinct()
 
-        return qs
+        return query_set
 
 
 class AthleteFileDetail(

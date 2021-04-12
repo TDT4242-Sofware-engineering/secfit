@@ -3,8 +3,8 @@ from django.contrib.auth import get_user_model
 
 
 class IsCurrentUser(permissions.BasePermission):
-    def has_object_permission(self, request, view, obj):
-        return obj == request.user
+    def has_object_permission(self, request, view, user):
+        return user == request.user
 
 
 class IsAthlete(permissions.BasePermission):
@@ -17,8 +17,8 @@ class IsAthlete(permissions.BasePermission):
 
         return True
 
-    def has_object_permission(self, request, view, obj):
-        return request.user == obj.athlete
+    def has_object_permission(self, request, view, instance):
+        return request.user == instance.athlete
 
 
 class IsCoach(permissions.BasePermission):
@@ -32,5 +32,5 @@ class IsCoach(permissions.BasePermission):
 
         return True
 
-    def has_object_permission(self, request, view, obj):
-        return request.user == obj.athlete.coach
+    def has_object_permission(self, request, view, instance):
+        return request.user == instance.athlete.coach

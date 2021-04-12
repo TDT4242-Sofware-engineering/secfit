@@ -38,13 +38,13 @@ class RegisterTestCase(APITestCase):
         self.password = ["password", "passsswordpasssswordpasssswordpasssswordpassssword", ""]
 
         # Index in pariwise table
-        self.phoneIndex = 0
-        self.countryIndex = 1
-        self.cityIndex = 2
-        self.streetIndex = 3
-        self.usernameIndex = 4
-        self.emailIndex = 5
-        self.passwordIndex = 6
+        self.phone_index = 0
+        self.country_index = 1
+        self.city_index = 2
+        self.street_index = 3
+        self.username_index = 4
+        self.email_index = 5
+        self.password_index = 6
 
         # Initializing the scenarios that will be tested
         self.pairwistable = [
@@ -79,14 +79,14 @@ class RegisterTestCase(APITestCase):
         (0, ),(1, ),(2, ),(3, ),(4, ),(5, ),(6, ),(7, ),(8, ),(9, ),(10, ),(11, ),(12, ),(13, ),(14, ),(15, ),(16, ),(17, ),(18, ),(19, ),(20, ),(21, ),
     ])
     def test_case(self, index):
-        request_form = {"username":         self.pairwistable[index][self.usernameIndex], 
-                        "email":            self.pairwistable[index][self.emailIndex], 
-                        "password":         self.pairwistable[index][self.passwordIndex], 
-                        "password1":        self.pairwistable[index][self.passwordIndex],
-                        "phone_number":     self.pairwistable[index][self.phoneIndex],
-                        "country":          self.pairwistable[index][self.countryIndex],
-                        "city":             self.pairwistable[index][self.cityIndex],
-                        "street_address":   self.pairwistable[index][self.streetIndex]
+        request_form = {"username":         self.pairwistable[index][self.username_index], 
+                        "email":            self.pairwistable[index][self.email_index], 
+                        "password":         self.pairwistable[index][self.password_index], 
+                        "password1":        self.pairwistable[index][self.password_index],
+                        "phone_number":     self.pairwistable[index][self.phone_index],
+                        "country":          self.pairwistable[index][self.country_index],
+                        "city":             self.pairwistable[index][self.city_index],
+                        "street_address":   self.pairwistable[index][self.street_index]
                     }
         
         

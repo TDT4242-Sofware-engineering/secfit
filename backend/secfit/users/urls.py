@@ -16,4 +16,5 @@ urlpatterns = [
         views.AthleteFileDetail.as_view(),
         name="athletefile-detail",
     ),
+    path("api/remember_me/", views.RememberMe.as_view(), name="remember_me"),
 ]

@@ -28,7 +28,6 @@ from workouts.permissions import (
 from workouts.mixins import CreateListModelMixin
 from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, WorkoutInvitation, ExerciseFile
 from workouts.serializers import WorkoutSerializer, ExerciseSerializer, WorkoutInvitationSerializer
-from workouts.serializers import RememberMeSerializer
 from workouts.serializers import ExerciseInstanceSerializer, WorkoutFileSerializer, ExerciseFileSerializer
 from django.core.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -60,53 +59,6 @@ def api_root(request, format=None):
             "likes": reverse("like-list", request=request, format=format),
         }
     )
-
-
-# Allow users to save a persistent session in their browser
-class RememberMe(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    generics.GenericAPIView,
-):
-
-    serializer_class = RememberMeSerializer
-
-    def get(self, request):
-        if request.user.is_authenticated == False:
-            raise PermissionDenied
-        else:
-            return Response({"remember_me": self.rememberme()})
-
-    def post(self, request):
-        cookie_object = namedtuple("Cookies", request.COOKIES.keys())(
-            *request.COOKIES.values()
-        )
-        user = self.get_user(cookie_object)
-        refresh = RefreshToken.for_user(user)
-        return Response(
-            {
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-            }
-        )
-
-    def get_user(self, cookie_object):
-        decode = base64.b64decode(cookie_object.remember_me)
-        user, sign = pickle.loads(decode)
-
-        # Validate signature
-        if sign == self.sign_user(user):
-            return user
-
-    def rememberme(self):
-        creds = [self.request.user, self.sign_user(str(self.request.user))]
-        return base64.b64encode(pickle.dumps(creds))
-
-    def sign_user(self, username):
-        signer = Signer()
-        signed_user = signer.sign(username)
-        return signed_user
 
 
 class WorkoutList(

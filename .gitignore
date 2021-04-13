@@ -8,3 +8,5 @@ backend/secfit/.coverage
 backend/secfit/htmlcov
 testing/node_modules/
 !.gitkeep
+.scannerwork
+/media

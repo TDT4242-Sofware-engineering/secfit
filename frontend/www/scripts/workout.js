@@ -10,32 +10,30 @@ async function retrieveWorkout(id) {
     let workoutData = null;
     let response = await sendRequest("GET", `${HOST}/api/workouts/${id}/`);
     if (!response.ok) {
-        let data = await response.json();
-        let alert = createAlert("Could not retrieve workout data!", data);
-        document.body.prepend(alert);
+        await createResponseAlert(response);
     } else {
         workoutData = await response.json();
         let form = document.querySelector("#form-workout");
         let formData = new FormData(form);
 
-        for (let key of formData.keys()) {
-            let selector = `input[name="${key}"], textarea[name="${key}"]`;
-            let inputFromForm = form.querySelector(selector);
-            let newVal = workoutData[key];
-            if (key == "date") {
-                // Creating a valid datetime-local string with the correct local time
-                let date = new Date(newVal);
-                date = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString(); // get ISO format for local time
-                newVal = date.substring(0, newVal.length - 1);    // remove Z (since this is a local time, not UTC)
-            }
-            if (key != "files") {
-                inputFromForm.value = newVal;
-            }
-        }
+        fillWorkoutForm(formData, form);
 
+        // Workout visibility
         let input = form.querySelector("select:disabled");
         input.value = workoutData["visibility"];
         // files
+        handleWorkoutFiles();
+
+        // fetch exercise types
+        let exerciseTypeResponse = await sendRequest("GET", `${HOST}/api/exercises/`);
+        let exerciseTypes = await exerciseTypeResponse.json();
+
+        handleRetrivedExercises(workoutData, exerciseTypes);
+    }
+    return workoutData;     
+
+
+    function handleWorkoutFiles() {
         let filesDiv = document.querySelector("#uploaded-files");
         for (let file of workoutData.files) {
             let a = document.createElement("a");
@@ -45,67 +43,82 @@ async function retrieveWorkout(id) {
             a.className = "me-2";
             filesDiv.appendChild(a);
         }
-
-        // create exercises
-
-        // fetch exercise types
-        let exerciseTypeResponse = await sendRequest("GET", `${HOST}/api/exercises/`);
-        let exerciseTypes = await exerciseTypeResponse.json();
-
-        handleRetrivedExercises(workoutData, exerciseTypes);
     }
-    return workoutData;     
-}
 
-function handleRetrivedExercises(workoutData, exerciseTypes){
-    for (let i = 0; i < workoutData.exercise_instances.length; i++) {
-        let templateExercise = document.querySelector("#template-exercise");
-        let divExerciseContainer = templateExercise.content.firstElementChild.cloneNode(true);
-
-        let exerciseTypeLabel = divExerciseContainer.querySelector('.exercise-type');
-        exerciseTypeLabel.for = `inputExerciseType${i}`;
-
-        let exerciseTypeSelect = divExerciseContainer.querySelector("select");            
-        exerciseTypeSelect.id = `inputExerciseType${i}`;
-        exerciseTypeSelect.disabled = true;
-        
-        let splitUrl = workoutData.exercise_instances[i].exercise.split("/");
-        let currentExerciseTypeId = splitUrl[splitUrl.length - 2];
-        let currentExerciseType = "";
-
-        for (let j = 0; j < exerciseTypes.count; j++) {
-            let option = document.createElement("option");
-            option.value = exerciseTypes.results[j].id;
-            if (currentExerciseTypeId == exerciseTypes.results[j].id) {
-                currentExerciseType = exerciseTypes.results[j];
+    function fillWorkoutForm(formData, form) {
+        for (let key of formData.keys()) {
+            let selector = `input[name="${key}"], textarea[name="${key}"]`;
+            let inputFromForm = form.querySelector(selector);
+            let newVal = workoutData[key];
+            if (key == "date") {
+                // Creating a valid datetime-local string with the correct local time
+                let date = new Date(newVal);
+                date = new Date(date.getTime() - (date.getTimezoneOffset() * 60 * 1000)).toISOString(); // get ISO format for local time
+                newVal = date.substring(0, newVal.length - 1); // remove Z (since this is a local time, not UTC)
             }
-            option.innerText = exerciseTypes.results[j].name;
-            exerciseTypeSelect.append(option);
+            if (key != "files") {
+                inputFromForm.value = newVal;
+            }
         }
-        
-        exerciseTypeSelect.value = currentExerciseType.id;
-
-        let exerciseSetLabel = divExerciseContainer.querySelector('.exercise-sets');
-        exerciseSetLabel.for = `inputSets${i}`;
-
-        let exerciseSetInput = divExerciseContainer.querySelector("input[name='sets']");
-        exerciseSetInput.id = `inputSets${i}`;
-        exerciseSetInput.value = workoutData.exercise_instances[i].sets;
-        exerciseSetInput.readOnly = true;
-
-        let exerciseNumberLabel = divExerciseContainer.querySelector('.exercise-number');
-        exerciseNumberLabel.for = "for", `inputNumber${i}`;
-        exerciseNumberLabel.innerText = currentExerciseType.unit;
-
-        let exerciseNumberInput = divExerciseContainer.querySelector("input[name='number']");
-        exerciseNumberInput.id = `inputNumber${i}`;
-        exerciseNumberInput.value = workoutData.exercise_instances[i].number;
-        exerciseNumberInput.readOnly = true;
-
-        let exercisesDiv = document.querySelector("#div-exercises");
-        exercisesDiv.appendChild(divExerciseContainer);
+    }
+    async function createResponseAlert(response) {
+        let data = await response.json();
+        let alert = createResponseAlert("Could not retrieve workout data!", data);
+        document.body.prepend(alert);
+    }
+    
+    function handleRetrivedExercises(workoutData, exerciseTypes){
+        for (let i = 0; i < workoutData.exercise_instances.length; i++) {
+            let templateExercise = document.querySelector("#template-exercise");
+            let divExerciseContainer = templateExercise.content.firstElementChild.cloneNode(true);
+    
+            let exerciseTypeLabel = divExerciseContainer.querySelector('.exercise-type');
+            exerciseTypeLabel.for = `inputExerciseType${i}`;
+    
+            let exerciseTypeSelect = divExerciseContainer.querySelector("select");            
+            exerciseTypeSelect.id = `inputExerciseType${i}`;
+            exerciseTypeSelect.disabled = true;
+            
+            let splitUrl = workoutData.exercise_instances[i].exercise.split("/");
+            let currentExerciseTypeId = splitUrl[splitUrl.length - 2];
+            let currentExerciseType = "";
+    
+            for (let j = 0; j < exerciseTypes.count; j++) {
+                let option = document.createElement("option");
+                option.value = exerciseTypes.results[j].id;
+                if (currentExerciseTypeId == exerciseTypes.results[j].id) {
+                    currentExerciseType = exerciseTypes.results[j];
+                }
+                option.innerText = exerciseTypes.results[j].name;
+                exerciseTypeSelect.append(option);
+            }
+            
+            exerciseTypeSelect.value = currentExerciseType.id;
+    
+            let exerciseSetLabel = divExerciseContainer.querySelector('.exercise-sets');
+            exerciseSetLabel.for = `inputSets${i}`;
+    
+            let exerciseSetInput = divExerciseContainer.querySelector("input[name='sets']");
+            exerciseSetInput.id = `inputSets${i}`;
+            exerciseSetInput.value = workoutData.exercise_instances[i].sets;
+            exerciseSetInput.readOnly = true;
+    
+            let exerciseNumberLabel = divExerciseContainer.querySelector('.exercise-number');
+            exerciseNumberLabel.for = "for", `inputNumber${i}`;
+            exerciseNumberLabel.innerText = currentExerciseType.unit;
+    
+            let exerciseNumberInput = divExerciseContainer.querySelector("input[name='number']");
+            exerciseNumberInput.id = `inputNumber${i}`;
+            exerciseNumberInput.value = workoutData.exercise_instances[i].number;
+            exerciseNumberInput.readOnly = true;
+    
+            let exercisesDiv = document.querySelector("#div-exercises");
+            exercisesDiv.appendChild(divExerciseContainer);
+        }
     }
 }
+
+
 
 function handleCancelDuringWorkoutEdit() {
     location.reload();
@@ -133,7 +146,7 @@ async function deleteWorkout(id) {
     let response = await sendRequest("DELETE", `${HOST}/api/workouts/${id}/`);
     if (!response.ok) {
         let data = await response.json();
-        let alert = createAlert(`Could not delete workout ${id}!`, data);
+        let alert = createResponseAlert(`Could not delete workout ${id}!`, data);
         document.body.prepend(alert);
     } else {
         window.location.replace("workouts.html");
@@ -146,7 +159,7 @@ async function updateWorkout(id) {
     let response = await sendRequest("PUT", `${HOST}/api/workouts/${id}/`, submitForm, "");
     if (!response.ok) {
         let data = await response.json();
-        let alert = createAlert("Could not update workout!", data);
+        let alert = createResponseAlert("Could not update workout!", data);
         document.body.prepend(alert);
     } else {
         location.reload();
@@ -209,7 +222,7 @@ async function createWorkout() {
         window.location.replace("workouts.html");
     } else {
         let data = await response.json();
-        let alert = createAlert("Could not create new workout!", data);
+        let alert = createResponseAlert("Could not create new workout!", data);
         document.body.prepend(alert);
     }
 }
@@ -300,7 +313,7 @@ async function createComment(workoutid) {
         addComment(sessionStorage.getItem("username"), content, "Now", false);
     } else {
         let data = await response.json();
-        let alert = createAlert("Failed to create comment!", data);
+        let alert = createResponseAlert("Failed to create comment!", data);
         document.body.prepend(alert);
     }
 }
@@ -309,7 +322,7 @@ async function retrieveComments(workoutid) {
     let response = await sendRequest("GET", `${HOST}/api/comments/`);
     if (!response.ok) {
         let data = await response.json();
-        let alert = createAlert("Could not retrieve comments!", data);
+        let alert = createResponseAlert("Could not retrieve comments!", data);
         document.body.prepend(alert);
     } else {
         let data = await response.json();

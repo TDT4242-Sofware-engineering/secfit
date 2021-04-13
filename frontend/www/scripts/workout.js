@@ -385,7 +385,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         inputSearchForUser.style.display = "none"
         inputSearchForUser.addEventListener("input", (async (e) => onSearchForInputChange(e, usersContainer, currentUser.username)));
         let addAthelteButton = document.querySelector("#btn-add-athelte");
-        addAthelteButton.addEventListener("click", (async () => togglehideById("#inputSearchForUser")));
+        addAthelteButton.addEventListener("click", () => togglehideById("#inputSearchForUser"));
 
 
         ownerInput.value = currentUser.username;
@@ -424,14 +424,18 @@ async function onSearchForInputChange(e, container, currentUserUsername){
     }
     let users = await sendRequest("GET", `${HOST}/api/users/?search=` + input);
     let data = await users.json();
-    data.results.forEach((user) => {
-        let button = document.createElement("input");
-        button.value = user.username;
-        button.type = "button";
-        button.className = "btn btn-primary";
-        button.addEventListener("click", (async () => toggleParticipant(user.username, currentUserUsername)));
-        container.appendChild(button)
-    })
+    mapUsersToButtons();
+
+    function mapUsersToButtons() {
+        data.results.forEach((user) => {
+            let button = document.createElement("input");
+            button.value = user.username;
+            button.type = "button";
+            button.className = "btn btn-primary";
+            button.addEventListener("click", (async () => toggleParticipant(user.username, currentUserUsername)));
+            container.appendChild(button);
+        });
+    }
 }
 
 function toggleParticipant(username, currentUserUsername){

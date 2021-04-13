@@ -111,7 +111,7 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     confirmButton.addEventListener("click", (() => updateProfile(user)))
     editProfileButton.addEventListener("click", (() => handleEditProfile()));
-    deleteProfileButton.addEventListener("click", (async () => await deleteProfile(user)));
+    deleteProfileButton.addEventListener("click", (async () => deleteProfile(user)));
     cancelDeleteButton.addEventListener("click", (() => handleCancel()));
     initiateDeleteButton.addEventListener("click", (() => {
         initiateDeleteButton.classList.add("hide");

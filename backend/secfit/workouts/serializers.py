@@ -184,10 +184,8 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         instance.participants.set(users)
         instance.save()
 
-        # Handle ExerciseInstances
         self.handleExercises(instance, exercise_instances, exercise_instances_data)
 
-        # Handle WorkoutFiles
         self.handleWorkoutFiles(instance,validated_data)
 
         return instance

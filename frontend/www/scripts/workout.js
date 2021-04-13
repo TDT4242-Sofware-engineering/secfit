@@ -20,7 +20,7 @@ async function retrieveWorkout(id) {
 
         for (let key of formData.keys()) {
             let selector = `input[name="${key}"], textarea[name="${key}"]`;
-            let input = form.querySelector(selector);
+            let inputFromForm = form.querySelector(selector);
             let newVal = workoutData[key];
             if (key == "date") {
                 // Creating a valid datetime-local string with the correct local time
@@ -29,7 +29,7 @@ async function retrieveWorkout(id) {
                 newVal = date.substring(0, newVal.length - 1);    // remove Z (since this is a local time, not UTC)
             }
             if (key != "files") {
-                input.value = newVal;
+                inputFromForm.value = newVal;
             }
         }
 
@@ -52,56 +52,59 @@ async function retrieveWorkout(id) {
         let exerciseTypeResponse = await sendRequest("GET", `${HOST}/api/exercises/`);
         let exerciseTypes = await exerciseTypeResponse.json();
 
-        //TODO: This should be in its own method.
-        for (let i = 0; i < workoutData.exercise_instances.length; i++) {
-            let templateExercise = document.querySelector("#template-exercise");
-            let divExerciseContainer = templateExercise.content.firstElementChild.cloneNode(true);
-
-            let exerciseTypeLabel = divExerciseContainer.querySelector('.exercise-type');
-            exerciseTypeLabel.for = `inputExerciseType${i}`;
-    
-            let exerciseTypeSelect = divExerciseContainer.querySelector("select");            
-            exerciseTypeSelect.id = `inputExerciseType${i}`;
-            exerciseTypeSelect.disabled = true;
-            
-            let splitUrl = workoutData.exercise_instances[i].exercise.split("/");
-            let currentExerciseTypeId = splitUrl[splitUrl.length - 2];
-            let currentExerciseType = "";
-
-            for (let j = 0; j < exerciseTypes.count; j++) {
-                let option = document.createElement("option");
-                option.value = exerciseTypes.results[j].id;
-                if (currentExerciseTypeId == exerciseTypes.results[j].id) {
-                    currentExerciseType = exerciseTypes.results[j];
-                }
-                option.innerText = exerciseTypes.results[j].name;
-                exerciseTypeSelect.append(option);
-            }
-            
-            exerciseTypeSelect.value = currentExerciseType.id;
-
-            let exerciseSetLabel = divExerciseContainer.querySelector('.exercise-sets');
-            exerciseSetLabel.for = `inputSets${i}`;
-
-            let exerciseSetInput = divExerciseContainer.querySelector("input[name='sets']");
-            exerciseSetInput.id = `inputSets${i}`;
-            exerciseSetInput.value = workoutData.exercise_instances[i].sets;
-            exerciseSetInput.readOnly = true;
-
-            let exerciseNumberLabel = divExerciseContainer.querySelector('.exercise-number');
-            exerciseNumberLabel.for = "for", `inputNumber${i}`;
-            exerciseNumberLabel.innerText = currentExerciseType.unit;
-
-            let exerciseNumberInput = divExerciseContainer.querySelector("input[name='number']");
-            exerciseNumberInput.id = `inputNumber${i}`;
-            exerciseNumberInput.value = workoutData.exercise_instances[i].number;
-            exerciseNumberInput.readOnly = true;
-
-            let exercisesDiv = document.querySelector("#div-exercises");
-            exercisesDiv.appendChild(divExerciseContainer);
-        }
+        handleRetrivedExercises(workoutData, exerciseTypes);
     }
     return workoutData;     
+}
+
+function handleRetrivedExercises(workoutData, exerciseTypes){
+    for (let i = 0; i < workoutData.exercise_instances.length; i++) {
+        let templateExercise = document.querySelector("#template-exercise");
+        let divExerciseContainer = templateExercise.content.firstElementChild.cloneNode(true);
+
+        let exerciseTypeLabel = divExerciseContainer.querySelector('.exercise-type');
+        exerciseTypeLabel.for = `inputExerciseType${i}`;
+
+        let exerciseTypeSelect = divExerciseContainer.querySelector("select");            
+        exerciseTypeSelect.id = `inputExerciseType${i}`;
+        exerciseTypeSelect.disabled = true;
+        
+        let splitUrl = workoutData.exercise_instances[i].exercise.split("/");
+        let currentExerciseTypeId = splitUrl[splitUrl.length - 2];
+        let currentExerciseType = "";
+
+        for (let j = 0; j < exerciseTypes.count; j++) {
+            let option = document.createElement("option");
+            option.value = exerciseTypes.results[j].id;
+            if (currentExerciseTypeId == exerciseTypes.results[j].id) {
+                currentExerciseType = exerciseTypes.results[j];
+            }
+            option.innerText = exerciseTypes.results[j].name;
+            exerciseTypeSelect.append(option);
+        }
+        
+        exerciseTypeSelect.value = currentExerciseType.id;
+
+        let exerciseSetLabel = divExerciseContainer.querySelector('.exercise-sets');
+        exerciseSetLabel.for = `inputSets${i}`;
+
+        let exerciseSetInput = divExerciseContainer.querySelector("input[name='sets']");
+        exerciseSetInput.id = `inputSets${i}`;
+        exerciseSetInput.value = workoutData.exercise_instances[i].sets;
+        exerciseSetInput.readOnly = true;
+
+        let exerciseNumberLabel = divExerciseContainer.querySelector('.exercise-number');
+        exerciseNumberLabel.for = "for", `inputNumber${i}`;
+        exerciseNumberLabel.innerText = currentExerciseType.unit;
+
+        let exerciseNumberInput = divExerciseContainer.querySelector("input[name='number']");
+        exerciseNumberInput.id = `inputNumber${i}`;
+        exerciseNumberInput.value = workoutData.exercise_instances[i].number;
+        exerciseNumberInput.readOnly = true;
+
+        let exercisesDiv = document.querySelector("#div-exercises");
+        exercisesDiv.appendChild(divExerciseContainer);
+    }
 }
 
 function handleCancelDuringWorkoutEdit() {
@@ -344,9 +347,9 @@ window.addEventListener("DOMContentLoaded", async () => {
         if (workoutData["owner"] == currentUser.url) {
             editWorkoutButton.classList.remove("hide");
             editWorkoutButton.addEventListener("click", handleEditWorkoutButtonClick);
-            deleteWorkoutButton.addEventListener("click", (async (id) => await deleteWorkout(id)).bind(undefined, id));
-            okWorkoutButton.addEventListener("click", (async (id) => await updateWorkout(id)).bind(undefined, id));
-            postCommentButton.addEventListener("click", (async (id) => await createComment(id)).bind(undefined, id));
+            deleteWorkoutButton.addEventListener("click", (async (id) => deleteWorkout(id)).bind(undefined, id));
+            okWorkoutButton.addEventListener("click", (async (id) => updateWorkout(id)).bind(undefined, id));
+            postCommentButton.addEventListener("click", (async (id) => createComment(id)).bind(undefined, id));
             divCommentRow.className = divCommentRow.className.replace(" hide", "");
         }
     } else {
@@ -356,9 +359,9 @@ window.addEventListener("DOMContentLoaded", async () => {
         console.log("usersContainer", usersContainer)
         let inputSearchForUser = document.querySelector("#inputSearchForUser");
         inputSearchForUser.style.display = "none"
-        inputSearchForUser.addEventListener("input", (async (e) => await onSearchForInputChange(e, usersContainer, currentUser.username)));
+        inputSearchForUser.addEventListener("input", (async (e) => onSearchForInputChange(e, usersContainer, currentUser.username)));
         let addAthelteButton = document.querySelector("#btn-add-athelte");
-        addAthelteButton.addEventListener("click", (async () => await togglehideById("#inputSearchForUser")));
+        addAthelteButton.addEventListener("click", (async () => togglehideById("#inputSearchForUser")));
 
 
         ownerInput.value = currentUser.username;
@@ -372,7 +375,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         inputSearchForUser.className = inputSearchForUser.className.replace(" hide", "");
         addAthelteButton.className = addAthelteButton.className.replace(" hide", "");
 
-        okWorkoutButton.addEventListener("click", async () => await createWorkout());
+        okWorkoutButton.addEventListener("click", async () => createWorkout());
         cancelWorkoutButton.addEventListener("click", handleCancelDuringWorkoutCreate);
         divCommentRow.className += " hide";
     }
@@ -389,7 +392,7 @@ function togglehideById(id){
     }
 }
 
-async function onSearchForInputChange(e, container, currentUser){
+async function onSearchForInputChange(e, container, currentUserUsername){
     container.innerHTML = "";
     container.className = "col-lg-6";
     let input = e.target.value;
@@ -404,20 +407,20 @@ async function onSearchForInputChange(e, container, currentUser){
         button.value = user.username;
         button.type = "button";
         button.className = "btn btn-primary";
-        button.addEventListener("click", (async () => await toggleParticipant(user.username, currentUser)));
+        button.addEventListener("click", (async () => toggleParticipant(user.username, currentUserUsername)));
         container.appendChild(button)
     })
 }
 
-function toggleParticipant(username, currentUser){
+function toggleParticipant(username, currentUserUsername){
     console.log("Chosen user: ", username);
     let ownerInput = document.querySelector("#inputOwner");
     if(participants.indexOf(username) < 0){
         participants.push(username);
-        ownerInput.value = currentUser + ", " + participants.join(", ");
+        ownerInput.value = currentUserUsername + ", " + participants.join(", ");
     } else {
         participants = participants.filter(f => f !== username);
         let temp = participants.length > 0 ? ", " + participants.join(", ") : "";
-        ownerInput.value = currentUser + temp;
+        ownerInput.value = currentUserUsername + temp;
     }
 }

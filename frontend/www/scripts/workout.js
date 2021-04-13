@@ -216,15 +216,8 @@ async function createWorkout() {
 
     if (response.ok) {
         let data = await response.json();
-        participants.forEach(async (participant) => {
-            let invitation = {
-                "owner": currentUser.username,
-                "participant": participant,
-                "workout": data.url
-            }
-            let invResponse = await sendRequest("POST", `${HOST}/api/workouts/invitations`, invitation);
-            console.log(invResponse);
-        })
+        
+        sendWorkoutInvitations(data);
 
         participants = [];
         window.location.replace("workouts.html");
@@ -232,6 +225,18 @@ async function createWorkout() {
         let data = await response.json();
         let alert = createResponseAlert("Could not create new workout!", data);
         document.body.prepend(alert);
+    }
+
+    function sendWorkoutInvitations(data) {
+        participants.forEach(async (participant) => {
+            let invitation = {
+                "owner": currentUser.username,
+                "participant": participant,
+                "workout": data.url
+            };
+            let invResponse = await sendRequest("POST", `${HOST}/api/workouts/invitations`, invitation);
+            console.log(invResponse);
+        });
     }
 }
 

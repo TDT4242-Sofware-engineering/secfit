@@ -235,7 +235,6 @@ async function createWorkout() {
                 "workout": data.url
             };
             let invResponse = await sendRequest("POST", `${HOST}/api/workouts/invitations`, invitation);
-            console.log(invResponse);
         });
     }
 }
@@ -382,7 +381,6 @@ window.addEventListener("DOMContentLoaded", async () => {
         await createBlankExercise();
         let ownerInput = document.querySelector("#inputOwner");
         let usersContainer = document.getElementById("users-search-result-container");
-        console.log("usersContainer", usersContainer)
         let inputSearchForUser = document.querySelector("#inputSearchForUser");
         inputSearchForUser.style.display = "none"
         inputSearchForUser.addEventListener("input", (async (e) => onSearchForInputChange(e, usersContainer, currentUser.username)));
@@ -410,7 +408,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 function togglehideById(id){
     let element = document.querySelector(id);
-    console.log("Hide" + id + " style: "+ element.style.display);
     if(element.style.display === "block"){
         element.style.display = "none"
     } else {
@@ -428,7 +425,6 @@ async function onSearchForInputChange(e, container, currentUserUsername){
     let users = await sendRequest("GET", `${HOST}/api/users/?search=` + input);
     let data = await users.json();
     data.results.forEach((user) => {
-        console.log(user)
         let button = document.createElement("input");
         button.value = user.username;
         button.type = "button";
@@ -439,7 +435,6 @@ async function onSearchForInputChange(e, container, currentUserUsername){
 }
 
 function toggleParticipant(username, currentUserUsername){
-    console.log("Chosen user: ", username);
     let ownerInput = document.querySelector("#inputOwner");
     if(participants.indexOf(username) < 0){
         participants.push(username);

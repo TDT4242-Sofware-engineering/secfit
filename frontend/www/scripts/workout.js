@@ -180,25 +180,33 @@ function generateWorkoutForm() {
     submitForm.append("participants", JSON.stringify([]));
 
     // adding exercise instances
-    let exerciseInstances = [];
-    let exerciseInstancesTypes = formData.getAll("type");
-    let exerciseInstancesSets = formData.getAll("sets");
-    let exerciseInstancesNumbers = formData.getAll("number");
-    for (let i = 0; i < exerciseInstancesTypes.length; i++) {
-        exerciseInstances.push({
-            exercise: `${HOST}/api/exercises/${exerciseInstancesTypes[i]}/`,
-            number: exerciseInstancesNumbers[i],
-            sets: exerciseInstancesSets[i]
-        });
-    }
-
+    let exerciseInstances = addExerciseInstances();
     submitForm.append("exercise_instances", JSON.stringify(exerciseInstances));
-    // adding files
-    for (let file of formData.getAll("files")) {
-        submitForm.append("files", file);
-    }
+    
+    addWorkoutFiles();
 
     return submitForm;
+
+    function addWorkoutFiles() {
+        for (let file of formData.getAll("files")) {
+            submitForm.append("files", file);
+        }
+    }
+
+    function addExerciseInstances() {
+        let exerciseInstances = [];
+        let exerciseInstancesTypes = formData.getAll("type");
+        let exerciseInstancesSets = formData.getAll("sets");
+        let exerciseInstancesNumbers = formData.getAll("number");
+        for (let i = 0; i < exerciseInstancesTypes.length; i++) {
+            exerciseInstances.push({
+                exercise: `${HOST}/api/exercises/${exerciseInstancesTypes[i]}/`,
+                number: exerciseInstancesNumbers[i],
+                sets: exerciseInstancesSets[i]
+            });
+        }
+        return exerciseInstances;
+    }
 }
 
 async function createWorkout() {

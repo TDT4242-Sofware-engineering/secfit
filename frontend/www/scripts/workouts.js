@@ -69,11 +69,9 @@ async function fetchWorkoutInvitations(){
 }
 
 async function acceptInvitation(event, invitation){
-    console.log("Accept", invitation)
     let getWorkoutResponse = await sendRequest("GET", invitation.workout);
     if(getWorkoutResponse.ok){
         let data = await getWorkoutResponse.json();
-        console.log("Workout data", data)
         data.participants.push(invitation.participant)
         let putWorkoutResponse = await sendRequest("PUT", invitation.workout, data);
         if(putWorkoutResponse.ok){
@@ -81,17 +79,12 @@ async function acceptInvitation(event, invitation){
             return;
         }
     }
-    console.log("Failed to update workout")
 }
 
 async function deleteInvitationAndReload(event, invitation){
-    console.log("Delete", invitation)
     let response = await sendRequest("DELETE", invitation.url);
     if(response.ok){
-        console.log("Invitation deleted")
         window.location.replace("workouts.html");
-    } else {
-        console.log("Failed to delete invitation")
     }
 }
 

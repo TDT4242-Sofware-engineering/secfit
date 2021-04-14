@@ -44,12 +44,26 @@ async function fetchWorkoutInvitations(){
         document.body.prepend(alert);
     } else {
         let invitations = await response.json();
+        mapInvitationsToHtmlObjects(invitations);
+        
+        if (invitations.results.length == 0) {
+            displayNoInvitations();
+        }
+    }
+
+    function displayNoInvitations() {
+        let p = document.createElement("p");
+        p.innerText = "You currently have no invitations.";
+        listWorkoutInvitation.append(p);
+    }
+
+    function mapInvitationsToHtmlObjects(invitations) {
         for (let invitation of invitations.results) {
             let cloneInvitation = templateWorkoutInvitation.content.cloneNode(true);
             let li = cloneInvitation.querySelector("li");
             let span = li.querySelector("span");
             span.textContent = `${invitation.owner} has invited you to a workout`;
-            
+
             let buttons = li.querySelectorAll("button");
             let acceptButton = buttons[0];
             let declineButton = buttons[1];
@@ -59,11 +73,6 @@ async function fetchWorkoutInvitations(){
             declineButton.addEventListener("click", async (event) => deleteInvitationAndReload(event, invitation));
 
             listWorkoutInvitation.appendChild(li);
-        }
-        if (invitations.results.length == 0) {
-            let p = document.createElement("p");
-            p.innerText = "You currently have no invitations.";
-            listWorkoutInvitation.append(p);
         }
     }
 }

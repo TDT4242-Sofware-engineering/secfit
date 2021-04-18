@@ -140,7 +140,7 @@ async function retrieveExercise(id) {
   }
 }
 
-function handleExerciseFiles(exerciseData){
+function handleExerciseFiles(exerciseData) {
   if (exerciseData.files && exerciseData.files.length > 0) {
     const mediaCarousel = document.querySelector("#mediaCarousel");
     mediaCarousel.classList.remove("hide");
@@ -156,9 +156,7 @@ function handleExerciseFiles(exerciseData){
         btn.setAttribute("class", "active");
         btn.setAttribute("aria-current", "true");
       }
-      const carouselIndicator = document.querySelector(
-        ".carousel-indicators"
-      );
+      const carouselIndicator = document.querySelector(".carousel-indicators");
       carouselIndicator.appendChild(btn);
 
       // Carousel item
@@ -183,7 +181,6 @@ function handleExerciseFiles(exerciseData){
     });
   }
 }
-
 
 async function updateExercise(id) {
   const submitForm = exerciseForm();

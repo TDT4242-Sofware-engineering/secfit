@@ -1,17 +1,13 @@
-let deleteProfileButton;
-let initiateDeleteButton;
-let cancelDeleteButton;
-let editProfileButton;
-let confirmButton;
-let cancelEditButton;
+
 
 async function getCurrentUser() {
     let user = null;
-    let response = await sendRequest("GET", `${HOST}/api/users/?user=current`)
+    const response = await sendRequest("GET", `${HOST}/api/users/?user=current`)
     if (!response.ok) {
-        console.log("COULD NOT RETRIEVE CURRENTLY LOGGED IN USER");
+        const alert = createAlert("Could not retrieve profile data!");
+        document.body.prepend(alert);
     } else {
-        let data = await response.json();
+        const data = await response.json();
         user = data.results[0];
     }
     return user;
@@ -19,27 +15,27 @@ async function getCurrentUser() {
 
 async function retrieveProfile() {
     let user = null;
-    let response = await sendRequest("GET", `${HOST}/api/users/?user=current`);
+    const response = await sendRequest("GET", `${HOST}/api/users/?user=current`);
     if (!response.ok) {
-        let alert = createAlert("Could not retrieve profile data!");
+        const alert = createAlert("Could not retrieve profile data!");
         document.body.prepend(alert);
     } else {
-        let data = await response.json();
+        const data = await response.json();
         user = data.results[0];
-        let form = document.querySelector("#form-profile");
-        let formData = new FormData(form);
+        const form = document.querySelector("#form-profile");
+        const formData = new FormData(form);
 
-        for (let key of formData.keys()) {
-            let selector = `input[name="${key}"], textarea[name="${key}"]`;
-            let input = form.querySelector(selector);
-            let newVal = user[key];
+        for (const key of formData.keys()) {
+            const selector = `input[name="${key}"], textarea[name="${key}"]`;
+            const input = form.querySelector(selector);
+            const newVal = user[key];
             input.value = newVal;
         }
     }
     return user;
 }
 
-function handleEditProfile() {
+function handleEditProfile(confirmButton, cancelEditButton, editProfileButton, initiateDeleteButton, cancelEditButton) {
     confirmButton = document.querySelector("#btn-confirm-edit");
     cancelEditButton = document.querySelector("#btn-cancel-edit");
     
@@ -54,11 +50,11 @@ function handleEditProfile() {
 }
 
 async function updateProfile(user) {
-    let submitForm = generateProfileForm();
+    const submitForm = generateProfileForm();
 
-    let response = await sendRequest("PATCH", `${HOST}/api/users/${user.id}/`, submitForm, "");
+    const response = await sendRequest("PATCH", `${HOST}/api/users/${user.id}/`, submitForm, "");
     if (!response.ok) {
-        let alert = createAlert("Could not update profile!");
+        const alert = createAlert("Could not update profile!");
         document.body.prepend(alert);
     } else {
         location.reload();
@@ -70,10 +66,10 @@ function handleCancel() {
 }
 
 function generateProfileForm() {
-    let form = document.querySelector("#form-profile");
+    const form = document.querySelector("#form-profile");
 
-    let formData = new FormData(form);
-    let submitForm = new FormData();
+    const formData = new FormData(form);
+    const submitForm = new FormData();
 
     submitForm.append("username", formData.get('username'));
     submitForm.append("email", formData.get('email'));
@@ -87,10 +83,10 @@ function generateProfileForm() {
 
 
 async function deleteProfile(user) {
-    let response = await sendRequest("DELETE", `${HOST}/api/users/${user.id}/`);
+    const response = await sendRequest("DELETE", `${HOST}/api/users/${user.id}/`);
     if (!response.ok) {
-        let data = await response.json();
-        let alert = createAlert(`Could not delete profile ${id}!`, data);
+        const data = await response.json();
+        const alert = createAlert(`Could not delete profile ${id}!`, data);
         document.body.prepend(alert);
     } else {
         window.location.replace("logout.html");
@@ -99,18 +95,19 @@ async function deleteProfile(user) {
 
 
 window.addEventListener("DOMContentLoaded", async () => {
-    let user = await retrieveProfile();
-    deleteProfileButton = document.querySelector("#btn-delete-user");
-    cancelDeleteButton = document.querySelector("#btn-cancel-delete");
-    initiateDeleteButton = document.querySelector("#btn-initiate-delete");
-    editProfileButton = document.querySelector("#btn-edit-profile");
-    confirmButton = document.querySelector("#btn-confirm-edit");
+    const user = await retrieveProfile();
+    const deleteProfileButton = document.querySelector("#btn-delete-user");
+    const cancelDeleteButton = document.querySelector("#btn-cancel-delete");
+    const initiateDeleteButton = document.querySelector("#btn-initiate-delete");
+    const editProfileButton = document.querySelector("#btn-edit-profile");
+    const confirmButton = document.querySelector("#btn-confirm-edit");
+    const cancelEditButton = document.querySelector("#btn-cancel-edit");
 
 
-    let modal = document.querySelector("#delete-modal");
+    const modal = document.querySelector("#delete-modal");
 
     confirmButton.addEventListener("click", (() => updateProfile(user)))
-    editProfileButton.addEventListener("click", (() => handleEditProfile()));
+    editProfileButton.addEventListener("click", (() => handleEditProfile(confirmButton, cancelEditButton, editProfileButton, initiateDeleteButton, cancelEditButton)));
     deleteProfileButton.addEventListener("click", (async () => deleteProfile(user)));
     cancelDeleteButton.addEventListener("click", (() => handleCancel()));
     initiateDeleteButton.addEventListener("click", (() => {

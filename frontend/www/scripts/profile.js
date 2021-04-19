@@ -5,18 +5,6 @@ let editProfileButton;
 let confirmButton;
 let cancelEditButton;
 
-async function getCurrentUser() {
-  let user = null;
-  const response = await sendRequest("GET", `${HOST}/api/users/?user=current`);
-  if (!response.ok) {
-    console.log("COULD NOT RETRIEVE CURRENTLY LOGGED IN USER");
-  } else {
-    const data = await response.json();
-    user = data.results[0];
-  }
-  return user;
-}
-
 async function retrieveProfile() {
   let user = null;
   const response = await sendRequest("GET", `${HOST}/api/users/?user=current`);

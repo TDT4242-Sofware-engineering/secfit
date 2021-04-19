@@ -56,13 +56,14 @@ function getCookieValue(name) {
     .find((row) => row.startsWith(name));
 
   if (cookieByName) {
+    // eslint-disable-next-line
     cookieValue = cookieByName.split("=")[1];
   }
 
   return cookieValue;
 }
 
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable */
 async function sendRequest(
   method,
   url,
@@ -151,6 +152,7 @@ function setReadOnly(readOnly, selector) {
     }
   }
 }
+/* eslint-enable  */
 
 // eslint-disable-next-line no-unused-vars
 async function getCurrentUser() {

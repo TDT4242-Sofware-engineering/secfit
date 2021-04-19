@@ -9,8 +9,6 @@ function isUserAuthenticated() {
 }
 
 function updateNavBar() {
-  const nav = document.querySelector("nav");
-
   // Emphasize link to current page
   if (
     window.location.pathname == "/" ||
@@ -82,7 +80,7 @@ async function sendRequest(
 
   if (contentType) myHeaders.set("Content-Type", contentType);
   if (getCookieValue("access"))
-    myHeaders.set("Authorization", `Bearer ${  getCookieValue("access")}`);
+    myHeaders.set("Authorization", `Bearer ${getCookieValue("access")}`);
   let myInit = { headers: myHeaders, method, body };
   let myRequest = new Request(url, myInit);
 
@@ -103,7 +101,7 @@ async function sendRequest(
       setCookie("access", data.access, 86400, "/");
 
       const myHeaders = new Headers({
-        Authorization: `Bearer ${  getCookieValue("access")}`,
+        Authorization: `Bearer ${getCookieValue("access")}`,
         "Content-Type": contentType,
       });
       const myInit = { headers: myHeaders, method, body };

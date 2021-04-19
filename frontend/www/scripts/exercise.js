@@ -200,7 +200,9 @@ async function updateExercise(id) {
     const data = await response.json();
     let msg = "";
     if (data.files) {
-      data.files.forEach((file) => (msg += `${file.file}`));
+      data.files.forEach((file) => {
+        msg += `${file.file}`;
+      });
     }
     const alert = createAlert(`Could not update exercise ${id}`, data, msg);
     document.body.prepend(alert);

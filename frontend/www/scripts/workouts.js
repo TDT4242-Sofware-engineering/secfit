@@ -1,3 +1,4 @@
+/* eslint-disable no-shadow, no-plusplus */
 async function fetchWorkouts(ordering) {
   const response = await sendRequest(
     "GET",
@@ -89,7 +90,11 @@ async function acceptInvitation(event, invitation) {
     const data = await getWorkoutResponse.json();
     console.log("Workout data", data);
     data.participants.push(invitation.participant);
-    const putWorkoutResponse = await sendRequest("PUT", invitation.workout, data);
+    const putWorkoutResponse = await sendRequest(
+      "PUT",
+      invitation.workout,
+      data
+    );
     if (putWorkoutResponse.ok) {
       deleteInvitationAndReload(null, invitation);
       return;
@@ -130,10 +135,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 
   const currentSort = document.querySelector("#current-sort");
-  currentSort.innerHTML =
-    `${ordering.startsWith("-") ? "Descending" : "Ascending" 
-    } ${ 
-    ordering.replace("-", "")}`;
+  currentSort.innerHTML = `${
+    ordering.startsWith("-") ? "Descending" : "Ascending"
+  } ${ordering.replace("-", "")}`;
 
   const currentUser = await getCurrentUser();
   // grab username

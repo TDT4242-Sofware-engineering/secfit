@@ -88,8 +88,7 @@ async function acceptOffer(offerUrl, ownerUsername) {
       const alert = createAlert("Could not update coach!", data);
       document.body.prepend(alert);
     } else {
-      location.reload();
-      return false;
+      window.location.reload();
     }
   }
 }
@@ -103,8 +102,7 @@ async function declineOffer(offerUrl) {
     const alert = createAlert("Could not decline offer!", data);
     document.body.prepend(alert);
   } else {
-    location.reload();
-    return false;
+    window.location.reload();
   }
 }
 
@@ -174,7 +172,7 @@ function editCoach(event) {
 }
 
 function cancelCoach() {
-  location.reload();
+  window.location.reload();
   return false;
 }
 
@@ -203,8 +201,7 @@ async function setCoach() {
       const alert = createAlert("Could not update coach!", data);
       document.body.prepend(alert);
     } else {
-      location.reload();
-      return false;
+      window.location.reload();
     }
   }
 }
@@ -218,10 +215,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   const buttonEditCoach = document.querySelector("#button-edit-coach");
   const buttonCancelCoach = document.querySelector("#button-cancel-coach");
 
-  buttonSetCoach.addEventListener(
-    "click",
-    async (event) => await setCoach(event)
-  );
+  buttonSetCoach.addEventListener("click", async () => {
+    await setCoach();
+  });
   buttonEditCoach.addEventListener("click", editCoach);
   buttonCancelCoach.addEventListener("click", cancelCoach);
 });

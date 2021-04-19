@@ -1,9 +1,10 @@
+/* eslint-disable no-await-in-loop, no-shadow, no-param-reassign */
+
 async function displayCurrentCoach() {
   const user = await getCurrentUser();
-  const coach = null;
 
   if (user.coach) {
-    response = await sendRequest("GET", user.coach);
+    const response = await sendRequest("GET", user.coach);
     if (!response.ok) {
       const data = await response.json();
       const alert = createAlert("Could not retrieve coach!", data);
@@ -14,7 +15,7 @@ async function displayCurrentCoach() {
 
     input.value = coach.username;
   } else {
-    console.log("NO USER.COACH");
+    console.log("NO USER.COACH"); // eslint-disable-line
   }
 }
 

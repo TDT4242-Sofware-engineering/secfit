@@ -20,8 +20,6 @@ async function displayCurrentCoach() {
 }
 
 async function displayOffers() {
-  const user = await getCurrentUser();
-
   const templateOffer = document.querySelector("#template-offer");
   const listOffers = document.querySelector("#list-offers");
 
@@ -68,8 +66,7 @@ async function displayOffers() {
   }
 }
 
-async function acceptOffer(event, offerUrl, ownerUsername) {
-  const button = event.currentTarget;
+async function acceptOffer(offerUrl, ownerUsername) {
   const body = { status: "d" };
 
   const response = await sendRequest("PATCH", offerUrl, body);
@@ -99,8 +96,7 @@ async function acceptOffer(event, offerUrl, ownerUsername) {
   }
 }
 
-async function declineOffer(event, offerUrl) {
-  const button = event.currentTarget;
+async function declineOffer(offerUrl) {
   const body = { status: "d" };
 
   const response = await sendRequest("PATCH", offerUrl, body);
@@ -161,30 +157,6 @@ async function displayFiles() {
     const p = document.createElement("p");
     p.innerText = "There are currently no files uploaded for this user.";
     document.querySelector("#list-files-div").append(p);
-  }
-}
-
-async function getReceivedRequests() {
-  const response = await sendRequest("GET", `${HOST}/api/athlete-requests/`);
-  if (!response.ok) {
-    const data = await response.json();
-    const alert = createAlert("Could not retrieve athlete request!", data);
-    document.body.prepend(alert);
-  } else {
-    const data = await response.json();
-    const athleteRequests = data.results;
-    for (const athleteRequest of athleteRequests) {
-      if (athleteRequest.recipient === sessionStorage.getItem("username")) {
-        const div = document.querySelector("#div-received-athlete-requests");
-        const template = document.querySelector("#template-athlete-request");
-
-        const clone = template.content.firstElementChild.cloneNode(true);
-        const button = clone.querySelector("button");
-        button.textContent = `${athleteRequest.owner} wants to be your coach!`;
-
-        div.appendChild(clone);
-      }
-    }
   }
 }
 

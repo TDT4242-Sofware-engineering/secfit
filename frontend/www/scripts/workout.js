@@ -270,7 +270,6 @@ async function createWorkout() {
         `${HOST}/api/workouts/invitations`,
         invitation
       );
-      console.log(invResponse);
     });
   }
 }
@@ -481,7 +480,6 @@ window.addEventListener("DOMContentLoaded", async () => {
 function toggleHideById(id) {
   const element = document.querySelector(id);
   // eslint-disable-next-line
-  console.log(`Hide${id} style: ${element.style.display}`);
   if (element.style.display === "block") {
     element.style.display = "none";
   } else {

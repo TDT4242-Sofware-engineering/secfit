@@ -1,4 +1,4 @@
-async function createNewUser(event) {
+async function createNewUser() {
   const form = document.querySelector("#form-register-user");
   const formData = new FormData(form);
 
@@ -39,4 +39,6 @@ async function createNewUser(event) {
 
 document
   .querySelector("#btn-create-account")
-  .addEventListener("click", async (event) => await createNewUser(event));
+  .addEventListener("click", async (event) => {
+    await createNewUser(event);
+  });

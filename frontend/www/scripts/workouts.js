@@ -55,7 +55,21 @@ async function fetchWorkoutInvitations() {
     document.body.prepend(alert);
   } else {
     const invitations = await response.json();
-    for (const invitation of invitations.results) {
+    mapInvitationsToHtmlObjects(invitations);
+
+    if (invitations.results.length == 0) {
+      displayNoInvitations();
+    }
+  }
+
+  function displayNoInvitations() {
+    const p = document.createElement("p");
+    p.innerText = "You currently have no invitations.";
+    listWorkoutInvitation.append(p);
+  }
+
+  function mapInvitationsToHtmlObjects(invitations) {
+    for (let invitation of invitations.results) {
       const cloneInvitation = templateWorkoutInvitation.content.cloneNode(true);
       const li = cloneInvitation.querySelector("li");
       const span = li.querySelector("span");
@@ -75,42 +89,29 @@ async function fetchWorkoutInvitations() {
 
       listWorkoutInvitation.appendChild(li);
     }
-    if (invitations.results.length === 0) {
-      const p = document.createElement("p");
-      p.innerText = "You currently have no invitations.";
-      listWorkoutInvitation.append(p);
-    }
   }
 }
 
 async function acceptInvitation(event, invitation) {
-  console.log("Accept", invitation);
   const getWorkoutResponse = await sendRequest("GET", invitation.workout);
   if (getWorkoutResponse.ok) {
-    const data = await getWorkoutResponse.json();
-    console.log("Workout data", data);
-    data.participants.push(invitation.participant);
+    const workout = await getWorkoutResponse.json();
+    workout.participants.push(invitation.participant);
     const putWorkoutResponse = await sendRequest(
       "PUT",
       invitation.workout,
-      data
+      workout
     );
     if (putWorkoutResponse.ok) {
       deleteInvitationAndReload(null, invitation);
-      return;
     }
   }
-  console.log("Failed to update workout");
 }
 
 async function deleteInvitationAndReload(event, invitation) {
-  console.log("Delete", invitation);
-  const response = await sendRequest("DELETE", invitation.url);
+  let response = await sendRequest("DELETE", invitation.url);
   if (response.ok) {
-    console.log("Invitation deleted");
     window.location.replace("workouts.html");
-  } else {
-    console.log("Failed to delete invitation");
   }
 }
 

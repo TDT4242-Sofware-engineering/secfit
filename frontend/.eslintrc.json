@@ -1,5 +1,6 @@
 {
-  "extends": ["eslint:recommended", "prettier"],
+  "root": true,
+  "extends": ["eslint:recommended", "airbnb-base", "prettier"],
   "env": {
     "browser": true,
     "commonjs": true,
@@ -14,8 +15,5 @@
     "deleteCookie": false,
     "setReadOnly": false,
     "getCookieValue": false
-  },
-  "rules": {
-    "prefer-const": 2
   }
 }

@@ -1,12 +1,12 @@
 async function fetchExerciseTypes(request) {
-  let response = await sendRequest("GET", `${HOST}/api/exercises/`);
+  const response = await sendRequest("GET", `${HOST}/api/exercises/`);
 
   if (response.ok) {
-    let data = await response.json();
+    const data = await response.json();
 
-    let exercises = data.results;
-    let container = document.getElementById("div-content");
-    let exerciseTemplate = document.querySelector("#template-exercise");
+    const exercises = data.results;
+    const container = document.getElementById("div-content");
+    const exerciseTemplate = document.querySelector("#template-exercise");
     exercises.forEach((exercise) => {
       const exerciseAnchor = exerciseTemplate.content.firstElementChild.cloneNode(
         true
@@ -31,14 +31,14 @@ function createExercise() {
 }
 
 window.addEventListener("DOMContentLoaded", async () => {
-  let createButton = document.querySelector("#btn-create-exercise");
+  const createButton = document.querySelector("#btn-create-exercise");
   createButton.addEventListener("click", createExercise);
 
-  let response = await fetchExerciseTypes();
+  const response = await fetchExerciseTypes();
 
   if (!response.ok) {
-    let data = await response.json();
-    let alert = createAlert("Could not retrieve exercise types!", data);
+    const data = await response.json();
+    const alert = createAlert("Could not retrieve exercise types!", data);
     document.body.prepend(alert);
   }
 });

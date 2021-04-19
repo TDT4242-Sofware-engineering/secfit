@@ -9,21 +9,19 @@ function isUserAuthenticated() {
 }
 
 function updateNavBar() {
-  const nav = document.querySelector("nav");
-
   // Emphasize link to current page
   if (
-    window.location.pathname == "/" ||
-    window.location.pathname == "/index.html"
+    window.location.pathname === "/" ||
+    window.location.pathname === "/index.html"
   ) {
     makeNavLinkActive("nav-index");
-  } else if (window.location.pathname == "/workouts.html") {
+  } else if (window.location.pathname === "/workouts.html") {
     makeNavLinkActive("nav-workouts");
-  } else if (window.location.pathname == "/exercises.html") {
+  } else if (window.location.pathname === "/exercises.html") {
     makeNavLinkActive("nav-exercises");
-  } else if (window.location.pathname == "/mycoach.html") {
+  } else if (window.location.pathname === "/mycoach.html") {
     makeNavLinkActive("nav-mycoach");
-  } else if (window.location.pathname == "/myathletes.html") {
+  } else if (window.location.pathname === "/myathletes.html") {
     makeNavLinkActive("nav-myathletes");
   }
 
@@ -58,13 +56,14 @@ function getCookieValue(name) {
     .find((row) => row.startsWith(name));
 
   if (cookieByName) {
+    // eslint-disable-next-line
     cookieValue = cookieByName.split("=")[1];
   }
 
   return cookieValue;
 }
 
-// eslint-disable-next-line no-unused-vars
+/* eslint-disable */
 async function sendRequest(
   method,
   url,
@@ -82,7 +81,7 @@ async function sendRequest(
 
   if (contentType) myHeaders.set("Content-Type", contentType);
   if (getCookieValue("access"))
-    myHeaders.set("Authorization", `Bearer ${  getCookieValue("access")}`);
+    myHeaders.set("Authorization", `Bearer ${getCookieValue("access")}`);
   let myInit = { headers: myHeaders, method, body };
   let myRequest = new Request(url, myInit);
 
@@ -103,7 +102,7 @@ async function sendRequest(
       setCookie("access", data.access, 86400, "/");
 
       const myHeaders = new Headers({
-        Authorization: `Bearer ${  getCookieValue("access")}`,
+        Authorization: `Bearer ${getCookieValue("access")}`,
         "Content-Type": contentType,
       });
       const myInit = { headers: myHeaders, method, body };
@@ -153,15 +152,18 @@ function setReadOnly(readOnly, selector) {
     }
   }
 }
+/* eslint-enable  */
 
 // eslint-disable-next-line no-unused-vars
 async function getCurrentUser() {
   let user = null;
   const response = await sendRequest("GET", `${HOST}/api/users/?user=current`);
   if (!response.ok) {
+    // eslint-disable-next-line
     console.log("COULD NOT RETRIEVE CURRENTLY LOGGED IN USER");
   } else {
     const data = await response.json();
+    // eslint-disable-next-line prefer-destructuring
     user = data.results[0];
   }
 
@@ -191,6 +193,7 @@ function createAlert(header, data, msg) {
     li.innerText = data.detail;
     ul.appendChild(li);
   } else {
+    /* eslint-disable no-restricted-syntax, guard-for-in, no-shadow */
     for (const key in data) {
       const li = document.createElement("li");
       li.innerText = key;
@@ -207,9 +210,11 @@ function createAlert(header, data, msg) {
       if (msg) {
         const li = document.createElement("li");
         const text = document.createTextNode(msg);
-        li.appendChild(text), ul.appendChild(li);
+        li.appendChild(text);
+        ul.appendChild(li);
       }
     }
+    /* eslint-enable */
   }
   alertDiv.appendChild(ul);
 

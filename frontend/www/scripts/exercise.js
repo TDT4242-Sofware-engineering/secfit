@@ -30,11 +30,12 @@ function handleCancelButtonDuringCreate() {
 }
 
 function validateFile() {
+  const customFile = document.querySelector("#customFile");
   const errorMsg = document.querySelector("#errorMsg");
   errorMsg.innerHTML = "";
-  const validatedFiles = Array.from(customFile.files).filter((file, i) => {
+  const validatedFiles = Array.from(customFile.files).filter((file) => {
     if (file.size < 1024 * 1024) {
-      return file;
+      return true;
     }
     const errorNode = document.createElement("p");
     errorNode.classList.add("text-danger");
@@ -43,6 +44,7 @@ function validateFile() {
     );
     errorNode.appendChild(text);
     errorMsg.appendChild(errorNode);
+    return false;
   });
 
   const newFileList = new DataTransfer();
@@ -59,9 +61,9 @@ function exerciseForm() {
   submitForm.append("description", formData.get("description"));
   submitForm.append("unit", formData.get("unit"));
 
-  for (const file of formData.getAll("files")) {
-    submitForm.append("files", file);
-  }
+  Array.from(formData.get("files")).forEach((file) =>
+    submitForm.append("files", file)
+  );
 
   return submitForm;
 }
@@ -82,7 +84,9 @@ async function createExercise() {
     const data = await response.json();
     let msg = "";
     if (data.files) {
-      data.files.forEach((file) => (msg += `${file.file}`));
+      data.files.forEach((file) => {
+        msg += `${file.file}`;
+      });
     }
     const alert = createAlert("Could not create new exercise!", data, msg);
     document.body.prepend(alert);
@@ -196,7 +200,9 @@ async function updateExercise(id) {
     const data = await response.json();
     let msg = "";
     if (data.files) {
-      data.files.forEach((file) => (msg += `${file.file}`));
+      data.files.forEach((file) => {
+        msg += `${file.file}`;
+      });
     }
     const alert = createAlert(`Could not update exercise ${id}`, data, msg);
     document.body.prepend(alert);
@@ -227,9 +233,9 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   const urlParams = new URLSearchParams(window.location.search);
 
-  const cstmFile = document.querySelector("#customFile");
-  console.log("custom inputfile: ", cstmFile);
-  cstmFile.addEventListener("input", validateFile);
+  const customFile = document.querySelector("#customFile");
+
+  customFile.addEventListener("input", validateFile);
 
   // view/edit
   if (urlParams.has("id")) {

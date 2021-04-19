@@ -15,5 +15,14 @@
     "deleteCookie": false,
     "setReadOnly": false,
     "getCookieValue": false
+  },
+  "rules": {
+    "no-restricted-syntax": [
+      "error",
+      "ForInStatement",
+      "LabeledStatement",
+      "WithStatement"
+    ],
+    "no-use-before-define": "off"
   }
 }

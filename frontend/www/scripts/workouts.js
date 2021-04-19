@@ -75,7 +75,7 @@ async function fetchWorkoutInvitations() {
 
       listWorkoutInvitation.appendChild(li);
     }
-    if (invitations.results.length == 0) {
+    if (invitations.results.length === 0) {
       const p = document.createElement("p");
       p.innerText = "You currently have no invitations.";
       listWorkoutInvitation.append(p);
@@ -126,9 +126,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
   const urlParams = new URLSearchParams(window.location.search);
   if (urlParams.has("ordering")) {
-    const aSort = null;
     ordering = urlParams.get("ordering");
-    if (ordering == "name" || ordering == "owner" || ordering == "date") {
+    if (ordering === "name" || ordering === "owner" || ordering === "date") {
       const aSort = document.querySelector(`a[href="?ordering=${ordering}"`);
       aSort.href = `?ordering=-${ordering}`;
     }
@@ -161,7 +160,7 @@ window.addEventListener("DOMContentLoaded", async () => {
         switch (event.currentTarget.id) {
           case "list-my-workouts-list":
             if (
-              workout.owner == currentUser.url ||
+              workout.owner === currentUser.url ||
               workout.participants.includes(currentUser.username)
             ) {
               workoutAnchor.classList.remove("hide");
@@ -180,7 +179,7 @@ window.addEventListener("DOMContentLoaded", async () => {
             }
             break;
           case "list-public-workouts-list":
-            if (workout.visibility == "PU") {
+            if (workout.visibility === "PU") {
               workoutAnchor.classList.remove("hide");
             } else {
               workoutAnchor.classList.add("hide");

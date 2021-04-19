@@ -11,11 +11,11 @@ class IsCommentVisibleToUser(permissions.BasePermission):
     - The comment is on a workout owned by the user
     """
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, comment):
         # Write permissions are only allowed to the owner.
         return (
-            obj.workout.visibility == "PU"
-            or obj.owner == request.user
-            or (obj.workout.visibility == "CO" and obj.owner.coach == request.user)
-            or obj.workout.owner == request.user
+            comment.workout.visibility == "PU"
+            or comment.owner == request.user
+            or (comment.workout.visibility == "CO" and comment.owner.coach == request.user)
+            or comment.workout.owner == request.user
         )

@@ -1,9 +1,9 @@
-let deleteProfileButton;
-let initiateDeleteButton;
-let cancelDeleteButton;
-let editProfileButton;
-let confirmButton;
-let cancelEditButton;
+const deleteProfileButton = document.querySelector("#btn-delete-user");
+const cancelDeleteButton = document.querySelector("#btn-cancel-delete");
+const initiateDeleteButton = document.querySelector("#btn-initiate-delete");
+const editProfileButton = document.querySelector("#btn-edit-profile");
+const confirmButton = document.querySelector("#btn-confirm-edit");
+const cancelEditButton = document.querySelector("#btn-cancel-edit");
 
 async function retrieveProfile() {
   let user = null;
@@ -28,18 +28,7 @@ async function retrieveProfile() {
   return user;
 }
 
-function handleEditProfile(
-  confirmButton,
-  cancelEditButton,
-  editProfileButton,
-  initiateDeleteButton,
-  cancelEditButton
-) {
-  confirmButton = document.querySelector("#btn-confirm-edit");
-  cancelEditButton = document.querySelector("#btn-cancel-edit");
-
-  setReadOnly(false, "#form-profile");
-
+function handleEditProfile() {
   setReadOnly(false, "#form-profile");
 
   editProfileButton.classList.add("hide");
@@ -100,24 +89,11 @@ async function deleteProfile(user) {
 
 window.addEventListener("DOMContentLoaded", async () => {
   const user = await retrieveProfile();
-  deleteProfileButton = document.querySelector("#btn-delete-user");
-  cancelDeleteButton = document.querySelector("#btn-cancel-delete");
-  initiateDeleteButton = document.querySelector("#btn-initiate-delete");
-  editProfileButton = document.querySelector("#btn-edit-profile");
-  confirmButton = document.querySelector("#btn-confirm-edit");
 
   const modal = document.querySelector("#delete-modal");
 
   confirmButton.addEventListener("click", () => updateProfile(user));
-  editProfileButton.addEventListener("click", () =>
-    handleEditProfile(
-      confirmButton,
-      cancelEditButton,
-      editProfileButton,
-      initiateDeleteButton,
-      cancelEditButton
-    )
-  );
+  editProfileButton.addEventListener("click", () => handleEditProfile());
   deleteProfileButton.addEventListener("click", async () =>
     deleteProfile(user)
   );

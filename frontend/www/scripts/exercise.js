@@ -61,7 +61,7 @@ function exerciseForm() {
   submitForm.append("description", formData.get("description"));
   submitForm.append("unit", formData.get("unit"));
 
-  Array.from(formData.get("files")).forEach((file) =>
+  Array.from(formData.getAll("files")).forEach((file) =>
     submitForm.append("files", file)
   );
 

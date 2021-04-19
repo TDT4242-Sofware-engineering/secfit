@@ -45,15 +45,13 @@ async function displayOffers() {
       const acceptButton = buttons[0];
       const declineButton = buttons[1];
 
-      acceptButton.addEventListener(
-        "click",
-        async (event) => await acceptOffer(event, offer.url, offer.owner)
-      );
+      acceptButton.addEventListener("click", async () => {
+        await acceptOffer(offer.url, offer.owner);
+      });
 
-      declineButton.addEventListener(
-        "click",
-        async (event) => await declineOffer(event, offer.url)
-      );
+      declineButton.addEventListener("click", async () => {
+        await declineOffer(offer.url);
+      });
 
       listOffers.appendChild(li);
     }

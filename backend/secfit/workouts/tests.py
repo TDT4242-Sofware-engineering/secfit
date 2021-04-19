@@ -967,91 +967,91 @@ class FR5TestCase(APITestCase):
         self.outsider.save()
 
         # Setting ut data to query as different roles
-        ex = Exercise.objects.create(
+        exercise1 = Exercise.objects.create(
             name="ex1",
             owner=self.athlete,
             description="ex desc",
             unit="m"
         )
-        ex.save()
+        exercise1.save()
 
-        w_pr = Workout.objects.create(
+        workout_private = Workout.objects.create(
             name="workout_PR",
             owner=self.athlete,
             date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PR"
         )
-        w_pr.save()
+        workout_private.save()
 
         ExerciseInstance.objects.create(
-            workout=w_pr,
-            exercise=ex,
+            workout=workout_private,
+            exercise=exercise1,
             sets=2,
             number=3
         ).save()
 
         Comment.objects.create(
             owner=self.athlete,
-            workout=w_pr,
+            workout=workout_private,
             content="comment_PR"
         ).save()
         
         WorkoutFile.objects.create(
             owner=self.athlete,
-            workout=w_pr
+            workout=workout_private
         ).save()
 
-        w_co = Workout.objects.create(
+        workout_coach = Workout.objects.create(
             name="workout_CO",
             owner=self.athlete,
             date="2021-03-12T13:37:00Z",
             notes="workoutnote",
             visibility="CO"
         )
-        w_co.save()
+        workout_coach.save()
 
         ExerciseInstance.objects.create(
-            workout=w_co,
-            exercise=ex,
+            workout=workout_coach,
+            exercise=exercise1,
             sets=2,
             number=3
         ).save()
 
         Comment.objects.create(
             owner=self.athlete,
-            workout=w_co,
+            workout=workout_coach,
             content="comment_CO"
         ).save()
         WorkoutFile.objects.create(
             owner=self.athlete,
-            workout=w_co
+            workout=workout_coach
         ).save()
 
-        w_pu = Workout.objects.create(
+        workout_public = Workout.objects.create(
             name="workout_PU",
             owner=self.athlete,
             date="2021-03-13T13:37:00Z",
             notes="workoutnote",
             visibility="PU"
         )
-        w_pu.save()
+        workout_public.save()
 
         ExerciseInstance.objects.create(
-            workout=w_pu,
-            exercise=ex,
+            workout=workout_public,
+            exercise=exercise1,
             sets=2,
             number=3
         ).save()
 
         Comment.objects.create(
             owner=self.athlete,
-            workout=w_pu,
+            workout=workout_public,
             content="comment_PU"
         ).save()
         WorkoutFile.objects.create(
             owner=self.athlete,
-            workout=w_pu
+            workout=workout_public
         ).save()
        
         
@@ -1138,40 +1138,40 @@ class WorkoutSerializerUpdateTestCase(APITestCase):
         self.athlete.save()
 
         # Setting ut data to query as different roles
-        ex = Exercise.objects.create(
+        exercise1 = Exercise.objects.create(
             name="ex1",
             owner=self.athlete,
             description="ex desc",
             unit="m"
         )
-        ex.save()
+        exercise1.save()
 
-        w_pr = Workout.objects.create(
+        workout_private = Workout.objects.create(
             name="workout_PR",
             owner=self.athlete,
             date=DUMMY_DATE,
             notes="workoutnote",
             visibility="PR"
         )
-        w_pr.save()
+        workout_private.save()
 
         ExerciseInstance.objects.create(
-            workout=w_pr,
-            exercise=ex,
+            workout=workout_private,
+            exercise=exercise1,
             sets=1,
             number=2
         ).save()
 
         ExerciseInstance.objects.create(
-            workout=w_pr,
-            exercise=ex,
+            workout=workout_private,
+            exercise=exercise1,
             sets=2,
             number=3
         ).save()
         
         WorkoutFile.objects.create(
             owner=self.athlete,
-            workout=w_pr
+            workout=workout_private
         ).save()
     
     def test_add_exercise(self):

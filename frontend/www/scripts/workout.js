@@ -35,8 +35,6 @@ async function retrieveWorkout(id) {
     );
     const exerciseTypes = await exerciseTypeResponse.json();
 
-    // handleRetrievedExercises(workoutData, exerciseTypes);
-    //TODO: This should be in its own method.
     handleRetrievedExercises(exerciseTypes);
   }
   return workoutData;
@@ -64,6 +62,7 @@ async function retrieveWorkout(id) {
       for (let j = 0; j < exerciseTypes.count; j++) {
         const option = document.createElement("option");
         option.value = exerciseTypes.results[j].id;
+        // eslint-disable-next-line
         if (currentExerciseTypeId == exerciseTypes.results[j].id) {
           currentExerciseType = exerciseTypes.results[j];
         }
@@ -88,7 +87,7 @@ async function retrieveWorkout(id) {
       const exerciseNumberLabel = divExerciseContainer.querySelector(
         ".exercise-number"
       );
-      (exerciseNumberLabel.for = "for"), `inputNumber${i}`;
+      exerciseNumberLabel.for = `inputNumber${i}`;
       exerciseNumberLabel.innerText = currentExerciseType.unit;
 
       const exerciseNumberInput = divExerciseContainer.querySelector(
@@ -265,11 +264,7 @@ async function createWorkout() {
         participant,
         workout: data.url,
       };
-      const invResponse = await sendRequest(
-        "POST",
-        `${HOST}/api/workouts/invitations`,
-        invitation
-      );
+      await sendRequest("POST", `${HOST}/api/workouts/invitations`, invitation);
     });
   }
 }

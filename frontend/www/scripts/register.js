@@ -24,7 +24,6 @@ async function createNewUser() {
       setCookie("refresh", data.refresh, 86400, "/");
       sessionStorage.setItem("username", formData.get("username"));
     } else {
-      console.log("CAN'T GET JWT TOKEN ON REGISTRATION");
       const data = await response.json();
       const alert = createAlert(
         "Registration could not complete. Try again!",

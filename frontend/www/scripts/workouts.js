@@ -57,7 +57,7 @@ async function fetchWorkoutInvitations() {
     const invitations = await response.json();
     mapInvitationsToHtmlObjects(invitations);
 
-    if (invitations.results.length == 0) {
+    if (invitations.results.length === 0) {
       displayNoInvitations();
     }
   }
@@ -69,7 +69,7 @@ async function fetchWorkoutInvitations() {
   }
 
   function mapInvitationsToHtmlObjects(invitations) {
-    for (let invitation of invitations.results) {
+    for (const invitation of invitations.results) {
       const cloneInvitation = templateWorkoutInvitation.content.cloneNode(true);
       const li = cloneInvitation.querySelector("li");
       const span = li.querySelector("span");
@@ -109,7 +109,7 @@ async function acceptInvitation(event, invitation) {
 }
 
 async function deleteInvitationAndReload(event, invitation) {
-  let response = await sendRequest("DELETE", invitation.url);
+  const response = await sendRequest("DELETE", invitation.url);
   if (response.ok) {
     window.location.replace("workouts.html");
   }

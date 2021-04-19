@@ -6,7 +6,8 @@
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "lint": "eslint www --ext .js"
+    "lint": "eslint www --ext .js",
+    "lint:fix": "eslint --fix www --ext .js"
   },
   "keywords": [
     "ecosystem:cordova"

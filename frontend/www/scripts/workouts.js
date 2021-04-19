@@ -95,16 +95,15 @@ async function fetchWorkoutInvitations() {
 async function acceptInvitation(event, invitation) {
   const getWorkoutResponse = await sendRequest("GET", invitation.workout);
   if (getWorkoutResponse.ok) {
-    const data = await getWorkoutResponse.json();
-    data.participants.push(invitation.participant);
+    const workout = await getWorkoutResponse.json();
+    workout.participants.push(invitation.participant);
     const putWorkoutResponse = await sendRequest(
       "PUT",
       invitation.workout,
-      data
+      workout
     );
     if (putWorkoutResponse.ok) {
       deleteInvitationAndReload(null, invitation);
-      return;
     }
   }
 }

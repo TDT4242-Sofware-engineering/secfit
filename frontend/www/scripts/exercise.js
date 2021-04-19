@@ -14,7 +14,7 @@ function handleCancelButtonDuringEdit() {
 
   cancelButton.removeEventListener("click", handleCancelButtonDuringEdit);
 
-  let form = document.querySelector("#form-exercise");
+  const form = document.querySelector("#form-exercise");
   if (oldFormData.has("name")) form.name.value = oldFormData.get("name");
   if (oldFormData.has("description"))
     form.description.value = oldFormData.get("description");
@@ -52,14 +52,14 @@ function validateFile() {
 }
 
 function exerciseForm() {
-  let form = document.querySelector("#form-exercise");
-  let formData = new FormData(form);
+  const form = document.querySelector("#form-exercise");
+  const formData = new FormData(form);
   const submitForm = new FormData();
   submitForm.append("name", formData.get("name"));
   submitForm.append("description", formData.get("description"));
   submitForm.append("unit", formData.get("unit"));
 
-  for (let file of formData.getAll("files")) {
+  for (const file of formData.getAll("files")) {
     submitForm.append("files", file);
   }
 
@@ -69,7 +69,7 @@ function exerciseForm() {
 async function createExercise() {
   const submitForm = exerciseForm();
 
-  let response = await sendRequest(
+  const response = await sendRequest(
     "POST",
     `${HOST}/api/exercises/`,
     submitForm,
@@ -79,12 +79,12 @@ async function createExercise() {
   if (response.ok) {
     window.location.replace("exercises.html");
   } else {
-    let data = await response.json();
+    const data = await response.json();
     let msg = "";
     if (data.files) {
       data.files.forEach((file) => (msg += `${file.file}`));
     }
-    let alert = createAlert("Could not create new exercise!", data, msg);
+    const alert = createAlert("Could not create new exercise!", data, msg);
     document.body.prepend(alert);
   }
 }
@@ -99,15 +99,15 @@ function handleEditExerciseButtonClick() {
 
   cancelButton.addEventListener("click", handleCancelButtonDuringEdit);
 
-  let form = document.querySelector("#form-exercise");
+  const form = document.querySelector("#form-exercise");
   oldFormData = new FormData(form);
 }
 
 async function deleteExercise(id) {
-  let response = await sendRequest("DELETE", `${HOST}/api/exercises/${id}/`);
+  const response = await sendRequest("DELETE", `${HOST}/api/exercises/${id}/`);
   if (!response.ok) {
-    let data = await response.json();
-    let alert = createAlert(`Could not delete exercise ${id}`, data);
+    const data = await response.json();
+    const alert = createAlert(`Could not delete exercise ${id}`, data);
     document.body.prepend(alert);
   } else {
     window.location.replace("exercises.html");
@@ -115,24 +115,24 @@ async function deleteExercise(id) {
 }
 
 async function retrieveExercise(id) {
-  let response = await sendRequest("GET", `${HOST}/api/exercises/${id}/`);
+  const response = await sendRequest("GET", `${HOST}/api/exercises/${id}/`);
   if (!response.ok) {
-    let data = await response.json();
-    let alert = createAlert("Could not retrieve exercise data!", data);
+    const data = await response.json();
+    const alert = createAlert("Could not retrieve exercise data!", data);
     document.body.prepend(alert);
   } else {
-    let exerciseData = await response.json();
-    let form = document.querySelector("#form-exercise");
-    let formData = new FormData(form);
-    if (currentUser.username === exerciseData["owner_username"]) {
+    const exerciseData = await response.json();
+    const form = document.querySelector("#form-exercise");
+    const formData = new FormData(form);
+    if (currentUser.username === exerciseData.owner_username) {
       const customFile = document.querySelector("#customFile");
       customFile.classList.remove("hide");
     }
 
-    for (let key of formData.keys()) {
-      let selector = `input[name="${key}"], textarea[name="${key}"]`;
-      let input = form.querySelector(selector);
-      let newVal = exerciseData[key];
+    for (const key of formData.keys()) {
+      const selector = `input[name="${key}"], textarea[name="${key}"]`;
+      const input = form.querySelector(selector);
+      const newVal = exerciseData[key];
       input.value = newVal;
     }
 
@@ -185,7 +185,7 @@ function handleExerciseFiles(exerciseData) {
 async function updateExercise(id) {
   const submitForm = exerciseForm();
 
-  let response = await sendRequest(
+  const response = await sendRequest(
     "PUT",
     `${HOST}/api/exercises/${id}/`,
     submitForm,
@@ -193,12 +193,12 @@ async function updateExercise(id) {
   );
 
   if (!response.ok) {
-    let data = await response.json();
+    const data = await response.json();
     let msg = "";
     if (data.files) {
       data.files.forEach((file) => (msg += `${file.file}`));
     }
-    let alert = createAlert(`Could not update exercise ${id}`, data, msg);
+    const alert = createAlert(`Could not update exercise ${id}`, data, msg);
     document.body.prepend(alert);
   } else {
     // duplicate code from handleCancelButtonDuringEdit
@@ -245,7 +245,7 @@ window.addEventListener("DOMContentLoaded", async () => {
       await updateExercise(exerciseId);
     });
   }
-  //create
+  // create
   else {
     setReadOnly(false, "#form-exercise");
 

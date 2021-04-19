@@ -1,4 +1,4 @@
-async function fetchExerciseTypes(request) {
+async function fetchExerciseTypes() {
   const response = await sendRequest("GET", `${HOST}/api/exercises/`);
 
   if (response.ok) {

@@ -1,3 +1,4 @@
+/* eslint-disable */
 class NavBar extends HTMLElement {
   constructor() {
     super();

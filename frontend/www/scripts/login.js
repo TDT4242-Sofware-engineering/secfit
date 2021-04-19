@@ -21,6 +21,7 @@ async function login() {
     document.body.prepend(alert);
   }
 
+  /* eslint-disable no-shadow */
   // Sets cookie if remember me checked
   const rememberMe = document.getElementById("rememberMe").checked;
   if (rememberMe) {
@@ -30,6 +31,7 @@ async function login() {
       setCookie("remember_me", data.remember_me, 3000000000, "/");
     }
   }
+  /* eslint-enable */
 }
 
 // Used for login if remember me cookie exists
@@ -49,12 +51,14 @@ async function rememberMe() {
   }
 }
 
+/* eslint-disable func-names */
 window.onload = function () {
   if (getCookieValue("remember_me")) {
     rememberMe();
   }
 };
+/* eslint-enable */
 
-document
-  .querySelector("#btn-login")
-  .addEventListener("click", async () => await login());
+document.querySelector("#btn-login").addEventListener("click", async () => {
+  await login();
+});

@@ -1,9 +1,10 @@
+/* eslint-disable no-await-in-loop, no-shadow, no-param-reassign */
+
 async function displayCurrentCoach() {
   const user = await getCurrentUser();
-  const coach = null;
 
   if (user.coach) {
-    response = await sendRequest("GET", user.coach);
+    const response = await sendRequest("GET", user.coach);
     if (!response.ok) {
       const data = await response.json();
       const alert = createAlert("Could not retrieve coach!", data);
@@ -14,13 +15,11 @@ async function displayCurrentCoach() {
 
     input.value = coach.username;
   } else {
-    console.log("NO USER.COACH");
+    console.log("NO USER.COACH"); // eslint-disable-line
   }
 }
 
 async function displayOffers() {
-  const user = await getCurrentUser();
-
   const templateOffer = document.querySelector("#template-offer");
   const listOffers = document.querySelector("#list-offers");
 
@@ -46,19 +45,17 @@ async function displayOffers() {
       const acceptButton = buttons[0];
       const declineButton = buttons[1];
 
-      acceptButton.addEventListener(
-        "click",
-        async (event) => await acceptOffer(event, offer.url, offer.owner)
-      );
+      acceptButton.addEventListener("click", async () => {
+        await acceptOffer(offer.url, offer.owner);
+      });
 
-      declineButton.addEventListener(
-        "click",
-        async (event) => await declineOffer(event, offer.url)
-      );
+      declineButton.addEventListener("click", async () => {
+        await declineOffer(offer.url);
+      });
 
       listOffers.appendChild(li);
     }
-    if (offers.results.length == 0) {
+    if (offers.results.length === 0) {
       const offersDiv = document.querySelector("#offers-div");
       const p = document.createElement("p");
       p.innerText = "You currently have no offers.";
@@ -67,8 +64,7 @@ async function displayOffers() {
   }
 }
 
-async function acceptOffer(event, offerUrl, ownerUsername) {
-  const button = event.currentTarget;
+async function acceptOffer(offerUrl, ownerUsername) {
   const body = { status: "d" };
 
   const response = await sendRequest("PATCH", offerUrl, body);
@@ -92,14 +88,12 @@ async function acceptOffer(event, offerUrl, ownerUsername) {
       const alert = createAlert("Could not update coach!", data);
       document.body.prepend(alert);
     } else {
-      location.reload();
-      return false;
+      window.location.reload();
     }
   }
 }
 
-async function declineOffer(event, offerUrl) {
-  const button = event.currentTarget;
+async function declineOffer(offerUrl) {
   const body = { status: "d" };
 
   const response = await sendRequest("PATCH", offerUrl, body);
@@ -108,8 +102,7 @@ async function declineOffer(event, offerUrl) {
     const alert = createAlert("Could not decline offer!", data);
     document.body.prepend(alert);
   } else {
-    location.reload();
-    return false;
+    window.location.reload();
   }
 }
 
@@ -156,34 +149,10 @@ async function displayFiles() {
     listTab.firstElementChild.click();
   }
 
-  if (user.coach_files.length == 0) {
+  if (user.coach_files.length === 0) {
     const p = document.createElement("p");
     p.innerText = "There are currently no files uploaded for this user.";
     document.querySelector("#list-files-div").append(p);
-  }
-}
-
-async function getReceivedRequests() {
-  const response = await sendRequest("GET", `${HOST}/api/athlete-requests/`);
-  if (!response.ok) {
-    const data = await response.json();
-    const alert = createAlert("Could not retrieve athlete request!", data);
-    document.body.prepend(alert);
-  } else {
-    const data = await response.json();
-    const athleteRequests = data.results;
-    for (const athleteRequest of athleteRequests) {
-      if (athleteRequest.recipient == sessionStorage.getItem("username")) {
-        const div = document.querySelector("#div-received-athlete-requests");
-        const template = document.querySelector("#template-athlete-request");
-
-        const clone = template.content.firstElementChild.cloneNode(true);
-        const button = clone.querySelector("button");
-        button.textContent = `${athleteRequest.owner} wants to be your coach!`;
-
-        div.appendChild(clone);
-      }
-    }
   }
 }
 
@@ -203,7 +172,7 @@ function editCoach(event) {
 }
 
 function cancelCoach() {
-  location.reload();
+  window.location.reload();
   return false;
 }
 
@@ -232,8 +201,7 @@ async function setCoach() {
       const alert = createAlert("Could not update coach!", data);
       document.body.prepend(alert);
     } else {
-      location.reload();
-      return false;
+      window.location.reload();
     }
   }
 }
@@ -247,10 +215,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   const buttonEditCoach = document.querySelector("#button-edit-coach");
   const buttonCancelCoach = document.querySelector("#button-cancel-coach");
 
-  buttonSetCoach.addEventListener(
-    "click",
-    async (event) => await setCoach(event)
-  );
+  buttonSetCoach.addEventListener("click", async () => {
+    await setCoach();
+  });
   buttonEditCoach.addEventListener("click", editCoach);
   buttonCancelCoach.addEventListener("click", cancelCoach);
 });

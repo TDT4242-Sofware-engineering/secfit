@@ -1,8 +1,9 @@
+/* eslint-disable no-await-in-loop, no-shadow, no-param-reassign, no-plusplus */
+
 let cancelWorkoutButton;
 let okWorkoutButton;
 let deleteWorkoutButton;
 let editWorkoutButton;
-let postCommentButton;
 let participants = [];
 let currentUser;
 
@@ -22,7 +23,7 @@ async function retrieveWorkout(id) {
       const selector = `input[name="${key}"], textarea[name="${key}"]`;
       const inputFromForm = form.querySelector(selector);
       let newVal = workoutData[key];
-      if (key == "date") {
+      if (key === "date") {
         // Creating a valid datetime-local string with the correct local time
         let date = new Date(newVal);
         date = new Date(
@@ -30,7 +31,7 @@ async function retrieveWorkout(id) {
         ).toISOString(); // get ISO format for local time
         newVal = date.substring(0, newVal.length - 1); // remove Z (since this is a local time, not UTC)
       }
-      if (key != "files") {
+      if (key !== "files") {
         inputFromForm.value = newVal;
       }
     }
@@ -85,7 +86,7 @@ function handleRetrivedExercises(workoutData, exerciseTypes) {
     for (let j = 0; j < exerciseTypes.count; j++) {
       const option = document.createElement("option");
       option.value = exerciseTypes.results[j].id;
-      if (currentExerciseTypeId == exerciseTypes.results[j].id) {
+      if (currentExerciseTypeId === exerciseTypes.results[j].id) {
         currentExerciseType = exerciseTypes.results[j];
       }
       option.innerText = exerciseTypes.results[j].name;
@@ -94,7 +95,9 @@ function handleRetrivedExercises(workoutData, exerciseTypes) {
 
     exerciseTypeSelect.value = currentExerciseType.id;
 
-    const exerciseSetLabel = divExerciseContainer.querySelector(".exercise-sets");
+    const exerciseSetLabel = divExerciseContainer.querySelector(
+      ".exercise-sets"
+    );
     exerciseSetLabel.for = `inputSets${i}`;
 
     const exerciseSetInput = divExerciseContainer.querySelector(
@@ -107,6 +110,7 @@ function handleRetrivedExercises(workoutData, exerciseTypes) {
     const exerciseNumberLabel = divExerciseContainer.querySelector(
       ".exercise-number"
     );
+    // eslint-disable-next-line
     (exerciseNumberLabel.for = "for"), `inputNumber${i}`;
     exerciseNumberLabel.innerText = currentExerciseType.unit;
 
@@ -123,7 +127,7 @@ function handleRetrivedExercises(workoutData, exerciseTypes) {
 }
 
 function handleCancelDuringWorkoutEdit() {
-  location.reload();
+  window.location.reload();
 }
 
 function handleEditWorkoutButtonClick() {
@@ -180,7 +184,7 @@ async function updateWorkout(id) {
     const alert = createAlert("Could not update workout!", data);
     document.body.prepend(alert);
   } else {
-    location.reload();
+    window.location.reload();
   }
 }
 
@@ -242,7 +246,7 @@ async function createWorkout() {
         `${HOST}/api/workouts/invitations`,
         invitation
       );
-      console.log(invResponse);
+      console.log(invResponse); // eslint-disable-line
     });
 
     participants = [];
@@ -259,9 +263,10 @@ function handleCancelDuringWorkoutCreate() {
 }
 
 async function createBlankExercise() {
-  const form = document.querySelector("#form-workout");
-
-  const exerciseTypeResponse = await sendRequest("GET", `${HOST}/api/exercises/`);
+  const exerciseTypeResponse = await sendRequest(
+    "GET",
+    `${HOST}/api/exercises/`
+  );
   const exerciseTypes = await exerciseTypeResponse.json();
 
   const exerciseTemplate = document.querySelector("#template-exercise");
@@ -284,7 +289,7 @@ async function createBlankExercise() {
   divExercises.appendChild(divExerciseContainer);
 }
 
-function removeExercise(event) {
+function removeExercise() {
   const divExerciseContainers = document.querySelectorAll(
     ".div-exercise-container"
   );
@@ -305,7 +310,7 @@ function addComment(author, text, date, append) {
   const smallText = document.createElement("small");
   smallText.className = "text-muted";
 
-  if (date != "Now") {
+  if (date !== "Now") {
     const localDate = new Date(date);
     smallText.innerText = localDate.toLocaleString();
   } else {
@@ -362,7 +367,7 @@ async function retrieveComments(workoutid) {
     const comments = data.results;
     for (const comment of comments) {
       const splitArray = comment.workout.split("/");
-      if (splitArray[splitArray.length - 2] == workoutid) {
+      if (splitArray[splitArray.length - 2] === workoutid) {
         addComment(comment.owner, comment.content, comment.timestamp, true);
       }
     }
@@ -390,7 +395,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const workoutData = await retrieveWorkout(id);
     await retrieveComments(id);
 
-    if (workoutData.owner == currentUser.url) {
+    if (workoutData.owner === currentUser.url) {
       editWorkoutButton.classList.remove("hide");
       editWorkoutButton.addEventListener("click", handleEditWorkoutButtonClick);
       deleteWorkoutButton.addEventListener(
@@ -413,7 +418,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     const usersContainer = document.getElementById(
       "users-search-result-container"
     );
-    console.log("usersContainer", usersContainer);
+
     const inputSearchForUser = document.querySelector("#inputSearchForUser");
     inputSearchForUser.style.display = "none";
     inputSearchForUser.addEventListener("input", async (e) =>
@@ -461,7 +466,8 @@ window.addEventListener("DOMContentLoaded", async () => {
 
 function togglehideById(id) {
   const element = document.querySelector(id);
-  console.log(`Hide${  id  } style: ${  element.style.display}`);
+  // eslint-disable-next-line
+  console.log(`Hide${id} style: ${element.style.display}`);
   if (element.style.display === "block") {
     element.style.display = "none";
   } else {
@@ -476,10 +482,9 @@ async function onSearchForInputChange(e, container, currentUserUsername) {
   if (input === undefined || input === null || input === "") {
     return;
   }
-  const users = await sendRequest("GET", `${HOST}/api/users/?search=${  input}`);
+  const users = await sendRequest("GET", `${HOST}/api/users/?search=${input}`);
   const data = await users.json();
   data.results.forEach((user) => {
-    console.log(user);
     const button = document.createElement("input");
     button.value = user.username;
     button.type = "button";
@@ -492,14 +497,13 @@ async function onSearchForInputChange(e, container, currentUserUsername) {
 }
 
 function toggleParticipant(username, currentUserUsername) {
-  console.log("Chosen user: ", username);
   const ownerInput = document.querySelector("#inputOwner");
   if (participants.indexOf(username) < 0) {
     participants.push(username);
-    ownerInput.value = `${currentUserUsername  }, ${  participants.join(", ")}`;
+    ownerInput.value = `${currentUserUsername}, ${participants.join(", ")}`;
   } else {
     participants = participants.filter((f) => f !== username);
-    const temp = participants.length > 0 ? `, ${  participants.join(", ")}` : "";
+    const temp = participants.length > 0 ? `, ${participants.join(", ")}` : "";
     ownerInput.value = currentUserUsername + temp;
   }
 }

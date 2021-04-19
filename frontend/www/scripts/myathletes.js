@@ -1,8 +1,12 @@
+/* eslint-disable no-await-in-loop, no-shadow, no-param-reassign */
+
 async function displayCurrentRoster() {
   const templateFilledAthlete = document.querySelector(
     "#template-filled-athlete"
   );
-  const templateEmptyAthlete = document.querySelector("#template-empty-athlete");
+  const templateEmptyAthlete = document.querySelector(
+    "#template-empty-athlete"
+  );
   const controls = document.querySelector("#controls");
 
   const currentUser = await getCurrentUser();
@@ -114,16 +118,15 @@ async function displayFiles() {
     }
     const uploadBtn = document.querySelector(`#btn-upload-${athlete.username}`);
     uploadBtn.disabled = false;
-    uploadBtn.addEventListener(
-      "click",
-      async (event) => await uploadFiles(event, athlete)
-    );
+    uploadBtn.addEventListener("click", async (event) => {
+      await uploadFiles(event, athlete);
+    });
 
     const fileInput = tabPanel.querySelector(".form-control");
     fileInput.disabled = false;
   }
 
-  if (user.athlete_files.length == 0 && user.athletes.length == 0) {
+  if (user.athlete_files.length === 0 && user.athletes.length === 0) {
     const p = document.createElement("p");
     p.innerText = "There are currently no athletes or uploaded files.";
     document.querySelector("#list-files-div").append(p);
@@ -198,12 +201,16 @@ async function submitRoster() {
       );
       if (response.ok) {
         const athlete = await response.json();
-        if (athlete.coach == currentUser.url) {
+        if (athlete.coach === currentUser.url) {
           body.athletes.push(athlete.id);
         } else {
           // create offer
           const body = { status: "p", recipient: athlete.url };
-          const response = await sendRequest("POST", `${HOST}/api/offers/`, body);
+          const response = await sendRequest(
+            "POST",
+            `${HOST}/api/offers/`,
+            body
+          );
           if (!response.ok) {
             const data = await response.json();
             const alert = createAlert("Could not create offer!", data);
@@ -220,8 +227,8 @@ async function submitRoster() {
       }
     }
   }
-  const response = await sendRequest("PUT", currentUser.url, body);
-  location.reload();
+  await sendRequest("PUT", currentUser.url, body);
+  location.reload(); // eslint-disable-line
 }
 
 async function uploadFiles(event, athlete) {
@@ -264,8 +271,7 @@ window.addEventListener("DOMContentLoaded", async () => {
   await displayFiles();
 
   const buttonSubmitRoster = document.querySelector("#button-submit-roster");
-  buttonSubmitRoster.addEventListener(
-    "click",
-    async () => await submitRoster()
-  );
+  buttonSubmitRoster.addEventListener("click", async () => {
+    await submitRoster();
+  });
 });

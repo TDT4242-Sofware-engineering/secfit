@@ -1,5 +1,5 @@
 function makeNavLinkActive(id) {
-  let link = document.getElementById(id);
+  const link = document.getElementById(id);
   link.classList.add("active");
   link.setAttribute("aria-current", "page");
 }
@@ -9,21 +9,19 @@ function isUserAuthenticated() {
 }
 
 function updateNavBar() {
-  let nav = document.querySelector("nav");
-
   // Emphasize link to current page
   if (
-    window.location.pathname == "/" ||
-    window.location.pathname == "/index.html"
+    window.location.pathname === "/" ||
+    window.location.pathname === "/index.html"
   ) {
     makeNavLinkActive("nav-index");
-  } else if (window.location.pathname == "/workouts.html") {
+  } else if (window.location.pathname === "/workouts.html") {
     makeNavLinkActive("nav-workouts");
-  } else if (window.location.pathname == "/exercises.html") {
+  } else if (window.location.pathname === "/exercises.html") {
     makeNavLinkActive("nav-exercises");
-  } else if (window.location.pathname == "/mycoach.html") {
+  } else if (window.location.pathname === "/mycoach.html") {
     makeNavLinkActive("nav-mycoach");
-  } else if (window.location.pathname == "/myathletes.html") {
+  } else if (window.location.pathname === "/myathletes.html") {
     makeNavLinkActive("nav-myathletes");
   }
 
@@ -46,23 +44,26 @@ function setCookie(name, value, maxage, path = "") {
   document.cookie = `${name}=${value}; max-age=${maxage}; path=${path}`;
 }
 
+// eslint-disable-next-line no-unused-vars
 function deleteCookie(name) {
   setCookie(name, "", 0, "/");
 }
 
 function getCookieValue(name) {
   let cookieValue = null;
-  let cookieByName = document.cookie
+  const cookieByName = document.cookie
     .split("; ")
     .find((row) => row.startsWith(name));
 
   if (cookieByName) {
+    // eslint-disable-next-line
     cookieValue = cookieByName.split("=")[1];
   }
 
   return cookieValue;
 }
 
+/* eslint-disable */
 async function sendRequest(
   method,
   url,
@@ -80,8 +81,8 @@ async function sendRequest(
 
   if (contentType) myHeaders.set("Content-Type", contentType);
   if (getCookieValue("access"))
-    myHeaders.set("Authorization", "Bearer " + getCookieValue("access"));
-  let myInit = { headers: myHeaders, method: method, body: body };
+    myHeaders.set("Authorization", `Bearer ${getCookieValue("access")}`);
+  let myInit = { headers: myHeaders, method, body };
   let myRequest = new Request(url, myInit);
 
   let response = await fetch(myRequest);
@@ -90,22 +91,22 @@ async function sendRequest(
     myHeaders = new Headers({
       "Content-Type": "application/json; charset=UTF-8",
     });
-    let tokenBody = JSON.stringify({ refresh: getCookieValue("refresh") });
+    const tokenBody = JSON.stringify({ refresh: getCookieValue("refresh") });
     myInit = { headers: myHeaders, method: "POST", body: tokenBody };
     myRequest = new Request(`${HOST}/api/token/refresh/`, myInit);
     response = await fetch(myRequest);
 
     if (response.ok) {
       // refresh successful, received new access token
-      let data = await response.json();
+      const data = await response.json();
       setCookie("access", data.access, 86400, "/");
 
-      let myHeaders = new Headers({
-        Authorization: "Bearer " + getCookieValue("access"),
+      const myHeaders = new Headers({
+        Authorization: `Bearer ${getCookieValue("access")}`,
         "Content-Type": contentType,
       });
-      let myInit = { headers: myHeaders, method: method, body: body };
-      let myRequest = new Request(url, myInit);
+      const myInit = { headers: myHeaders, method, body };
+      const myRequest = new Request(url, myInit);
       response = await fetch(myRequest);
 
       if (!response.ok) window.location.replace("logout.html");
@@ -115,13 +116,14 @@ async function sendRequest(
   return response;
 }
 
+// eslint-disable-next-line no-unused-vars
 function setReadOnly(readOnly, selector) {
-  let form = document.querySelector(selector);
-  let formData = new FormData(form);
+  const form = document.querySelector(selector);
+  const formData = new FormData(form);
 
-  for (let key of formData.keys()) {
+  for (const key of formData.keys()) {
     let selector = `input[name="${key}"], textarea[name="${key}"]`;
-    for (let input of form.querySelectorAll(selector)) {
+    for (const input of form.querySelectorAll(selector)) {
       if (!readOnly && input.hasAttribute("readonly")) {
         input.readOnly = false;
       } else if (readOnly && !input.hasAttribute("readonly")) {
@@ -130,7 +132,7 @@ function setReadOnly(readOnly, selector) {
     }
 
     selector = `input[type="file"], select[name="${key}`;
-    for (let input of form.querySelectorAll(selector)) {
+    for (const input of form.querySelectorAll(selector)) {
       if (!readOnly && input.hasAttribute("disabled")) {
         input.disabled = false;
       } else if (readOnly && !input.hasAttribute("disabled")) {
@@ -139,7 +141,7 @@ function setReadOnly(readOnly, selector) {
     }
   }
 
-  for (let input of document.querySelectorAll(
+  for (const input of document.querySelectorAll(
     "input:disabled, select:disabled"
   )) {
     if (
@@ -150,49 +152,55 @@ function setReadOnly(readOnly, selector) {
     }
   }
 }
+/* eslint-enable  */
 
+// eslint-disable-next-line no-unused-vars
 async function getCurrentUser() {
   let user = null;
-  let response = await sendRequest("GET", `${HOST}/api/users/?user=current`);
+  const response = await sendRequest("GET", `${HOST}/api/users/?user=current`);
   if (!response.ok) {
+    // eslint-disable-next-line
     console.log("COULD NOT RETRIEVE CURRENTLY LOGGED IN USER");
   } else {
-    let data = await response.json();
+    const data = await response.json();
+    // eslint-disable-next-line prefer-destructuring
     user = data.results[0];
   }
 
   return user;
 }
 
+// eslint-disable-next-line no-unused-vars
 function createAlert(header, data, msg) {
-  let alertDiv = document.createElement("div");
+  const alertDiv = document.createElement("div");
   alertDiv.className = "alert alert-warning alert-dismissible fade show";
   alertDiv.setAttribute("role", "alert");
 
-  let strong = document.createElement("strong");
+  const strong = document.createElement("strong");
   strong.innerText = header;
   alertDiv.appendChild(strong);
 
-  let button = document.createElement("button");
+  const button = document.createElement("button");
   button.type = "button";
   button.className = "btn-close";
   button.setAttribute("data-bs-dismiss", "alert");
   button.setAttribute("aria-label", "Close");
   alertDiv.appendChild(button);
 
-  let ul = document.createElement("ul");
+  const ul = document.createElement("ul");
   if ("detail" in data) {
-    let li = document.createElement("li");
-    li.innerText = data["detail"];
+    const li = document.createElement("li");
+    li.innerText = data.detail;
     ul.appendChild(li);
   } else {
-    for (let key in data) {
-      let li = document.createElement("li");
+    /* eslint-disable no-restricted-syntax, guard-for-in, no-shadow */
+    for (const key in data) {
+      const li = document.createElement("li");
       li.innerText = key;
 
-      let innerUl = document.createElement("ul");
-      for (let message of data[key]) {
-        let innerLi = document.createElement("li");
+      const innerUl = document.createElement("ul");
+      for (const message of data[key]) {
+        const innerLi = document.createElement("li");
         innerLi.innerText = message;
         innerUl.appendChild(innerLi);
       }
@@ -202,9 +210,11 @@ function createAlert(header, data, msg) {
       if (msg) {
         const li = document.createElement("li");
         const text = document.createTextNode(msg);
-        li.appendChild(text), ul.appendChild(li);
+        li.appendChild(text);
+        ul.appendChild(li);
       }
     }
+    /* eslint-enable */
   }
   alertDiv.appendChild(ul);
 

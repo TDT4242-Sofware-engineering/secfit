@@ -1,0 +1,28 @@
+{
+  "root": true,
+  "extends": ["eslint:recommended", "airbnb-base", "prettier"],
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es2017": true
+  },
+  "globals": {
+    "HOST": false,
+    "sendRequest": false,
+    "getCurrentUser": false,
+    "createAlert": false,
+    "setCookie": false,
+    "deleteCookie": false,
+    "setReadOnly": false,
+    "getCookieValue": false
+  },
+  "rules": {
+    "no-restricted-syntax": [
+      "error",
+      "ForInStatement",
+      "LabeledStatement",
+      "WithStatement"
+    ],
+    "no-use-before-define": "off"
+  }
+}

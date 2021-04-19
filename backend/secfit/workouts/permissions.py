@@ -8,8 +8,8 @@ from django.contrib.auth import get_user_model
 class IsOwner(permissions.BasePermission):
     """Checks whether the requesting user is also the owner of the existing object"""
 
-    def has_object_permission(self, request, view, obj):
-        return obj.owner == request.user
+    def has_object_permission(self, request, view, instance):
+        return instance.owner == request.user
 
 
 class IsOwnerOfWorkout(permissions.BasePermission):
@@ -26,8 +26,8 @@ class IsOwnerOfWorkout(permissions.BasePermission):
 
         return True
 
-    def has_object_permission(self, request, view, obj):
-        return obj.workout.owner == request.user
+    def has_object_permission(self, request, view, instance):
+        return instance.workout.owner == request.user
 
 class IsOwnerOfExercise(permissions.BasePermission):
     """Checks whether the requesting user is also the owner of the new or existing object"""
@@ -43,16 +43,16 @@ class IsOwnerOfExercise(permissions.BasePermission):
 
         return True
 
-    def has_object_permission(self, request, view, obj):
-        return obj.exercise.owner == request.user
+    def has_object_permission(self, request, view, instance):
+        return instance.exercise.owner == request.user
 
 class IsCoachAndVisibleToCoach(permissions.BasePermission):
     """Checks whether the requesting user is the existing object's owner's coach
     and whether the object (workout) has a visibility of Public or Coach.
     """
 
-    def has_object_permission(self, request, view, obj):
-        return obj.owner.coach == request.user
+    def has_object_permission(self, request, view, instance):
+        return instance.owner.coach == request.user
 
 
 class IsCoachOfWorkoutAndVisibleToCoach(permissions.BasePermission):
@@ -60,34 +60,34 @@ class IsCoachOfWorkoutAndVisibleToCoach(permissions.BasePermission):
     and whether the object has a visibility of Public or Coach.
     """
 
-    def has_object_permission(self, request, view, obj):
-        return obj.workout.owner.coach == request.user
+    def has_object_permission(self, request, view, instance):
+        return instance.workout.owner.coach == request.user
 
 
 class IsPublic(permissions.BasePermission):
     """Checks whether the object (workout) has visibility of Public."""
 
-    def has_object_permission(self, request, view, obj):
-        return obj.visibility == "PU"
+    def has_object_permission(self, request, view, workout):
+        return workout.visibility == "PU"
 
 
 class IsWorkoutPublic(permissions.BasePermission):
     """Checks whether the object's workout has visibility of Public."""
 
-    def has_object_permission(self, request, view, obj):
-        return obj.workout.visibility == "PU"
+    def has_object_permission(self, request, view, instance):
+        return instance.workout.visibility == "PU"
 
 
 class IsReadOnly(permissions.BasePermission):
     """Checks whether the HTTP request verb is only for retrieving data (GET, HEAD, OPTIONS)"""
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, instance):
         return request.method in permissions.SAFE_METHODS
 
 class IsOwnerOrParticipantOfWorkoutInvitation(permissions.BasePermission):
     """Checks whether the user is allowed to delete a workout invitation"""
 
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, instance):
         if request.method == "DELETE":
             invitation_pk = view.kwargs["pk"]
             invitation = WorkoutInvitation.objects.filter(pk=invitation_pk).first()
@@ -98,7 +98,7 @@ class IsOwnerOrParticipantOfWorkoutInvitation(permissions.BasePermission):
 
 class IsInvitedToWorkout(permissions.BasePermission):
     """Checks whether the user is allowed to edit or get the workout. For invited participants to be able to add itself to the workout."""
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, instance):
         if request.method == "PUT" or request.method == "GET":
             workout_pk = view.kwargs["pk"]
             workout = Workout.objects.get(pk=workout_pk)
@@ -112,7 +112,7 @@ class IsInvitedToWorkout(permissions.BasePermission):
 
 class IsParticipantToWorkout(permissions.BasePermission):
     """Checks whether the user is allowed to edit or get the workout. For participants to be able se the workout."""
-    def has_object_permission(self, request, view, obj):
+    def has_object_permission(self, request, view, instance):
         if request.method == "GET":
             workout_pk = view.kwargs["pk"]
             workout = Workout.objects.get(pk=workout_pk)

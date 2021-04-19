@@ -28,10 +28,10 @@ class CommentList(
 
     def get_queryset(self):
         workout_pk = self.kwargs.get("pk")
-        qs = Comment.objects.none()
+        query_set = Comment.objects.none()
 
         if workout_pk:
-            qs = Comment.objects.filter(workout=workout_pk)
+            query_set = Comment.objects.filter(workout=workout_pk)
         elif self.request.user:
             """A comment should be visible to the requesting user if any of the following hold:
             - The comment is on a public visibility workout
@@ -43,7 +43,7 @@ class CommentList(
             # We should replace it with a better solution.
             # Or maybe not.
             
-            qs = Comment.objects.filter(
+            query_set = Comment.objects.filter(
                 Q(workout__visibility="PU")
                 | Q(owner=self.request.user)
                 | (
@@ -53,9 +53,9 @@ class CommentList(
                 | Q(workout__owner=self.request.user)
             ).distinct()
 
-        return qs
+        return query_set
 
-# Details of comment
+
 class CommentDetail(
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
@@ -78,7 +78,7 @@ class CommentDetail(
         return self.destroy(request, *args, **kwargs)
 
 
-# List of likes
+
 class LikeList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView):
     serializer_class = LikeSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -96,7 +96,7 @@ class LikeList(mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericA
         return Like.objects.filter(owner=self.request.user)
 
 
-# Details of like
+
 class LikeDetail(
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,

@@ -28,7 +28,6 @@ from workouts.permissions import (
 from workouts.mixins import CreateListModelMixin
 from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, WorkoutInvitation, ExerciseFile
 from workouts.serializers import WorkoutSerializer, ExerciseSerializer, WorkoutInvitationSerializer
-from workouts.serializers import RememberMeSerializer
 from workouts.serializers import ExerciseInstanceSerializer, WorkoutFileSerializer, ExerciseFileSerializer
 from django.core.exceptions import PermissionDenied
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -62,53 +61,6 @@ def api_root(request, format=None):
     )
 
 
-# Allow users to save a persistent session in their browser
-class RememberMe(
-    mixins.ListModelMixin,
-    mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
-    generics.GenericAPIView,
-):
-
-    serializer_class = RememberMeSerializer
-
-    def get(self, request):
-        if request.user.is_authenticated == False:
-            raise PermissionDenied
-        else:
-            return Response({"remember_me": self.rememberme()})
-
-    def post(self, request):
-        cookie_object = namedtuple("Cookies", request.COOKIES.keys())(
-            *request.COOKIES.values()
-        )
-        user = self.get_user(cookie_object)
-        refresh = RefreshToken.for_user(user)
-        return Response(
-            {
-                "refresh": str(refresh),
-                "access": str(refresh.access_token),
-            }
-        )
-
-    def get_user(self, cookie_object):
-        decode = base64.b64decode(cookie_object.remember_me)
-        user, sign = pickle.loads(decode)
-
-        # Validate signature
-        if sign == self.sign_user(user):
-            return user
-
-    def rememberme(self):
-        creds = [self.request.user, self.sign_user(str(self.request.user))]
-        return base64.b64encode(pickle.dumps(creds))
-
-    def sign_user(self, username):
-        signer = Signer()
-        signed_user = signer.sign(username)
-        return signed_user
-
-
 class WorkoutList(
     mixins.ListModelMixin, mixins.CreateModelMixin, generics.GenericAPIView
 ):
@@ -139,20 +91,20 @@ class WorkoutList(
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        qs = Workout.objects.none()
+        query_set = Workout.objects.none()
         if self.request.user:
             # A workout should be visible to the requesting user if any of the following hold:
             # - The workout has public visibility
             # - The owner of the workout is the requesting user
             # - The workout has coach visibility and the requesting user is the owner's coach
-            qs = Workout.objects.filter(
+            query_set = Workout.objects.filter(
                 Q(visibility="PU")
                 | (Q(visibility="CO") & Q(owner__coach=self.request.user))
                 | Q(owner=self.request.user) # BUG FIX -> This allow user to see it own workouts
                 | Q(participants=self.request.user)
             ).distinct()
 
-        return qs
+        return query_set
 
 
 class WorkoutDetail(
@@ -279,9 +231,9 @@ class ExerciseInstanceList(
         return self.create(request, *args, **kwargs)
 
     def get_queryset(self):
-        qs = ExerciseInstance.objects.none()
+        query_set = ExerciseInstance.objects.none()
         if self.request.user:
-            qs = ExerciseInstance.objects.filter(
+            query_set = ExerciseInstance.objects.filter(
                 Q(workout__owner=self.request.user)
                 | (
                     (Q(workout__visibility="CO") | Q(workout__visibility="PU"))
@@ -289,7 +241,7 @@ class ExerciseInstanceList(
                 )
             ).distinct()
 
-        return qs
+        return query_set
 
 
 class ExerciseInstanceDetail(
@@ -342,9 +294,9 @@ class WorkoutFileList(
         serializer.save(owner=self.request.user)
 
     def get_queryset(self):
-        qs = WorkoutFile.objects.none()
+        query_set = WorkoutFile.objects.none()
         if self.request.user:
-            qs = WorkoutFile.objects.filter(
+            query_set = WorkoutFile.objects.filter(
                 Q(owner=self.request.user)
                 | Q(workout__owner=self.request.user)
                 | (
@@ -354,7 +306,7 @@ class WorkoutFileList(
                 | Q(workout__visibility="PU") # BUG FIX -> to allow users to see pulic workout files
             ).distinct()
 
-        return qs
+        return query_set
 
 
 class WorkoutInvitationList(
@@ -380,13 +332,13 @@ class WorkoutInvitationList(
             )
 
     def get_queryset(self):
-        qs = WorkoutInvitation.objects.none()
+        query_set = WorkoutInvitation.objects.none()
         if self.request.user:
-            qs = WorkoutInvitation.objects.filter(
+            query_set = WorkoutInvitation.objects.filter(
                 Q(participant=self.request.user)
             ).distinct()
 
-        return qs
+        return query_set
 
 class WorkoutInvitationDetail(
     mixins.RetrieveModelMixin,

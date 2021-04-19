@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Exercises</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css"
@@ -17,41 +17,55 @@
       crossorigin="anonymous"
     ></script>
 
-    <script src="https://kit.fontawesome.com/0ce6c392ca.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="styles/style.css">
+    <script
+      src="https://kit.fontawesome.com/0ce6c392ca.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="styles/style.css" />
     <script src="scripts/navbar.js" type="text/javascript" defer></script>
-</head>
-<body>
+  </head>
+  <body>
     <navbar-el></navbar-el>
 
     <div class="container">
-        <div class="row">
-            <div class="col-lg text-center">
-                <h3 class="mt-5">View Exercises</h3>
-                <p>Here you can view, create, and edit exercise types defined by you and other athletes.</p>
-                <input type="button" class="btn btn-primary" id="btn-create-exercise" value="Create new exercise">
+      <div class="row">
+        <div class="col-lg text-center">
+          <h3 class="mt-5">View Exercises</h3>
+          <p>
+            Here you can view, create, and edit exercise types defined by you
+            and other athletes.
+          </p>
+          <input
+            type="button"
+            class="btn btn-primary"
+            id="btn-create-exercise"
+            value="Create new exercise"
+          />
         </div>
-        <div class="row">
-            <div class="col-lg text-center">
-                <div class="list-group mt-1" id="div-content"></div>
-            </div>
+      </div>
+      <div class="row">
+        <div class="col-lg text-center">
+          <div class="list-group mt-1" id="div-content"></div>
         </div>
+      </div>
     </div>
 
     <template id="template-exercise">
-        <a class="list-group-item list-group-item-action flex-column align-items-start my-1 exercise" href="">
-            <div class="d-flex w-100 justify-content-between align-items-center">
-                <h5 class="mb-1"></h5>
-            </div>
-            <div class="d-flex">
-                <p class="mb-1">
-                </p>
-            </div>
-        </a>
+      <a
+        class="list-group-item list-group-item-action flex-column align-items-start my-1 exercise"
+        href=""
+      >
+        <div class="d-flex w-100 justify-content-between align-items-center">
+          <h5 class="mb-1"></h5>
+        </div>
+        <div class="d-flex">
+          <p class="mb-1"></p>
+        </div>
+      </a>
     </template>
 
     <script src="scripts/defaults.js"></script>
     <script src="scripts/scripts.js"></script>
     <script src="scripts/exercises.js"></script>
-</body>
+  </body>
 </html>

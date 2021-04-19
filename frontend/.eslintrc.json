@@ -14,5 +14,8 @@
     "deleteCookie": false,
     "setReadOnly": false,
     "getCookieValue": false
+  },
+  "rules": {
+    "prefer-const": 2
   }
 }

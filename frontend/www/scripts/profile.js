@@ -13,6 +13,7 @@ async function retrieveProfile() {
     document.body.prepend(alert);
   } else {
     const data = await response.json();
+    // eslint-disable-next-line prefer-destructuring
     user = data.results[0];
     const form = document.querySelector("#form-profile");
     const formData = new FormData(form);
@@ -54,12 +55,12 @@ async function updateProfile(user) {
     const alert = createAlert("Could not update profile!");
     document.body.prepend(alert);
   } else {
-    location.reload();
+    window.location.reload();
   }
 }
 
 function handleCancel() {
-  location.reload();
+  window.location.reload();
 }
 
 function generateProfileForm() {
@@ -82,7 +83,7 @@ async function deleteProfile(user) {
   const response = await sendRequest("DELETE", `${HOST}/api/users/${user.id}/`);
   if (!response.ok) {
     const data = await response.json();
-    const alert = createAlert(`Could not delete profile ${id}!`, data);
+    const alert = createAlert(`Could not delete profile ${user.id}!`, data);
     document.body.prepend(alert);
   } else {
     window.location.replace("logout.html");

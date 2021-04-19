@@ -46,6 +46,7 @@ function setCookie(name, value, maxage, path = "") {
   document.cookie = `${name}=${value}; max-age=${maxage}; path=${path}`;
 }
 
+// eslint-disable-next-line no-unused-vars
 function deleteCookie(name) {
   setCookie(name, "", 0, "/");
 }
@@ -63,6 +64,7 @@ function getCookieValue(name) {
   return cookieValue;
 }
 
+// eslint-disable-next-line no-unused-vars
 async function sendRequest(
   method,
   url,
@@ -115,6 +117,7 @@ async function sendRequest(
   return response;
 }
 
+// eslint-disable-next-line no-unused-vars
 function setReadOnly(readOnly, selector) {
   let form = document.querySelector(selector);
   let formData = new FormData(form);
@@ -151,6 +154,7 @@ function setReadOnly(readOnly, selector) {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 async function getCurrentUser() {
   let user = null;
   let response = await sendRequest("GET", `${HOST}/api/users/?user=current`);
@@ -164,6 +168,7 @@ async function getCurrentUser() {
   return user;
 }
 
+// eslint-disable-next-line no-unused-vars
 function createAlert(header, data, msg) {
   let alertDiv = document.createElement("div");
   alertDiv.className = "alert alert-warning alert-dismissible fade show";

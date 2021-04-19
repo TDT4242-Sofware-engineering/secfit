@@ -159,9 +159,11 @@ async function getCurrentUser() {
   let user = null;
   const response = await sendRequest("GET", `${HOST}/api/users/?user=current`);
   if (!response.ok) {
+    // eslint-disable-next-line
     console.log("COULD NOT RETRIEVE CURRENTLY LOGGED IN USER");
   } else {
     const data = await response.json();
+    // eslint-disable-next-line prefer-destructuring
     user = data.results[0];
   }
 
@@ -191,6 +193,7 @@ function createAlert(header, data, msg) {
     li.innerText = data.detail;
     ul.appendChild(li);
   } else {
+    /* eslint-disable no-restricted-syntax, guard-for-in, no-shadow */
     for (const key in data) {
       const li = document.createElement("li");
       li.innerText = key;
@@ -207,9 +210,11 @@ function createAlert(header, data, msg) {
       if (msg) {
         const li = document.createElement("li");
         const text = document.createTextNode(msg);
-        li.appendChild(text), ul.appendChild(li);
+        li.appendChild(text);
+        ul.appendChild(li);
       }
     }
+    /* eslint-enable */
   }
   alertDiv.appendChild(ul);
 

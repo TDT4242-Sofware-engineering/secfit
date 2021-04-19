@@ -11,17 +11,17 @@ function isUserAuthenticated() {
 function updateNavBar() {
   // Emphasize link to current page
   if (
-    window.location.pathname == "/" ||
-    window.location.pathname == "/index.html"
+    window.location.pathname === "/" ||
+    window.location.pathname === "/index.html"
   ) {
     makeNavLinkActive("nav-index");
-  } else if (window.location.pathname == "/workouts.html") {
+  } else if (window.location.pathname === "/workouts.html") {
     makeNavLinkActive("nav-workouts");
-  } else if (window.location.pathname == "/exercises.html") {
+  } else if (window.location.pathname === "/exercises.html") {
     makeNavLinkActive("nav-exercises");
-  } else if (window.location.pathname == "/mycoach.html") {
+  } else if (window.location.pathname === "/mycoach.html") {
     makeNavLinkActive("nav-mycoach");
-  } else if (window.location.pathname == "/myathletes.html") {
+  } else if (window.location.pathname === "/myathletes.html") {
     makeNavLinkActive("nav-myathletes");
   }
 

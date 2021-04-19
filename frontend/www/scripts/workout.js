@@ -432,14 +432,11 @@ window.addEventListener("DOMContentLoaded", async () => {
   } else {
     await createBlankExercise();
     const ownerInput = document.querySelector("#inputOwner");
-    const usersContainer = document.getElementById(
-      "users-search-result-container"
-    );
 
     const inputSearchForUser = document.querySelector("#inputSearchForUser");
     inputSearchForUser.style.display = "none";
     inputSearchForUser.addEventListener("input", async (e) =>
-      onSearchForInputChange(e, usersContainer, currentUser.username)
+      onSearchForInputChange(e, currentUser.username)
     );
     const addAthelteButton = document.querySelector("#btn-add-athelte");
     addAthelteButton.addEventListener("click", () =>
@@ -492,10 +489,10 @@ function toggleHideById(id) {
   }
 }
 
-async function onSearchForInputChange(e, container, currentUserUsername) {
+async function onSearchForInputChange(event, currentUserUsername) {
+  const container = document.getElementById("users-search-result-container");
   container.innerHTML = "";
-  container.className = "col-lg-6";
-  const input = e.target.value;
+  const input = event.target.value;
   if (input === undefined || input === null || input === "") {
     return;
   }

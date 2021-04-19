@@ -1,9 +1,9 @@
-let deleteProfileButton;
-let initiateDeleteButton;
-let cancelDeleteButton;
-let editProfileButton;
-let confirmButton;
-let cancelEditButton;
+const deleteProfileButton = document.querySelector("#btn-delete-user");
+const cancelDeleteButton = document.querySelector("#btn-cancel-delete");
+const initiateDeleteButton = document.querySelector("#btn-initiate-delete");
+const editProfileButton = document.querySelector("#btn-edit-profile");
+const confirmButton = document.querySelector("#btn-confirm-edit");
+const cancelEditButton = document.querySelector("#btn-cancel-edit");
 
 async function retrieveProfile() {
   let user = null;
@@ -29,9 +29,6 @@ async function retrieveProfile() {
 }
 
 function handleEditProfile() {
-  confirmButton = document.querySelector("#btn-confirm-edit");
-  cancelEditButton = document.querySelector("#btn-cancel-edit");
-
   setReadOnly(false, "#form-profile");
 
   editProfileButton.classList.add("hide");
@@ -92,11 +89,6 @@ async function deleteProfile(user) {
 
 window.addEventListener("DOMContentLoaded", async () => {
   const user = await retrieveProfile();
-  deleteProfileButton = document.querySelector("#btn-delete-user");
-  cancelDeleteButton = document.querySelector("#btn-cancel-delete");
-  initiateDeleteButton = document.querySelector("#btn-initiate-delete");
-  editProfileButton = document.querySelector("#btn-edit-profile");
-  confirmButton = document.querySelector("#btn-confirm-edit");
 
   const modal = document.querySelector("#delete-modal");
 

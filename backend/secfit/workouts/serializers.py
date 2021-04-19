@@ -2,7 +2,7 @@
 """
 from rest_framework import serializers
 from rest_framework.serializers import HyperlinkedRelatedField
-from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, RememberMe, WorkoutInvitation, ExerciseFile
+from workouts.models import Workout, Exercise, ExerciseInstance, WorkoutFile, WorkoutInvitation, ExerciseFile
 from django.contrib.auth import get_user_model
 
 
@@ -184,10 +184,8 @@ class WorkoutSerializer(serializers.HyperlinkedModelSerializer):
         instance.participants.set(users)
         instance.save()
 
-        # Handle ExerciseInstances
         self.handleExercises(instance, exercise_instances, exercise_instances_data)
 
-        # Handle WorkoutFiles
         self.handleWorkoutFiles(instance,validated_data)
 
         return instance
@@ -325,15 +323,4 @@ class ExerciseSerializer(serializers.HyperlinkedModelSerializer):
 
         return instance
 
-class RememberMeSerializer(serializers.HyperlinkedModelSerializer):
-    """Serializer for an RememberMe. Hyperlinks are used for relationships by default.
 
-    Serialized fields: remember_me
-
-    Attributes:
-        remember_me:    Value of cookie used for remember me functionality
-    """
-
-    class Meta:
-        model = RememberMe
-        fields = ["remember_me"]

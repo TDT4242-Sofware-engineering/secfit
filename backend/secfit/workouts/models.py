@@ -176,14 +176,4 @@ class ExerciseFile(models.Model):
     owner = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="exercise_files")
     file = models.FileField(upload_to=exercise_directory_path, validators=[file_size])
 
-class RememberMe(models.Model):
-    """Django model for an remember_me cookie used for remember me functionality.
 
-    Attributes:
-        remember_me:        Value of cookie used for remember me
-    """
-
-    remember_me = models.CharField(max_length=501)
-
-    def __str__(self):
-        return self.remember_me

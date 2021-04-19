@@ -59,7 +59,7 @@ async function displayOffers() {
 
       listOffers.appendChild(li);
     }
-    if (offers.results.length == 0) {
+    if (offers.results.length === 0) {
       const offersDiv = document.querySelector("#offers-div");
       const p = document.createElement("p");
       p.innerText = "You currently have no offers.";
@@ -157,7 +157,7 @@ async function displayFiles() {
     listTab.firstElementChild.click();
   }
 
-  if (user.coach_files.length == 0) {
+  if (user.coach_files.length === 0) {
     const p = document.createElement("p");
     p.innerText = "There are currently no files uploaded for this user.";
     document.querySelector("#list-files-div").append(p);
@@ -174,7 +174,7 @@ async function getReceivedRequests() {
     const data = await response.json();
     const athleteRequests = data.results;
     for (const athleteRequest of athleteRequests) {
-      if (athleteRequest.recipient == sessionStorage.getItem("username")) {
+      if (athleteRequest.recipient === sessionStorage.getItem("username")) {
         const div = document.querySelector("#div-received-athlete-requests");
         const template = document.querySelector("#template-athlete-request");
 

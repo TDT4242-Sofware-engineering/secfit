@@ -19,6 +19,103 @@ async function retrieveWorkout(id) {
     const form = document.querySelector("#form-workout");
     const formData = new FormData(form);
 
+    fillWorkoutForm(formData, form);
+
+    const input = form.querySelector("select:disabled");
+    input.value = workoutData.visibility;
+    // files
+    mapWorkoutFilesToHrefObjects();
+
+    // create exercises
+
+    // fetch exercise types
+    const exerciseTypeResponse = await sendRequest(
+      "GET",
+      `${HOST}/api/exercises/`
+    );
+    const exerciseTypes = await exerciseTypeResponse.json();
+
+    // handleRetrievedExercises(workoutData, exerciseTypes);
+    //TODO: This should be in its own method.
+    handleRetrievedExercises(exerciseTypes);
+  }
+  return workoutData;
+
+  function handleRetrievedExercises(exerciseTypes) {
+    for (let i = 0; i < workoutData.exercise_instances.length; i++) {
+      const templateExercise = document.querySelector("#template-exercise");
+      const divExerciseContainer = templateExercise.content.firstElementChild.cloneNode(
+        true
+      );
+
+      const exerciseTypeLabel = divExerciseContainer.querySelector(
+        ".exercise-type"
+      );
+      exerciseTypeLabel.for = `inputExerciseType${i}`;
+
+      const exerciseTypeSelect = divExerciseContainer.querySelector("select");
+      exerciseTypeSelect.id = `inputExerciseType${i}`;
+      exerciseTypeSelect.disabled = true;
+
+      const splitUrl = workoutData.exercise_instances[i].exercise.split("/");
+      const currentExerciseTypeId = splitUrl[splitUrl.length - 2];
+      let currentExerciseType = "";
+
+      for (let j = 0; j < exerciseTypes.count; j++) {
+        const option = document.createElement("option");
+        option.value = exerciseTypes.results[j].id;
+        if (currentExerciseTypeId == exerciseTypes.results[j].id) {
+          currentExerciseType = exerciseTypes.results[j];
+        }
+        option.innerText = exerciseTypes.results[j].name;
+        exerciseTypeSelect.append(option);
+      }
+
+      exerciseTypeSelect.value = currentExerciseType.id;
+
+      const exerciseSetLabel = divExerciseContainer.querySelector(
+        ".exercise-sets"
+      );
+      exerciseSetLabel.for = `inputSets${i}`;
+
+      const exerciseSetInput = divExerciseContainer.querySelector(
+        "input[name='sets']"
+      );
+      exerciseSetInput.id = `inputSets${i}`;
+      exerciseSetInput.value = workoutData.exercise_instances[i].sets;
+      exerciseSetInput.readOnly = true;
+
+      const exerciseNumberLabel = divExerciseContainer.querySelector(
+        ".exercise-number"
+      );
+      (exerciseNumberLabel.for = "for"), `inputNumber${i}`;
+      exerciseNumberLabel.innerText = currentExerciseType.unit;
+
+      const exerciseNumberInput = divExerciseContainer.querySelector(
+        "input[name='number']"
+      );
+      exerciseNumberInput.id = `inputNumber${i}`;
+      exerciseNumberInput.value = workoutData.exercise_instances[i].number;
+      exerciseNumberInput.readOnly = true;
+
+      const exercisesDiv = document.querySelector("#div-exercises");
+      exercisesDiv.appendChild(divExerciseContainer);
+    }
+  }
+
+  function mapWorkoutFilesToHrefObjects() {
+    const filesDiv = document.querySelector("#uploaded-files");
+    for (const file of workoutData.files) {
+      const a = document.createElement("a");
+      a.href = file.file;
+      const pathArray = file.file.split("/");
+      a.text = pathArray[pathArray.length - 1];
+      a.className = "me-2";
+      filesDiv.appendChild(a);
+    }
+  }
+
+  function fillWorkoutForm(formData, form) {
     for (const key of formData.keys()) {
       const selector = `input[name="${key}"], textarea[name="${key}"]`;
       const inputFromForm = form.querySelector(selector);
@@ -35,94 +132,6 @@ async function retrieveWorkout(id) {
         inputFromForm.value = newVal;
       }
     }
-
-    const input = form.querySelector("select:disabled");
-    input.value = workoutData.visibility;
-    // files
-    const filesDiv = document.querySelector("#uploaded-files");
-    for (const file of workoutData.files) {
-      const a = document.createElement("a");
-      a.href = file.file;
-      const pathArray = file.file.split("/");
-      a.text = pathArray[pathArray.length - 1];
-      a.className = "me-2";
-      filesDiv.appendChild(a);
-    }
-
-    // create exercises
-
-    // fetch exercise types
-    const exerciseTypeResponse = await sendRequest(
-      "GET",
-      `${HOST}/api/exercises/`
-    );
-    const exerciseTypes = await exerciseTypeResponse.json();
-
-    handleRetrivedExercises(workoutData, exerciseTypes);
-  }
-  return workoutData;
-}
-
-function handleRetrivedExercises(workoutData, exerciseTypes) {
-  for (let i = 0; i < workoutData.exercise_instances.length; i++) {
-    const templateExercise = document.querySelector("#template-exercise");
-    const divExerciseContainer = templateExercise.content.firstElementChild.cloneNode(
-      true
-    );
-
-    const exerciseTypeLabel = divExerciseContainer.querySelector(
-      ".exercise-type"
-    );
-    exerciseTypeLabel.for = `inputExerciseType${i}`;
-
-    const exerciseTypeSelect = divExerciseContainer.querySelector("select");
-    exerciseTypeSelect.id = `inputExerciseType${i}`;
-    exerciseTypeSelect.disabled = true;
-
-    const splitUrl = workoutData.exercise_instances[i].exercise.split("/");
-    const currentExerciseTypeId = splitUrl[splitUrl.length - 2];
-    let currentExerciseType = "";
-
-    for (let j = 0; j < exerciseTypes.count; j++) {
-      const option = document.createElement("option");
-      option.value = exerciseTypes.results[j].id;
-      if (currentExerciseTypeId === exerciseTypes.results[j].id) {
-        currentExerciseType = exerciseTypes.results[j];
-      }
-      option.innerText = exerciseTypes.results[j].name;
-      exerciseTypeSelect.append(option);
-    }
-
-    exerciseTypeSelect.value = currentExerciseType.id;
-
-    const exerciseSetLabel = divExerciseContainer.querySelector(
-      ".exercise-sets"
-    );
-    exerciseSetLabel.for = `inputSets${i}`;
-
-    const exerciseSetInput = divExerciseContainer.querySelector(
-      "input[name='sets']"
-    );
-    exerciseSetInput.id = `inputSets${i}`;
-    exerciseSetInput.value = workoutData.exercise_instances[i].sets;
-    exerciseSetInput.readOnly = true;
-
-    const exerciseNumberLabel = divExerciseContainer.querySelector(
-      ".exercise-number"
-    );
-    // eslint-disable-next-line
-    (exerciseNumberLabel.for = "for"), `inputNumber${i}`;
-    exerciseNumberLabel.innerText = currentExerciseType.unit;
-
-    const exerciseNumberInput = divExerciseContainer.querySelector(
-      "input[name='number']"
-    );
-    exerciseNumberInput.id = `inputNumber${i}`;
-    exerciseNumberInput.value = workoutData.exercise_instances[i].number;
-    exerciseNumberInput.readOnly = true;
-
-    const exercisesDiv = document.querySelector("#div-exercises");
-    exercisesDiv.appendChild(divExerciseContainer);
   }
 }
 
@@ -216,11 +225,15 @@ function generateWorkoutForm() {
 
   submitForm.append("exercise_instances", JSON.stringify(exerciseInstances));
   // adding files
-  for (const file of formData.getAll("files")) {
-    submitForm.append("files", file);
-  }
+  addWorkoutFiles();
 
   return submitForm;
+
+  function addWorkoutFiles() {
+    for (const file of formData.getAll("files")) {
+      submitForm.append("files", file);
+    }
+  }
 }
 
 async function createWorkout() {
@@ -235,6 +248,17 @@ async function createWorkout() {
 
   if (response.ok) {
     const data = await response.json();
+    sendWorkoutInvitations(data);
+
+    participants = [];
+    window.location.replace("workouts.html");
+  } else {
+    const data = await response.json();
+    const alert = createAlert("Could not create new workout!", data);
+    document.body.prepend(alert);
+  }
+
+  function sendWorkoutInvitations(data) {
     participants.forEach(async (participant) => {
       const invitation = {
         owner: currentUser.username,
@@ -246,15 +270,7 @@ async function createWorkout() {
         `${HOST}/api/workouts/invitations`,
         invitation
       );
-      console.log(invResponse); // eslint-disable-line
     });
-
-    participants = [];
-    window.location.replace("workouts.html");
-  } else {
-    const data = await response.json();
-    const alert = createAlert("Could not create new workout!", data);
-    document.body.prepend(alert);
   }
 }
 
@@ -415,18 +431,15 @@ window.addEventListener("DOMContentLoaded", async () => {
   } else {
     await createBlankExercise();
     const ownerInput = document.querySelector("#inputOwner");
-    const usersContainer = document.getElementById(
-      "users-search-result-container"
-    );
 
     const inputSearchForUser = document.querySelector("#inputSearchForUser");
     inputSearchForUser.style.display = "none";
     inputSearchForUser.addEventListener("input", async (e) =>
-      onSearchForInputChange(e, usersContainer, currentUser.username)
+      onSearchForInputChange(e, currentUser.username)
     );
     const addAthelteButton = document.querySelector("#btn-add-athelte");
-    addAthelteButton.addEventListener("click", async () =>
-      togglehideById("#inputSearchForUser")
+    addAthelteButton.addEventListener("click", () =>
+      toggleHideById("#inputSearchForUser")
     );
 
     ownerInput.value = currentUser.username;
@@ -464,10 +477,9 @@ window.addEventListener("DOMContentLoaded", async () => {
   }
 });
 
-function togglehideById(id) {
+function toggleHideById(id) {
   const element = document.querySelector(id);
   // eslint-disable-next-line
-  console.log(`Hide${id} style: ${element.style.display}`);
   if (element.style.display === "block") {
     element.style.display = "none";
   } else {
@@ -475,25 +487,29 @@ function togglehideById(id) {
   }
 }
 
-async function onSearchForInputChange(e, container, currentUserUsername) {
+async function onSearchForInputChange(event, currentUserUsername) {
+  const container = document.getElementById("users-search-result-container");
   container.innerHTML = "";
-  container.className = "col-lg-6";
-  const input = e.target.value;
+  const input = event.target.value;
   if (input === undefined || input === null || input === "") {
     return;
   }
   const users = await sendRequest("GET", `${HOST}/api/users/?search=${input}`);
   const data = await users.json();
-  data.results.forEach((user) => {
-    const button = document.createElement("input");
-    button.value = user.username;
-    button.type = "button";
-    button.className = "btn btn-primary";
-    button.addEventListener("click", async () =>
-      toggleParticipant(user.username, currentUserUsername)
-    );
-    container.appendChild(button);
-  });
+  mapUsersToButtons();
+
+  function mapUsersToButtons() {
+    data.results.forEach((user) => {
+      const button = document.createElement("input");
+      button.value = user.username;
+      button.type = "button";
+      button.className = "btn btn-primary";
+      button.addEventListener("click", () =>
+        toggleParticipant(user.username, currentUserUsername)
+      );
+      container.appendChild(button);
+    });
+  }
 }
 
 function toggleParticipant(username, currentUserUsername) {
